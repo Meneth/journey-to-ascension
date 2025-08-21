@@ -5,10 +5,16 @@
     --element-background-color: rgb(35, 108, 168);
     --element-foreground-color: rgb(49, 144, 221);
     --game-width: 1100px;
+    --font-family: Helvetica, Arial, sans-serif;
+    --font-weight: 500;
 }
 
 /* MARK: Main areas
 */
+
+* {
+    
+}
 
 body {
     color: #000;
@@ -128,7 +134,7 @@ button:hover:enabled {
 
 .task button:disabled {
     background: linear-gradient(5deg, #777, #999);
-    color: #000;
+    color: #444;
 }
 
 .task.Normal button:enabled {

@@ -117,7 +117,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
     const skillsUsed = document.createElement("p");
     skillsUsed.className = "skills-used-text";
-    var skillText = "Skills used: ";
+    var skillText = "Skills: ";
     var skillStrings: string[] = [];
     for (const skill of task.task_definition.skills) {
         const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
