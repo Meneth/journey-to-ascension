@@ -177,7 +177,7 @@ button:hover:enabled {
 .task.Prestige button:enabled {
     background: linear-gradient(5deg, rgb(141, 23, 196), rgb(162, 54, 204));
     transition: background-color 0.2s, filter 0.2s;
-    animation: prestige-glow 2s infinite;
+    animation: prestige-glow 1s infinite alternate;
 }
 
 .task .indicator {
@@ -222,17 +222,27 @@ button:hover:enabled {
     color: red;
 }
 
+.perk-unlock {
+    animation: perk-glow 1s infinite alternate;
+}
+
 @keyframes prestige-glow {
-    0% {
+    from {
         box-shadow: 0 0 5px 5px rgba(166, 52, 219, 0.6);
     }
 
-    50% {
+    to {
         box-shadow: 0 0 15px 8px rgba(166, 52, 219, 0.9);
     }
+}
 
-    100% {
-        box-shadow: 0 0 5px 5px rgba(166, 52, 219, 0.6);
+@keyframes perk-glow {
+    from {
+        box-shadow: 0 0 8px 2px rgba(52, 219, 66, 0.6);
+    }
+
+    to {
+        box-shadow: 0 0 12px 4px rgba(52, 219, 66, 0.9);
     }
 }
 

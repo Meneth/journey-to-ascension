@@ -146,6 +146,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         perk_indicator.classList.add("indicator");
         perk_indicator.textContent = PERKS[task.task_definition.perk]?.icon as string;
         task_button.appendChild(perk_indicator);
+        task_button.classList.add("perk-unlock");
     }
 
     const task_reps_div = document.createElement("div");
@@ -938,6 +939,7 @@ function handleEvents() {
                     message_div.innerHTML = `Unlocked ${perk.icon}${perk.name}`;
                     message_div.innerHTML += `<br>${perk.tooltip}`;
                     setupControls(); // Show the automation controls
+                    recreateTasks(); // Get rid of Perk indicator
                     break;
                 }
             case EventType.UsedItem:
