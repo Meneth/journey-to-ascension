@@ -392,9 +392,48 @@ button:hover:enabled {
     margin-bottom: 8px;
 }
 
+#tooltip .subheader {
+    font-weight: bold;
+}
+
 .tooltip hr {
     border: none;
     border-bottom: 1px solid var(--tooltip-palette-table-lines);
+}
+
+.table {
+    color: var(--tooltip-palette-text-primary);
+    overflow-x: auto;
+}
+
+.tooltip>.simple-table {
+    min-width: 350px;
+}
+
+.simple-table {
+    width: 100%;
+    border-spacing: 0;
+}
+
+.simple-table tr>td {
+    display: table-cell;
+    padding: 6px;
+    font-size: .875rem;
+    text-align: start;
+    line-height: 1.43;
+    vertical-align: inherit;
+}
+
+.simple-table td:last-child {
+    text-align: end;
+}
+
+.simple-table tr:not(:last-child)>td {
+    border-bottom: 1px solid var(--tooltip-palette-table-lines);
+}
+
+.tooltip-asterisk {
+    font-size: 0.6em;
 }
 
 /* MARK: Progress bars

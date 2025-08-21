@@ -163,79 +163,152 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     task_div.appendChild(task_upper_div);
 
     setupTooltip(task_div, function() {return `${task.task_definition.name}`;}, function () {
-        var tooltip = `<p>Type: ${TASK_TYPE_NAMES[task.task_definition.type]}</p>`;
-
-        if (task.task_definition.item != ItemType.Count) {
-            tooltip += `<p>Gives Item ${ITEMS[task.task_definition.item]?.icon}${ITEMS[task.task_definition.item]?.name}</p>`;
-        }
-
-        if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
-            const perk = PERKS[task.task_definition.perk];
-            tooltip += `<p>Gives a permanent ${perk?.icon}Perk when fully completed</p>`;
-        }
-
-        tooltip += `Estimated energy used: ${formatNumber(estimateTotalTaskEnergyConsumption(task))}`;
-        const task_ticks = estimateTotalTaskTicks(task);
-        if (task_ticks == 1) {
-            tooltip += `<br>Estimated time: one tick`;
-        }
-        else {
-            tooltip += `<br>Estimated time: ${estimateTaskTimeInSeconds(task)}s`;
-        }
-        tooltip += "<br>Estimated levels up:";
-
-        for (const skill of task.task_definition.skills) {
-            const skill_progress = getSkill(skill);
-            const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
-            const name = skill_definition.name;
-            if (!name) {
-                continue;
-            }
-
-            var xp_gained = calcSkillXp(task, calcTaskCost(task));
-            var resulting_level = skill_progress.level;
-            var xp_needed = calcSkillXpNeeded(skill_progress) - skill_progress.progress;
-
-            while (xp_gained > xp_needed) {
-                xp_gained -= xp_needed;
-                resulting_level += 1;
-                xp_needed = calcSkillXpNeededAtLevel(resulting_level, skill);
-            }
-
-            const levels_diff = resulting_level - skill_progress.level;
-            if (levels_diff > 0) {
-                tooltip += `<br>* ${name}: ${resulting_level - skill_progress.level} ${levels_diff == 1 ? "level" : "levels"} up`;
-            } else {
-                const level_percentage = xp_gained / calcSkillXpNeeded(skill_progress) * 100;
-                tooltip += `<br>* ${name}: ${formatNumber(level_percentage)}% of a level up`;
-            }
-        }
-
-        if (task.task_definition.xp_mult != 1) {
-            tooltip += `<br><br>XP multiplier: ${task.task_definition.xp_mult}`;
-        }
-
-        const attunement_gain = calcAttunementGain(task);
-        if (attunement_gain > 0) {
-            tooltip += `<br><br>Gives ${attunement_gain} Attunement`;
-        }
-
-        const power_gain = calcPowerGain(task);
-        if (power_gain > 0 && GAMESTATE.has_unlocked_power) {
-            tooltip += `<br><br>Gives ${power_gain} Power`;
-        }
-
+        var tooltip = `<p class="subheader">${TASK_TYPE_NAMES[task.task_definition.type]} Task</p>`;
+        
         if (!task.enabled) {
             if (task.task_definition.type == TaskType.Travel) {
-                tooltip += `<br><br><span class="disable-reason">Disabled until you complete the Mandatory tasks</span>`;
+                tooltip += `<p class="disable-reason">Disabled until you complete the Mandatory tasks</p>`;
             }
             else if (task.reps >= task.task_definition.max_reps) {
-                tooltip += `<br><br><span class="disable-reason">Disabled due to being fully completed</span>`;
+                tooltip += `<p class="disable-reason">Disabled due to being fully completed</p>`;
             }
             else {
                 console.error("Task disabled for unknown reason");
             }
         }
+
+        var task_table = document.createElement("table");
+        task_table.className = "table simple-table";
+
+        var asterisk_count = 0;
+        var perk_asterisk_index = -1;
+        var level_asterisks = "";
+
+        function createThreeElementRow(x: string, y: string, z: string) {
+            var row = document.createElement("tr");
+            row.innerHTML = `<td>${y}${z}</td><td>${x}</td>`;
+            return row;
+        }
+
+        {
+            var row = document.createElement("tr");
+            var header = document.createElement("td");
+            header.innerHTML = `Rewards`;
+            row.appendChild(header);
+
+            var contents = document.createElement("td");
+            var table = document.createElement("table");
+            table.className = "table simple-table";
+
+            if (task.task_definition.item != ItemType.Count) {
+                const item = ITEMS[task.task_definition.item] as ItemDefinition;
+                table.appendChild(createThreeElementRow(`1`, item.icon, `${item.name} Item` ));
+            }
+
+            if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
+                const perk = PERKS[task.task_definition.perk] as PerkDefinition;
+                const is_last_rep = (task.reps + 1) == task.task_definition.max_reps;
+                if (!is_last_rep) { ++asterisk_count; perk_asterisk_index = asterisk_count; }
+                table.appendChild(createThreeElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, perk.icon, `Mystery Perk` ));
+            }
+            
+            asterisk_count += 1; // Levels will always produce one
+            level_asterisks = "*".repeat(asterisk_count);
+            for (const skill of task.task_definition.skills) {
+                const skill_progress = getSkill(skill);
+                const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
+                const name = skill_definition.name;
+
+                var xp_gained = calcSkillXp(task, calcTaskCost(task));
+                var resulting_level = skill_progress.level;
+                var xp_needed = calcSkillXpNeeded(skill_progress) - skill_progress.progress;
+
+                while (xp_gained > xp_needed) {
+                    xp_gained -= xp_needed;
+                    resulting_level += 1;
+                    xp_needed = calcSkillXpNeededAtLevel(resulting_level, skill);
+                }
+
+                var levels = ``;
+
+                const levels_diff = resulting_level - skill_progress.level;
+                if (levels_diff > 0) {
+                    levels = `${resulting_level - skill_progress.level}${level_asterisks}`;
+                } else {
+                    const level_percentage = xp_gained / calcSkillXpNeeded(skill_progress);
+                    if (level_percentage < 0.01) {
+                        levels = `<0.01${level_asterisks}`;
+                    } else {
+                        levels = `${formatNumber(level_percentage)}${level_asterisks}`;
+                    }
+                }
+
+                
+                table.appendChild(createThreeElementRow(levels, ``, name));
+            }
+            
+            const attunement_gain = calcAttunementGain(task);
+            if (attunement_gain > 0) {
+                table.appendChild(createThreeElementRow(`${attunement_gain}`, `🌀`, `Attunement`));
+            }
+
+            const power_gain = calcPowerGain(task);
+            if (power_gain > 0 && GAMESTATE.has_unlocked_power) {
+                table.appendChild(createThreeElementRow(`${power_gain}`, `💪`, `Power`));
+            }
+
+            contents.appendChild(table);
+            row.appendChild(contents);
+            task_table.appendChild(row);
+        }
+
+        {
+            var row = document.createElement("tr");
+            var header = document.createElement("td");
+            header.innerHTML = `Cost Estimate`;
+            row.appendChild(header);
+
+            var contents = document.createElement("td");
+            var table = document.createElement("table");
+            table.className = "table simple-table";
+
+            table.appendChild(createThreeElementRow(formatNumber(estimateTotalTaskEnergyConsumption(task)), `🔋`, `Energy`));
+
+            const task_ticks = estimateTotalTaskTicks(task);
+            if (task_ticks != 1) {
+                table.appendChild(createThreeElementRow(formatNumber(estimateTaskTimeInSeconds(task)), `⏰`, `Seconds`));
+            } else {
+                table.appendChild(createThreeElementRow(`1`, `⏰`, `Tick`));
+            }
+
+            contents.appendChild(table);
+            row.appendChild(contents);
+            task_table.appendChild(row);
+        }
+
+        {
+            var row = document.createElement("tr");
+            var header = document.createElement("td");
+            header.innerHTML = `Modifiers`;
+            row.appendChild(header);
+
+            var contents = document.createElement("td");
+            var table = document.createElement("table");
+            table.className = "table simple-table";
+
+            table.appendChild(createThreeElementRow(`x${task.task_definition.xp_mult}`, `♟️`, `XP Multiplier`));
+
+            contents.appendChild(table);
+            row.appendChild(contents);
+            task_table.appendChild(row);
+        }
+
+        tooltip += task_table.outerHTML;
+
+        if (perk_asterisk_index >= 0) {
+            tooltip += `<p class="tooltip-asterisk">${"*".repeat(perk_asterisk_index)} Perk is only gained on completing all Reps of the Task</p>`;
+        }
+        tooltip += `<p class="tooltip-asterisk">${level_asterisks} Task does not need to be completed, XP is given proportionally to the progress made</p>`;
 
         return tooltip;
     });
