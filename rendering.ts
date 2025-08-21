@@ -2,8 +2,8 @@ import { Task, TaskDefinition, ZONES, TaskType } from "./zones.js";
 import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
-import { PerkDefinition, PerkType, PERKS, ENERGETIC_MEMORY_MULT } from "./perks.js";
-import { EventContext, EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
+import { PerkDefinition, PerkType, PERKS } from "./perks.js";
+import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
 
@@ -295,7 +295,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
         {
             var table = createTableSection("Modifiers");
-            table.appendChild(createTwoElementRow(`x${task.task_definition.xp_mult}`, `${XP_TEXT} Multiplier`));
+            const mult = task.task_definition.xp_mult;
+            var mult_class = "";
+            if (mult != 1) { mult_class = mult > 1 ? "good" : "bad"; }
+            table.appendChild(createTwoElementRow(`<span class="${mult_class}">x${mult}</span>`, `${XP_TEXT} Multiplier`));
         }
 
         tooltip += task_table.outerHTML;

@@ -477,6 +477,14 @@ button:hover:enabled {
     font-size: 0.6em;
 }
 
+.tooltip .good {
+    color: green;
+}
+
+.tooltip .bad {
+    color: orange;
+}
+
 /* MARK: Progress bars
 */
 
