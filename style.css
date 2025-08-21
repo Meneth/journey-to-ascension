@@ -485,6 +485,26 @@ button:hover:enabled {
     color: orange;
 }
 
+.tooltip .very-low {
+    color: green;
+}
+
+.tooltip .normal {
+    color: palegoldenrod;
+}
+
+.tooltip .high {
+    color: yellow;
+}
+
+.tooltip .very-high {
+    color: orange;
+}
+
+.tooltip .extreme {
+    color: red;
+}
+
 /* MARK: Progress bars
 */
 

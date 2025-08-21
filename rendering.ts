@@ -283,7 +283,26 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         {
             var table = createTableSection("Cost Estimate");
 
-            table.appendChild(createTwoElementRow(formatNumber(completions * estimateTotalTaskEnergyConsumption(task)), ENERGY_TEXT));
+            const energy_cost = completions * estimateTotalTaskEnergyConsumption(task);
+            const energy_cost_ratio = energy_cost / GAMESTATE.current_energy;
+            var energy_cost_class = "";
+            if (energy_cost_ratio < 0.05) {
+                energy_cost_class = "very-low";
+            }
+            else if (energy_cost_ratio < 0.5) {
+                energy_cost_class = "low";
+            } else if (energy_cost_ratio < 0.75) {
+                energy_cost_class = "normal";
+            } else if (energy_cost_ratio < 1.0) {
+                energy_cost_class = "high";
+            } else if (energy_cost_ratio < 1.25) {
+                energy_cost_class = "very-high";
+            } else {
+                energy_cost_class = "extreme";
+            }
+
+            const energy_cost_text = `<span class="${energy_cost_class}">${formatNumber(energy_cost)}</span>`;
+            table.appendChild(createTwoElementRow(`${energy_cost_text}`, ENERGY_TEXT));
 
             const task_ticks = completions * estimateTotalTaskTicks(task);
             if (task_ticks != completions) {
