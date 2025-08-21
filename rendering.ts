@@ -1,9 +1,11 @@
-import { Task, TaskDefinition, SkillType, ZONES, TaskType, SKILL_DEFINITIONS, SkillDefinition } from "./zones.js";
+import { Task, TaskDefinition, ZONES, TaskType } from "./zones.js";
 import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, ENERGETIC_MEMORY_MULT } from "./perks.js";
 import { EventContext, EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
+import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
+import { ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
 
 // MARK: Skills
 
@@ -15,7 +17,7 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
     const skill_definition = SKILL_DEFINITIONS[skill.type] as SkillDefinition;
     const name = document.createElement("div");
     name.className = "sidebar-item-text";
-    name.textContent = `${skill_definition.name}`;
+    name.textContent = `${skill_definition.icon}${skill_definition.name}`;
 
     const progressFill = document.createElement("div");
     progressFill.className = "progress-fill";
@@ -27,7 +29,7 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
     skill_div.appendChild(name);
     skill_div.appendChild(progressBar);
 
-    setupTooltip(skill_div, function() { return `${skill_definition.name} - Level ${skill.level}`; }, function () {
+    setupTooltip(skill_div, function() { return `${skill_definition.icon}${skill_definition.name} - Level ${skill.level}`; }, function () {
         var tooltip = `Speed multiplier: x${formatNumber(calcSkillTaskProgressMultiplier(skill.type))}`;
         const other_sources_mult = calcSkillTaskProgressWithoutLevel(skill.type);
         if (other_sources_mult != 1) {
@@ -35,8 +37,8 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
             tooltip += `<br>From other sources: x${formatNumber(other_sources_mult)}`;
         }
 
-        tooltip += `<br><br>XP: ${formatNumber(skill.progress)}/${formatNumber(calcSkillXpNeeded(skill))}`;
-        tooltip += `<br><br>Skill speed increases 1% per level, while XP needed to level up increases 2%`;
+        tooltip += `<br><br>${XP_TEXT}: ${formatNumber(skill.progress)}/${formatNumber(calcSkillXpNeeded(skill))}`;
+        tooltip += `<br><br>Skill speed increases 1% per level, while ${XP_TEXT} needed to level up increases 2%`;
         tooltip += `<br>The speed of Tasks with multiple skills scale by the square or cube root of the skill level bonuses`;
         tooltip += `<br>Bonuses not from levels (E.G., from Items and Perks) are not scaled down this way`;
         return tooltip;
@@ -76,13 +78,18 @@ function updateSkillRendering() {
         var name = element.querySelector<HTMLDivElement>(".sidebar-item-text");
         if (name) {
             const skill_definition = SKILL_DEFINITIONS[skill.type] as SkillDefinition;
-            const new_html = `<span>${skill_definition.name}</span><span>${skill.level}</span>`;
+            const new_html = `<span>${skill_definition.icon}${skill_definition.name}</span><span>${skill.level}</span>`;
             // Avoid flickering in the debugger
             if (new_html != name.innerHTML) {
                 name.innerHTML = new_html;
             }
         }
     }
+}
+
+export function getSkillString(type: SkillType) {
+    const skill = SKILL_DEFINITIONS[type] as SkillDefinition;
+    return `${skill.icon}${skill.name}`;
 }
 
 // MARK: Tasks
@@ -120,10 +127,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     var skillStrings: string[] = [];
     for (const skill of task.task_definition.skills) {
         const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
-        const name = skill_definition.name;
-        if (name) {
-            skillStrings.push(name);
-        }
+        skillStrings.push(`${skill_definition.icon}${skill_definition.name}`);
     }
     skillText += skillStrings.join(", ");
     skillsUsed.textContent = skillText;
@@ -217,7 +221,6 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             for (const skill of task.task_definition.skills) {
                 const skill_progress = getSkill(skill);
                 const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
-                const name = skill_definition.name;
 
                 var xp_gained = calcSkillXp(task, calcTaskCost(task));
                 var resulting_level = skill_progress.level;
@@ -244,7 +247,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 }
 
                 
-                table.appendChild(createThreeElementRow(levels, ``, name));
+                table.appendChild(createThreeElementRow(levels, ``, `${skill_definition.icon}${skill_definition.name}`));
             }
             
             const attunement_gain = calcAttunementGain(task);
@@ -272,7 +275,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             var table = document.createElement("table");
             table.className = "table simple-table";
 
-            table.appendChild(createThreeElementRow(formatNumber(estimateTotalTaskEnergyConsumption(task)), `🔋`, `Energy`));
+            table.appendChild(createThreeElementRow(formatNumber(estimateTotalTaskEnergyConsumption(task)), ``, ENERGY_TEXT));
 
             const task_ticks = estimateTotalTaskTicks(task);
             if (task_ticks != 1) {
@@ -296,7 +299,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             var table = document.createElement("table");
             table.className = "table simple-table";
 
-            table.appendChild(createThreeElementRow(`x${task.task_definition.xp_mult}`, `♟️`, `XP Multiplier`));
+            table.appendChild(createThreeElementRow(`x${task.task_definition.xp_mult}`, ``, `${XP_TEXT} Multiplier`));
 
             contents.appendChild(table);
             row.appendChild(contents);
@@ -308,7 +311,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         if (perk_asterisk_index >= 0) {
             tooltip += `<p class="tooltip-asterisk">${"*".repeat(perk_asterisk_index)} Perk is only gained on completing all Reps of the Task</p>`;
         }
-        tooltip += `<p class="tooltip-asterisk">${level_asterisks} Task does not need to be completed, XP is given proportionally to the progress made</p>`;
+        tooltip += `<p class="tooltip-asterisk">${level_asterisks} Task does not need to be completed, ${XP_TEXT} is given proportionally to the progress made</p>`;
 
         return tooltip;
     });
@@ -628,7 +631,7 @@ function populateGameOver(game_over_div: HTMLElement) {
     for (const [skill, skill_diff] of skill_gains) {
         var skill_gain_text = document.createElement("p");
         const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
-        skill_gain_text.textContent = `${skill_definition.name}: +${skill_diff} (x${calcSkillTaskProgressMultiplierFromLevel(skill_diff).toFixed(2)} speed)`;
+        skill_gain_text.textContent = `${skill_definition.icon}${skill_definition.name}: +${skill_diff} (x${calcSkillTaskProgressMultiplierFromLevel(skill_diff).toFixed(2)} speed)`;
 
         skill_gain.appendChild(skill_gain_text);
     };
@@ -654,7 +657,7 @@ function populateGameOver(game_over_div: HTMLElement) {
     if (hasPerk(PerkType.EnergeticMemory)) {
         var energetic_memory_gain_text = document.createElement("p");
         const energy_gain = (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
-        energetic_memory_gain_text.textContent = `Max Energy: +${energy_gain} (Energetic Memory Perk)`;
+        energetic_memory_gain_text.textContent = `Max ${ENERGY_TEXT}: +${energy_gain} (Energetic Memory Perk)`;
 
         skill_gain.appendChild(energetic_memory_gain_text);
     }
@@ -672,7 +675,7 @@ function populateGameOver(game_over_div: HTMLElement) {
         return;
     }
 
-    reset_count.textContent = `You've now done your ${formatOrdinal(GAMESTATE.energy_reset_count + 1)} energy reset`;
+    reset_count.textContent = `You've now done your ${formatOrdinal(GAMESTATE.energy_reset_count + 1)} Energy Reset`;
 }
 
 function setupGameOverRestartListener(game_over_div: HTMLElement) {
@@ -698,7 +701,7 @@ function populateEndOfContent(end_of_content_div: HTMLElement) {
         return;
     }
 
-    reset_count.textContent = `You've done ${GAMESTATE.energy_reset_count} energy resets`;
+    reset_count.textContent = `You've done ${GAMESTATE.energy_reset_count} Energy Resets`;
 }
 
 function updateGameOver() {
@@ -906,7 +909,7 @@ function handleEvents() {
                 {
                     var skill_context = context as SkillUpContext;
                     const skill_definition = SKILL_DEFINITIONS[skill_context.skill] as SkillDefinition;
-                    message_div.textContent = `${skill_definition.name} is now ${skill_context.new_level} (+${skill_context.levels_gained})`;
+                    message_div.textContent = `${skill_definition.icon}${skill_definition.name} is now ${skill_context.new_level} (+${skill_context.levels_gained})`;
                     break;
                 }
             case EventType.GainedPerk:
@@ -938,14 +941,14 @@ function handleEvents() {
                 {
                     var unlock_skill_context = context as UnlockedSkillContext;
                     const skill_definition = SKILL_DEFINITIONS[unlock_skill_context.skill] as SkillDefinition;
-                    message_div.innerHTML = `Unlocked skill ${skill_definition.name}`;
+                    message_div.innerHTML = `Unlocked skill ${skill_definition.icon}${skill_definition.name}`;
                     recreateSkills();
                     break;
                 }
             case EventType.UnlockedPower:
                 {
                     message_div.innerHTML = `Unlocked Power mechanic`;
-                    message_div.innerHTML += `<br>Boosts Combat and Fortitude`;
+                    message_div.innerHTML += `<br>Boosts ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)}`;
                     recreateTasks();
                     break;
                 }
@@ -1063,7 +1066,7 @@ function updateExtraStats() {
     if (GAMESTATE.has_unlocked_power && RENDERING.power_element.style.display == "none") {
         RENDERING.power_element.style.display = "flex";
         setupTooltip(RENDERING.power_element, function() { return `💪Power - ${formatNumber(GAMESTATE.power, false)}`;}, function () {
-            var tooltip = `Increases Combat and Fortitude speed by ${formatNumber(GAMESTATE.power, false)}%`;
+            var tooltip = `Increases ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} speed by ${formatNumber(GAMESTATE.power, false)}%`;
             tooltip += `<br><br>Increased by fighting Bosses`;
 
             return tooltip;
@@ -1078,7 +1081,7 @@ function updateExtraStats() {
     if (hasPerk(PerkType.Attunement) && RENDERING.attunement_element.style.display == "none") {
         RENDERING.attunement_element.style.display = "flex";
         setupTooltip(RENDERING.attunement_element, function() { return `🌀Attunement - ${formatNumber(GAMESTATE.attunement, false)}`;}, function () {
-            var tooltip = `Increases Study, Magic, and Druid speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
+            var tooltip = `Increases ${getSkillString(SkillType.Study)}, ${getSkillString(SkillType.Magic)}, and ${getSkillString(SkillType.Druid)} speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
             tooltip += `<br><br>Increased by all tasks it boosts`;
 
             return tooltip;
@@ -1140,8 +1143,8 @@ export class Rendering {
 
         this.energy_element = getElement("energy");
 
-        setupTooltip(this.energy_element, function() { return `Energy - ${GAMESTATE.current_energy.toFixed(0)}/${GAMESTATE.max_energy.toFixed(0)}`; }, function () {
-            return `Energy goes down over time while you have a Task active`;
+        setupTooltip(this.energy_element, function() { return `${ENERGY_TEXT} - ${GAMESTATE.current_energy.toFixed(0)}/${GAMESTATE.max_energy.toFixed(0)}`; }, function () {
+            return `${ENERGY_TEXT} goes down over time while you have a Task active`;
         });
 
         this.tooltip_element = getElement("tooltip");

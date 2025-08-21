@@ -1,6 +1,7 @@
 import { ItemType } from "./items.js";
 import { PerkType } from "./perks.js";
-import { SkillType, TaskDefinition } from "./zones.js";
+import { SkillType } from "./skills.js";
+import { TaskDefinition } from "./zones.js";
 
 export enum EventType {
     SkillUp,

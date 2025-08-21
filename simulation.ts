@@ -1,8 +1,9 @@
-import { Task, ZONES, SkillType, TaskType, TASK_LOOKUP, TaskDefinition, SKILL_DEFINITIONS, SkillDefinition } from "./zones.js";
+import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition,  } from "./zones.js";
 import { GAMESTATE } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } from "./items.js";
 import { ENERGETIC_MEMORY_MULT, PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
+import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 
 // MARK: Skills
 

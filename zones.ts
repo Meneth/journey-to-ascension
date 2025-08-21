@@ -1,47 +1,6 @@
 import { ItemType } from "./items.js";
 import { PerkType } from "./perks.js";
-
-export enum SkillType {
-    Charisma,
-    Study,
-    Combat,
-    Search,
-    Subterfuge,
-    Crafting,
-    Survival,
-    Travel,
-    Magic,
-    Fortitude,
-    Druid,
-    Ascension,
-
-    Count
-}
-
-export class SkillDefinition {
-    type: SkillType = SkillType.Count;
-    name = "";
-    xp_needed_mult = 1.0;
-
-    constructor(overrides: Partial<SkillDefinition> = {}) {
-        Object.assign(this, overrides);
-    }
-}
-
-export const SKILL_DEFINITIONS: SkillDefinition[] = [
-    new SkillDefinition({ type: SkillType.Charisma, name: "Charisma" }),
-    new SkillDefinition({ type: SkillType.Study, name: "Study" }),
-    new SkillDefinition({ type: SkillType.Combat, name: "Combat" }),
-    new SkillDefinition({ type: SkillType.Search, name: "Search" }),
-    new SkillDefinition({ type: SkillType.Subterfuge, name: "Subterfuge" }),
-    new SkillDefinition({ type: SkillType.Crafting, name: "Crafting" }),
-    new SkillDefinition({ type: SkillType.Survival, name: "Survival" }),
-    new SkillDefinition({ type: SkillType.Travel, name: "Travel" }),
-    new SkillDefinition({ type: SkillType.Magic, name: "Magic", xp_needed_mult: 3 }),
-    new SkillDefinition({ type: SkillType.Fortitude, name: "Fortitude", xp_needed_mult: 10 }),
-    new SkillDefinition({ type: SkillType.Druid, name: "Druid", xp_needed_mult: 20 }),
-    new SkillDefinition({ type: SkillType.Ascension, name: "Ascension", xp_needed_mult: 1000 }),
-]
+import { SkillType } from "./skills.js";
 
 export enum TaskType {
     Normal,
