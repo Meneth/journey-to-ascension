@@ -392,6 +392,13 @@ function updateEnergyRendering() {
             value.textContent = new_html;
         }
     }
+
+    const energy_percentage = GAMESTATE.current_energy / GAMESTATE.max_energy;
+    if (energy_percentage < 0.15) {
+        RENDERING.energy_element.classList.add("low-energy");
+    } else {
+        RENDERING.energy_element.classList.remove("low-energy");
+    }
 }
 
 function estimateTotalTaskEnergyConsumption(task: Task): number {
