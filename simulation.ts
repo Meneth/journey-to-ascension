@@ -419,15 +419,6 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
     return drain;
 }
 
-function checkEnergyReset() {
-    if (GAMESTATE.current_energy > 0) {
-        return;
-    }
-
-    GAMESTATE.is_in_game_over = true;
-    GAMESTATE.current_energy = 0;
-}
-
 export function doEnergyReset() {
     if (hasPerk(PerkType.EnergeticMemory)) {
         GAMESTATE.max_energy += (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
@@ -641,6 +632,55 @@ export function setAutomationMode(mode: AutomationMode) {
     GAMESTATE.automation_mode = mode;
 }
 
+// MARK: Game over
+
+export class GameOverInfo {
+    skill_gains: [SkillType, number][] = [];
+    power_at_start = 0;
+    power_at_end = 0;
+    attunement_at_start = 0;
+    attunement_at_end = 0;
+    energetic_memory_gain = 0;
+}
+
+function checkEnergyReset() {
+    if (GAMESTATE.current_energy > 0) {
+        return;
+    }
+
+    GAMESTATE.is_in_game_over = true;
+    GAMESTATE.current_energy = 0;
+
+    populateGameOverInfo();
+}
+
+function populateGameOverInfo() {
+    var info = new GameOverInfo();
+
+    for (let i = 0; i < SkillType.Count; i++) {
+        const current_level = getSkill(i).level;
+        const starting_level = GAMESTATE.skills_at_start_of_reset[i] as number;
+        const skill_diff = current_level - starting_level;
+
+        if (skill_diff > 0) {
+            info.skill_gains.push([i, skill_diff]);
+        }
+    }
+
+    // Biggest gain first
+    info.skill_gains.sort((a, b) => b[1] - a[1]);
+
+    info.power_at_end = GAMESTATE.power;
+    info.power_at_start = GAMESTATE.power_at_start_of_reset;
+    info.attunement_at_end = GAMESTATE.attunement;
+    info.attunement_at_start = GAMESTATE.attunement_at_start_of_reset;
+    if (hasPerk(PerkType.EnergeticMemory)) {
+        info.energetic_memory_gain = (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
+    }
+
+    GAMESTATE.game_over_info = info;
+}
+
 // MARK: Persistence
 
 export const SAVE_LOCATION = "incrementalGameSave";
@@ -746,6 +786,7 @@ export class Gamestate {
 
     is_in_game_over = false;
     is_at_end_of_content = false;
+    game_over_info = new GameOverInfo();
 
     current_energy = 100;
     max_energy = 100;

@@ -602,33 +602,47 @@ function updatePerks() {
 // MARK: Game over
 
 function populateGameOver(game_over_div: HTMLElement) {
-    game_over_div.style.display = "flex";
-
-    var skill_gain = game_over_div.querySelector("#game-over-skillgain");
-    if (!skill_gain) {
-        console.error("No skill gain text");
+    var open_button = document.querySelector<HTMLInputElement>("#open-energy-reset");
+    if (!open_button) {
+        console.error("No open-energy-reset button");
         return;
     }
 
-    skill_gain.innerHTML = "";
+    open_button.disabled = false;
 
-    var skill_gains: [SkillType, number][] = [];
+    game_over_div.style.display = "flex";
+    game_over_div.innerHTML = "";
 
-    for (let i = 0; i < SkillType.Count; i++) {
-        const current_level = getSkill(i).level;
-        const starting_level = GAMESTATE.skills_at_start_of_reset[i] as number;
-        const skill_diff = current_level - starting_level;
-
-        if (skill_diff > 0) {
-            skill_gains.push([i, skill_diff]);
-
-        }
+    if (GAMESTATE.is_in_game_over) {
+        game_over_div.innerHTML = "<h2>Run Over</h2>" +
+                "<p>You used up all your Energy.</p>" +
+                "<p>You keep half your Items (rounded up).</p>" +
+                "<p>The effects of used Items disappear.</p>" +
+                "<p>You keep all your Skills and Perks.</p>";
+    } else {
+        game_over_div.innerHTML = "<h2>Last Run</h2>";
     }
 
-    // Biggest gain first
-    skill_gains.sort((a, b) => b[1] - a[1]);
+    var button = document.createElement("button");
+    button.className = "game-over-dismiss";
+    button.textContent = GAMESTATE.is_in_game_over ? "Restart" : "Dismiss";
 
-    for (const [skill, skill_diff] of skill_gains) {
+    button.addEventListener("click", () => {
+        game_over_div.style.display = "none";
+        if (GAMESTATE.is_in_game_over) {
+            doEnergyReset();
+        }
+    });
+    setupTooltipStatic(button, button.textContent, GAMESTATE.is_in_game_over ? "Do Energy Reset" : "Return to the game");
+    game_over_div.appendChild(button);
+
+    var skill_gain = document.createElement("div");
+
+    skill_gain.innerHTML = "";
+
+    const info = GAMESTATE.game_over_info;
+
+    for (const [skill, skill_diff] of info.skill_gains) {
         var skill_gain_text = document.createElement("p");
         const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
         skill_gain_text.textContent = `${skill_definition.icon}${skill_definition.name}: +${skill_diff} (x${calcSkillTaskProgressMultiplierFromLevel(skill_diff).toFixed(2)} speed)`;
@@ -636,19 +650,19 @@ function populateGameOver(game_over_div: HTMLElement) {
         skill_gain.appendChild(skill_gain_text);
     };
 
-    const power_gain = GAMESTATE.power - GAMESTATE.power_at_start_of_reset;
+    const power_gain = info.power_at_end - info.power_at_start;
     if (power_gain > 0) {
         var power_gain_text = document.createElement("p");
-        const speed_bonus = calcPowerSpeedBonusAtLevel(GAMESTATE.power) / calcPowerSpeedBonusAtLevel(GAMESTATE.power_at_start_of_reset);
+        const speed_bonus = calcPowerSpeedBonusAtLevel(info.power_at_end) / calcPowerSpeedBonusAtLevel(info.power_at_start);
         power_gain_text.textContent = `Power: +${power_gain} (x${speed_bonus.toFixed(2)} speed)`;
 
         skill_gain.appendChild(power_gain_text);
     }
 
-    const attunement_gain = GAMESTATE.attunement - GAMESTATE.attunement_at_start_of_reset;
+    const attunement_gain = info.attunement_at_end - info.attunement_at_start;
     if (attunement_gain > 0) {
         var attunement_gain_text = document.createElement("p");
-        const speed_bonus = calcAttunementSpeedBonusAtLevel(GAMESTATE.attunement) / calcAttunementSpeedBonusAtLevel(GAMESTATE.attunement_at_start_of_reset);
+        const speed_bonus = calcAttunementSpeedBonusAtLevel(info.attunement_at_end) / calcAttunementSpeedBonusAtLevel(info.attunement_at_start);
         attunement_gain_text.textContent = `Attunement: +${attunement_gain} (x${speed_bonus.toFixed(2)} speed)`;
 
         skill_gain.appendChild(attunement_gain_text);
@@ -656,8 +670,7 @@ function populateGameOver(game_over_div: HTMLElement) {
 
     if (hasPerk(PerkType.EnergeticMemory)) {
         var energetic_memory_gain_text = document.createElement("p");
-        const energy_gain = (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
-        energetic_memory_gain_text.textContent = `Max ${ENERGY_TEXT}: +${energy_gain} (Energetic Memory Perk)`;
+        energetic_memory_gain_text.textContent = `Max ${ENERGY_TEXT}: +${info.energetic_memory_gain} (Energetic Memory Perk)`;
 
         skill_gain.appendChild(energetic_memory_gain_text);
     }
@@ -669,26 +682,34 @@ function populateGameOver(game_over_div: HTMLElement) {
         skill_gain.appendChild(skill_gain_text);
     }
 
-    var reset_count = game_over_div.querySelector("#game-over-reset-count");
-    if (!reset_count) {
-        console.error("No reset count text");
-        return;
-    }
+    game_over_div.appendChild(skill_gain);
 
-    reset_count.textContent = `You've now done your ${formatOrdinal(GAMESTATE.energy_reset_count + 1)} Energy Reset`;
+    var reset_count = document.createElement("h3");
+    reset_count.textContent = GAMESTATE.is_in_game_over ? `You've now done your ${formatOrdinal(GAMESTATE.energy_reset_count + 1)} Energy Reset` : `This was your ${formatOrdinal(GAMESTATE.energy_reset_count)} Energy Reset`;
+    game_over_div.appendChild(reset_count);
 }
 
-function setupGameOverRestartListener(game_over_div: HTMLElement) {
-    var button = game_over_div.querySelector("#game-over-dismiss");
+function setupGameOver(game_over_div: HTMLElement) {
+    var open_button = document.querySelector<HTMLInputElement>("#open-energy-reset");
 
-    if (!button) {
-        console.error("No game over button");
+    if (!open_button) {
+        console.error("No open-energy-reset button");
         return;
     }
 
-    button.addEventListener("click", () => {
-        game_over_div.style.display = "none";
-        doEnergyReset();
+    open_button.addEventListener("click", () => {
+        populateGameOver(RENDERING.game_over_element);
+        game_over_div.style.display = "flex";
+    });
+
+    open_button.disabled = GAMESTATE.energy_reset_count == 0;
+
+    setupTooltipStaticHeader(open_button, `View Last Energy Reset Summary`, function() {
+        var tooltip = `Lets you reopen the last Energy Reset Summary`;
+        if (open_button?.disabled) {
+            tooltip += `<p class="disable-reason">Disabled until you do your first Energy Reset</p>`
+        }
+        return tooltip;
     });
 }
 
@@ -1158,7 +1179,7 @@ export class Rendering {
     }
 
     public initialize() {
-        setupGameOverRestartListener(this.game_over_element);
+        setupGameOver(this.game_over_element);
         setupSettings(this.settings_element);
         setupControls();
         setupInfoTooltips();

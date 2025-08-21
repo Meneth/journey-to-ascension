@@ -350,10 +350,12 @@ button:hover:enabled {
 .full-screen-overlay {
     position: fixed;
     display: flex;
+    flex-direction: column;
     top: 0;
     left: 0;
     height: 100%;
     width: 100%;
+    text-align: center;
     justify-content: center;
     align-items: center;
     color: white;
@@ -361,16 +363,16 @@ button:hover:enabled {
     background: #0008;
 }
 
-#game-over-box {
-    text-align: center;
-}
-
 #end-of-content-box {
     text-align: center;
 }
 
-#game-over-dismiss {
+.game-over-dismiss {
     font-size: 1.5em;
+}
+
+#game-over-overlay p {
+    margin: 0.7em;
 }
 
 /* MARK: Tooltips
