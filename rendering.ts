@@ -445,6 +445,7 @@ function setupInfoTooltips() {
     setupTooltipStaticHeader(item_info, `Items`, function () {
         var tooltip = `Items can be used to get bonuses that last until the next Energy Reset`;
         tooltip += `<br>The bonuses stack additively; 2 +100% results in 3x speed, not 4x`;
+        tooltip += `<br>Bonuses to different Task types stack multiplicatively with one another`;
         tooltip += `<br>Right-click to use all rather than just one`;
         return tooltip;
     });
