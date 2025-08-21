@@ -318,6 +318,7 @@ function updateTaskRendering() {
     if (GAMESTATE.energy_reset_count != RENDERING.energy_reset_count) {
         RENDERING.energy_reset_count = GAMESTATE.energy_reset_count;
         recreateTasks();
+        recreateItems();
     }
 
     for (const task of GAMESTATE.tasks) {
@@ -480,7 +481,7 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     RENDERING.item_elements.set(item, button);
 }
 
-function createItems() {
+function recreateItems() {
     var items_div = document.getElementById("items-list");
     if (!items_div) {
         console.error("The element with ID 'items-list' was not found.");
@@ -878,7 +879,7 @@ function handleEvents() {
         }
 
         if (event.type == EventType.GainedItem) {
-            createItems();
+            recreateItems();
             continue; // No message, just forces item list to update
         }
 
@@ -938,7 +939,7 @@ function handleEvents() {
                     const item = ITEMS[item_context.item] as ItemDefinition;
                     message_div.innerHTML = `Used ${item_context.count} ${item.icon}${item.name}`;
                     message_div.innerHTML += `<br>${item.get_effect_text(item_context.count)}`;
-                    createItems();
+                    recreateItems();
                     break;
                 }
             case EventType.UnlockedTask:
@@ -1007,7 +1008,7 @@ function setupRepeatTasksControl() {
     });
 
     setupTooltip(rep_control, function () { return rep_control.textContent; }, function () {
-        return "Toggle between repeating Tasks if they have multiple reps, or only doing a single rep";
+        return "Toggle between repeating Tasks if they have multiple reps, or only doing a single rep<br>When repeating, the Task tooltip will show the numbers for doing all remaining reps rather than just one";
     });
 
     RENDERING.controls_list_element.appendChild(rep_control);
@@ -1181,7 +1182,7 @@ export class Rendering {
 
         setupZone();
         createPerks();
-        createItems();
+        recreateItems();
 
         updateRendering();
 
