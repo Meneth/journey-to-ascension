@@ -251,10 +251,11 @@ function updateActiveTask() {
         return;
     }
 
-    const progress = calcTaskProgressPerTick(active_task);
+    var progress = calcTaskProgressPerTick(active_task);
+    const cost = calcTaskCost(active_task);
+    progress = Math.min(progress, cost - active_task.progress);
     active_task.progress += progress;
     
-    const cost = calcTaskCost(active_task);
     const is_single_tick = progress >= cost;
     modifyEnergy(-calcEnergyDrainPerTick(active_task, is_single_tick));
 
