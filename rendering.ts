@@ -188,9 +188,9 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         var perk_asterisk_index = -1;
         var level_asterisks = "";
 
-        function createThreeElementRow(x: string, y: string, z: string) {
+        function createTwoElementRow(x: string, y: string) {
             var row = document.createElement("tr");
-            row.innerHTML = `<td>${y}${z}</td><td>${x}</td>`;
+            row.innerHTML = `<td>${y}</td><td>${x}</td>`;
             return row;
         }
 
@@ -206,14 +206,14 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
             if (task.task_definition.item != ItemType.Count) {
                 const item = ITEMS[task.task_definition.item] as ItemDefinition;
-                table.appendChild(createThreeElementRow(`1`, item.icon, `${item.name} Item` ));
+                table.appendChild(createTwoElementRow(`1`, `${item.icon}${item.name} Item` ));
             }
 
             if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
                 const perk = PERKS[task.task_definition.perk] as PerkDefinition;
                 const is_last_rep = (task.reps + 1) == task.task_definition.max_reps;
                 if (!is_last_rep) { ++asterisk_count; perk_asterisk_index = asterisk_count; }
-                table.appendChild(createThreeElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, perk.icon, `Mystery Perk` ));
+                table.appendChild(createTwoElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, `${perk.icon}Mystery Perk` ));
             }
             
             asterisk_count += 1; // Levels will always produce one
@@ -247,17 +247,17 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 }
 
                 
-                table.appendChild(createThreeElementRow(levels, ``, `${skill_definition.icon}${skill_definition.name}`));
+                table.appendChild(createTwoElementRow(levels, `${skill_definition.icon}${skill_definition.name}`));
             }
             
             const attunement_gain = calcAttunementGain(task);
             if (attunement_gain > 0) {
-                table.appendChild(createThreeElementRow(`${attunement_gain}`, `🌀`, `Attunement`));
+                table.appendChild(createTwoElementRow(`${attunement_gain}`, `🌀Attunement`));
             }
 
             const power_gain = calcPowerGain(task);
             if (power_gain > 0 && GAMESTATE.has_unlocked_power) {
-                table.appendChild(createThreeElementRow(`${power_gain}`, `💪`, `Power`));
+                table.appendChild(createTwoElementRow(`${power_gain}`, `💪Power`));
             }
 
             contents.appendChild(table);
@@ -275,13 +275,13 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             var table = document.createElement("table");
             table.className = "table simple-table";
 
-            table.appendChild(createThreeElementRow(formatNumber(estimateTotalTaskEnergyConsumption(task)), ``, ENERGY_TEXT));
+            table.appendChild(createTwoElementRow(formatNumber(estimateTotalTaskEnergyConsumption(task)), ENERGY_TEXT));
 
             const task_ticks = estimateTotalTaskTicks(task);
             if (task_ticks != 1) {
-                table.appendChild(createThreeElementRow(formatNumber(estimateTaskTimeInSeconds(task)), `⏰`, `Seconds`));
+                table.appendChild(createTwoElementRow(formatNumber(estimateTaskTimeInSeconds(task)), `⏰Seconds`));
             } else {
-                table.appendChild(createThreeElementRow(`1`, `⏰`, `Tick`));
+                table.appendChild(createTwoElementRow(`1`, `⏰Tick`));
             }
 
             contents.appendChild(table);
@@ -299,7 +299,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             var table = document.createElement("table");
             table.className = "table simple-table";
 
-            table.appendChild(createThreeElementRow(`x${task.task_definition.xp_mult}`, ``, `${XP_TEXT} Multiplier`));
+            table.appendChild(createTwoElementRow(`x${task.task_definition.xp_mult}`, `${XP_TEXT} Multiplier`));
 
             contents.appendChild(table);
             row.appendChild(contents);
