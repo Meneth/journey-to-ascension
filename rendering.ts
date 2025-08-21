@@ -187,6 +187,8 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         var asterisk_count = 0;
         var perk_asterisk_index = -1;
         var level_asterisks = "";
+        const remaining_completions = (task.reps == task.task_definition.max_reps) ? task.task_definition.max_reps : (task.task_definition.max_reps - task.reps);
+        const completions = GAMESTATE.repeat_tasks ? remaining_completions : 1;
 
         function createTwoElementRow(x: string, y: string) {
             var row = document.createElement("tr");
@@ -194,24 +196,39 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             return row;
         }
 
-        {
+        function createTableSection(name: string) {
             var row = document.createElement("tr");
             var header = document.createElement("td");
-            header.innerHTML = `Rewards`;
+            header.innerHTML = name;
             row.appendChild(header);
 
             var contents = document.createElement("td");
             var table = document.createElement("table");
             table.className = "table simple-table";
 
+            contents.appendChild(table);
+            row.appendChild(contents);
+            task_table.appendChild(row);
+
+            return table;
+        }
+
+        {
+            var table = createTableSection("Completions");
+            table.appendChild(createTwoElementRow(`${completions}`, ""));
+        }
+
+        {
+            var table = createTableSection("Rewards");
+
             if (task.task_definition.item != ItemType.Count) {
                 const item = ITEMS[task.task_definition.item] as ItemDefinition;
-                table.appendChild(createTwoElementRow(`1`, `${item.icon}${item.name} Item` ));
+                table.appendChild(createTwoElementRow(`${completions}`, `${item.icon}${item.name} Item` ));
             }
 
             if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
                 const perk = PERKS[task.task_definition.perk] as PerkDefinition;
-                const is_last_rep = (task.reps + 1) == task.task_definition.max_reps;
+                const is_last_rep = (task.reps + completions) == task.task_definition.max_reps;
                 if (!is_last_rep) { ++asterisk_count; perk_asterisk_index = asterisk_count; }
                 table.appendChild(createTwoElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, `${perk.icon}Mystery Perk` ));
             }
@@ -222,7 +239,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 const skill_progress = getSkill(skill);
                 const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
 
-                var xp_gained = calcSkillXp(task, calcTaskCost(task));
+                var xp_gained = completions * calcSkillXp(task, calcTaskCost(task));
                 var resulting_level = skill_progress.level;
                 var xp_needed = calcSkillXpNeeded(skill_progress) - skill_progress.progress;
 
@@ -250,60 +267,33 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 table.appendChild(createTwoElementRow(levels, `${skill_definition.icon}${skill_definition.name}`));
             }
             
-            const attunement_gain = calcAttunementGain(task);
+            const attunement_gain = completions * calcAttunementGain(task);
             if (attunement_gain > 0) {
                 table.appendChild(createTwoElementRow(`${attunement_gain}`, `🌀Attunement`));
             }
 
-            const power_gain = calcPowerGain(task);
+            const power_gain = completions * calcPowerGain(task);
             if (power_gain > 0 && GAMESTATE.has_unlocked_power) {
                 table.appendChild(createTwoElementRow(`${power_gain}`, `💪Power`));
             }
-
-            contents.appendChild(table);
-            row.appendChild(contents);
-            task_table.appendChild(row);
         }
 
         {
-            var row = document.createElement("tr");
-            var header = document.createElement("td");
-            header.innerHTML = `Cost Estimate`;
-            row.appendChild(header);
+            var table = createTableSection("Cost Estimate");
 
-            var contents = document.createElement("td");
-            var table = document.createElement("table");
-            table.className = "table simple-table";
+            table.appendChild(createTwoElementRow(formatNumber(completions * estimateTotalTaskEnergyConsumption(task)), ENERGY_TEXT));
 
-            table.appendChild(createTwoElementRow(formatNumber(estimateTotalTaskEnergyConsumption(task)), ENERGY_TEXT));
-
-            const task_ticks = estimateTotalTaskTicks(task);
-            if (task_ticks != 1) {
+            const task_ticks = completions * estimateTotalTaskTicks(task);
+            if (task_ticks != completions) {
                 table.appendChild(createTwoElementRow(formatNumber(estimateTaskTimeInSeconds(task)), `⏰Seconds`));
             } else {
-                table.appendChild(createTwoElementRow(`1`, `⏰Tick`));
+                table.appendChild(createTwoElementRow(`${completions}`, `⏰Ticks`));
             }
-
-            contents.appendChild(table);
-            row.appendChild(contents);
-            task_table.appendChild(row);
         }
 
         {
-            var row = document.createElement("tr");
-            var header = document.createElement("td");
-            header.innerHTML = `Modifiers`;
-            row.appendChild(header);
-
-            var contents = document.createElement("td");
-            var table = document.createElement("table");
-            table.className = "table simple-table";
-
+            var table = createTableSection("Modifiers");
             table.appendChild(createTwoElementRow(`x${task.task_definition.xp_mult}`, `${XP_TEXT} Multiplier`));
-
-            contents.appendChild(table);
-            row.appendChild(contents);
-            task_table.appendChild(row);
         }
 
         tooltip += task_table.outerHTML;
