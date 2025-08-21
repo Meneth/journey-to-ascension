@@ -37,33 +37,6 @@ body {
     width: 190px;
 }
 
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.sidebar-item {
-    width: 100%;
-    text-align: center;
-    background: var(--element-background-color);
-    border-radius: 8px;
-    padding: 5px;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-}
-
-.sidebar-item-text {
-    display: flex;
-    justify-content: space-between;
-}
-
-.sidebar-item-text span {
-    display: inline-flex;
-    align-items: flex-end;
-}
-
 #play-area {
     display: flex;
     margin-top: 30px;
@@ -108,22 +81,23 @@ body {
     -moz-box-sizing: border-box;
 }
 
-#right-top-area {
-    width: 100%;
-    margin-bottom: 10px;
-    display: flex;
-    flex-wrap: wrap;
-}
-
 button {
     border-radius: 8px;
     background: var(--element-foreground-color);
 }
 
-#open-settings {
+#settings-area {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+#settings-area button {
     height: 48px;
     text-align: center;
     font-size: 2em;
+    flex: 1;
 }
 
 button:hover:enabled {
@@ -256,8 +230,35 @@ button:hover:enabled {
     margin-bottom: 2px;
 }
 
-/* MARK: Sidebar right
+/* MARK: Sidebars
 */
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-item {
+    width: 100%;
+    text-align: center;
+    background: var(--element-background-color);
+    border-radius: 8px;
+    padding: 5px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.sidebar-item-text {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sidebar-item-text span {
+    display: inline-flex;
+    align-items: flex-end;
+}
 
 .sidebar-section {
     position: relative;

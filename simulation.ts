@@ -471,7 +471,6 @@ export function clickItem(item: ItemType, use_all: boolean) {
     GAMESTATE.items.set(item, old_value - num_used);
 
     const context: UsedItemContext = { item: item, count: num_used };
-    console.log(context instanceof UsedItemContext);
     const event = new RenderEvent(EventType.UsedItem, context);
     GAMESTATE.queueRenderEvent(event);
 }
