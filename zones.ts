@@ -110,7 +110,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 27, name: "Learn How to Write", cost_multiplier: 20, xp_mult: 0.2, skills: [SkillType.Study], perk: PerkType.Writing }),
             new TaskDefinition({ id: 23, name: "Chit-chat", max_reps: 3, skills: [SkillType.Charisma], xp_mult: 2 }),
             new TaskDefinition({ id: 24, name: "Sparring", cost_multiplier: 1.5, max_reps: 4, skills: [SkillType.Combat] }),
-            new TaskDefinition({ id: 26, name: "Prepare Travel Supplies", cost_multiplier: 1, max_reps: 6, xp_mult: 3, skills: [SkillType.Travel, SkillType.Survival] }),
+            new TaskDefinition({ id: 26, name: "Daydream About Leaving the Village", cost_multiplier: 1, max_reps: 6, xp_mult: 3, skills: [SkillType.Travel, SkillType.Survival] }),
         ],
     },
     {
@@ -148,7 +148,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 52, name: "Rescue Captives", type: TaskType.Mandatory, cost_multiplier: 1.5, max_reps: 3, skills: [SkillType.Charisma, SkillType.Subterfuge] }),
             new TaskDefinition({ id: 53, name: "Steal Supplies", max_reps: 5, cost_multiplier: 0.3, skills: [SkillType.Subterfuge], item: ItemType.GoblinSupplies }),
             new TaskDefinition({ id: 54, name: "Try Casting a Spell", cost_multiplier: 3, max_reps: 6, skills: [SkillType.Magic, SkillType.Study], perk: PerkType.EnergySpell }),
-            new TaskDefinition({ id: 55, name: "Inspect Wall Paitings", cost_multiplier: 2, xp_mult: 4, skills: [SkillType.Study] }),
+            new TaskDefinition({ id: 55, name: "Inspect Wall Paintings", cost_multiplier: 2, xp_mult: 4, skills: [SkillType.Study] }),
             new TaskDefinition({ id: 56, name: "Scout the Cave", cost_multiplier: 0.5, max_reps: 3, xp_mult: 3, skills: [SkillType.Search] }),
             new TaskDefinition({ id: 57, name: "Goblin Chieftain", type: TaskType.Boss, cost_multiplier: 10000, skills: [SkillType.Combat], xp_mult: 0.3, unlocks_task: 58, item: ItemType.GoblinTreasure }),
             new TaskDefinition({ id: 58, name: "Wipe Out Goblins", cost_multiplier: 10000, skills: [SkillType.Combat], xp_mult: 0.3, hidden_by_default: true, perk: PerkType.GoblinScourge }),

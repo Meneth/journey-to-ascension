@@ -28,7 +28,7 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
     skill_div.appendChild(progressBar);
 
     setupTooltip(skill_div, function () {
-        var tooltip = `<h3>${skill_definition.name} - ${skill.level}</h3>`;
+        var tooltip = `<h3>${skill_definition.name} - Level ${skill.level}</h3>`;
         tooltip += `Speed multiplier: x${formatNumber(calcSkillTaskProgressMultiplier(skill.type))}`;
         const other_sources_mult = calcSkillTaskProgressWithoutLevel(skill.type);
         if (other_sources_mult != 1) {
@@ -174,7 +174,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
         if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
             const perk = PERKS[task.task_definition.perk];
-            tooltip += `<p>Gives a permanent ${perk?.icon}Perk</p>`;
+            tooltip += `<p>Gives a permanent ${perk?.icon}Perk when fully completed</p>`;
         }
 
         tooltip += `Estimated energy used: ${formatNumber(estimateTotalTaskEnergyConsumption(task))}`;
@@ -207,10 +207,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
             const levels_diff = resulting_level - skill_progress.level;
             if (levels_diff > 0) {
-                tooltip += `<br>* ${name} - ${resulting_level - skill_progress.level}`;
+                tooltip += `<br>* ${name}: ${resulting_level - skill_progress.level} ${levels_diff == 1 ? "level" : "levels"} up`;
             } else {
                 const level_percentage = xp_gained / calcSkillXpNeeded(skill_progress) * 100;
-                tooltip += `<br>* ${name} - ${formatNumber(level_percentage)}% of a level`;
+                tooltip += `<br>* ${name}: ${formatNumber(level_percentage)}% of a level up`;
             }
         }
 
