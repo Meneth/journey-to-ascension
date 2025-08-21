@@ -287,7 +287,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
             const task_ticks = completions * estimateTotalTaskTicks(task);
             if (task_ticks != completions) {
-                table.appendChild(createTwoElementRow(formatNumber(estimateTaskTimeInSeconds(task)), `⏰Seconds`));
+                table.appendChild(createTwoElementRow(formatNumber(completions * estimateTaskTimeInSeconds(task)), `⏰Seconds`));
             } else {
                 table.appendChild(createTwoElementRow(`${completions}`, `⏰Ticks`));
             }
