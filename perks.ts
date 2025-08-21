@@ -38,25 +38,25 @@ export const ENERGETIC_MEMORY_MULT = 0.1;
 
 export var PERKS: PerkDefinition[] = [
     {
-        enum: PerkType.Reading, name: `How to Read`, tooltip: `Improves ${getSkillString(SkillType.Study)} speed by 50%`, icon: `📖`,
+        enum: PerkType.Reading, name: `How to Read`, tooltip: `Improves ${getSkillString(SkillType.Study)} Task speed by 50%`, icon: `📖`,
     },
     {
         enum: PerkType.Writing, name: `How to Write`, tooltip: `Improves ${XP_TEXT} gain by 50%`, icon: `📝`,
     },
     {
-        enum: PerkType.VillagerGratitude, name: `Villager Gratitude`, tooltip: `Improves ${getSkillString(SkillType.Charisma)} speed by 50%`, icon: `❤️`,
+        enum: PerkType.VillagerGratitude, name: `Villager Gratitude`, tooltip: `Improves ${getSkillString(SkillType.Charisma)} Task speed by 50%`, icon: `❤️`,
     },
     {
-        enum: PerkType.Amulet, name: `Mysterious Amulet`, tooltip: `Improves ${getSkillString(SkillType.Magic)} speed by 50%`, icon: `📿`,
+        enum: PerkType.Amulet, name: `Mysterious Amulet`, tooltip: `Improves ${getSkillString(SkillType.Magic)} Task speed by 50%`, icon: `📿`,
     },
     {
         enum: PerkType.EnergySpell, name: `Energetic Spell`, tooltip: `Increases starting ${ENERGY_TEXT} by 50`, icon: `✨`,
     },
     {
-        enum: PerkType.ExperiencedTraveler, name: `Experienced Traveler`, tooltip: `Improves ${getSkillString(SkillType.Travel)} speed by 50%`, icon: `🦶`,
+        enum: PerkType.ExperiencedTraveler, name: `Experienced Traveler`, tooltip: `Improves ${getSkillString(SkillType.Travel)} Task speed by 50%`, icon: `🦶`,
     },
     {
-        enum: PerkType.UndergroundConnection, name: `Underground Connection`, tooltip: `Improves ${getSkillString(SkillType.Subterfuge)} speed by 40% and ${getSkillString(SkillType.Charisma)} speed by 20%`, icon: `🎲`,
+        enum: PerkType.UndergroundConnection, name: `Underground Connection`, tooltip: `Improves ${getSkillString(SkillType.Subterfuge)} Task speed by 40% and ${getSkillString(SkillType.Charisma)} Task speed by 20%`, icon: `🎲`,
     },
     {
         enum: PerkType.MinorTimeCompression, name: `Minor Time Compression`, tooltip: `Tasks that are completed instantly (in a single tick) now cost 80% less ${ENERGY_TEXT}`, icon: `⌚`,
@@ -68,31 +68,31 @@ export var PERKS: PerkDefinition[] = [
         enum: PerkType.DeepTrance, name: `Deep Trance`, tooltip: `Unlocks Zone Automation<br>Unlocks automatic Item use`, icon: `💫`,
     },
     {
-        enum: PerkType.VillageHero, name: `Village Hero`, tooltip: `Improves ${getSkillString(SkillType.Charisma)} speed by 20% and ${getSkillString(SkillType.Combat)} speed by 20%`, icon: `🎖️`,
+        enum: PerkType.VillageHero, name: `Village Hero`, tooltip: `Improves ${getSkillString(SkillType.Charisma)} Task speed by 20% and ${getSkillString(SkillType.Combat)} Task speed by 20%`, icon: `🎖️`,
     },
     {
         enum: PerkType.Attunement, name: `Attunement`, tooltip: `Unlocks the 🌀Attunement mechanic`, icon: `🌀`,
     },
     {
-        enum: PerkType.GoblinScourge, name: `Goblin Scourge`, tooltip: `Improves ${getSkillString(SkillType.Combat)} speed by 30% and ${getSkillString(SkillType.Fortitude)} speed by 30%`, icon: `💀`,
+        enum: PerkType.GoblinScourge, name: `Goblin Scourge`, tooltip: `Improves ${getSkillString(SkillType.Combat)} Task speed by 30% and ${getSkillString(SkillType.Fortitude)} Task speed by 30%`, icon: `💀`,
     },
     {
-        enum: PerkType.SunkenTreasure, name: `Sunken Treasure`, tooltip: `Improves ${getSkillString(SkillType.Survival)} speed by 30% and ${getSkillString(SkillType.Fortitude)} speed by 30%`, icon: `⚓`,
+        enum: PerkType.SunkenTreasure, name: `Sunken Treasure`, tooltip: `Improves ${getSkillString(SkillType.Survival)} Task speed by 30% and ${getSkillString(SkillType.Fortitude)} Task speed by 30%`, icon: `⚓`,
     },
     {
-        enum: PerkType.LostTemple, name: `Found Lost Temple`, tooltip: `Improves ${getSkillString(SkillType.Druid)} speed by 50%`, icon: `🏯`,
+        enum: PerkType.LostTemple, name: `Found Lost Temple`, tooltip: `Improves ${getSkillString(SkillType.Druid)} Task speed by 50%`, icon: `🏯`,
     },
     {
-        enum: PerkType.WalkWithoutRhythm, name: `Walk Without Rhythm`, tooltip: `Improves ${getSkillString(SkillType.Subterfuge)} speed by 40% and ${getSkillString(SkillType.Travel)} speed by 20%`, icon: `👣`,
+        enum: PerkType.WalkWithoutRhythm, name: `Walk Without Rhythm`, tooltip: `Improves ${getSkillString(SkillType.Subterfuge)} Task speed by 40% and ${getSkillString(SkillType.Travel)} Task speed by 20%`, icon: `👣`,
     },
     {
         enum: PerkType.ReflectionsOnTheJourney, name: `Reflections on the Journey`, tooltip: `Reduce ${ENERGY_TEXT} drain based on the highest zone reached<br>In each zone ${ENERGY_TEXT} consumption is reduced 5% compounding for each zone you've reached past it<br>So zone 12 has ${ENERGY_TEXT} cost multiplied by 0.95^2 if the highest zone reached is 14`, icon: `🕰️`,
     },
     {
-        enum: PerkType.PurgedBureaucracy, name: `Purged Bureaucracy`, tooltip: `Improves ${getSkillString(SkillType.Charisma)} and ${getSkillString(SkillType.Crafting)} speed by 30%`, icon: `⚖️`,
+        enum: PerkType.PurgedBureaucracy, name: `Purged Bureaucracy`, tooltip: `Improves ${getSkillString(SkillType.Charisma)} and ${getSkillString(SkillType.Crafting)} Task speed by 30%`, icon: `⚖️`,
     },
     {
-        enum: PerkType.DeepSeaDiving, name: `Deep Sea Diving`, tooltip: `Improves ${getSkillString(SkillType.Search)} and ${getSkillString(SkillType.Druid)} speed by 30%`, icon: `🤿`,
+        enum: PerkType.DeepSeaDiving, name: `Deep Sea Diving`, tooltip: `Improves ${getSkillString(SkillType.Search)} and ${getSkillString(SkillType.Druid)} Task speed by 30%`, icon: `🤿`,
     },
     {
         enum: PerkType.EnergeticMemory, name: `Energetic Memory`, tooltip: `On each Energy Reset, increase max ${ENERGY_TEXT} by the current zone / 10<br>So zone 11 gives 1.1 max ${ENERGY_TEXT}`, icon: `💭`,
