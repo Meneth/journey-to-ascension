@@ -168,11 +168,12 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     task_div.appendChild(task_upper_div);
 
     setupTooltip(task_div, function() {return `${task.task_definition.name}`;}, function () {
-        var tooltip = `<p class="subheader">${TASK_TYPE_NAMES[task.task_definition.type]} Task</p>`;
+        const task_type = TASK_TYPE_NAMES[task.task_definition.type];
+        var tooltip = `<p class="subheader ${task_type}">${task_type} Task</p>`;
         
         if (!task.enabled) {
             if (task.task_definition.type == TaskType.Travel) {
-                tooltip += `<p class="disable-reason">Disabled until you complete the Mandatory tasks</p>`;
+                tooltip += `<p class="disable-reason">Disabled until you complete the <span class="Mandatory">Mandatory</span> tasks</p>`;
             }
             else if (task.reps >= task.task_definition.max_reps) {
                 tooltip += `<p class="disable-reason">Disabled due to being fully completed</p>`;

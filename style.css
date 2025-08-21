@@ -162,22 +162,41 @@ button:hover:enabled {
     background: linear-gradient(5deg, rgb(22, 196, 88), rgb(53, 197, 101));
 }
 
+.tooltip .Normal {
+    color: rgb(22, 196, 88);
+}
+
 .task.Travel button:enabled {
     background: linear-gradient(5deg, rgb(23, 112, 196), rgb(54, 132, 204));
+}
+
+.tooltip .Travel {
+    color: rgb(23, 112, 196);
 }
 
 .task.Mandatory button:enabled {
     background: linear-gradient(5deg, rgb(224, 193, 68), rgb(220, 221, 130));
 }
 
+.tooltip .Mandatory {
+    color: rgb(224, 193, 68);
+}
+
 .task.Boss button:enabled {
     background: linear-gradient(5deg, rgb(214, 60, 60), rgb(236, 107, 107));
 }
 
+.tooltip .Boss {
+    color: rgb(214, 60, 60);
+}
+
 .task.Prestige button:enabled {
     background: linear-gradient(5deg, rgb(141, 23, 196), rgb(162, 54, 204));
-    transition: background-color 0.2s, filter 0.2s;
     animation: prestige-glow 1s infinite alternate;
+}
+
+.tooltip .Prestige {
+    color: rgb(141, 23, 196);
 }
 
 .task .indicator {
