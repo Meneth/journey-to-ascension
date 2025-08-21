@@ -898,6 +898,7 @@ function handleEvents() {
 
         const message_div = document.createElement("div");
         message_div.className = "message";
+        var message_to_replace: Element | null = null;
 
         function removeMessage(message: Element) {
             messages.removeChild(message);
@@ -912,7 +913,7 @@ function handleEvents() {
                     var old_item_context = old_event.context as UsedItemContext;
                     if (old_item_context.item == new_item_context.item) {
                         new_item_context.count += old_item_context.count;
-                        removeMessage(message);
+                        message_to_replace = message;
                     }
                 }
             }
@@ -923,7 +924,7 @@ function handleEvents() {
                     var old_skill_context = old_event.context as SkillUpContext;
                     if (old_skill_context.skill == new_skill_context.skill) {
                         new_skill_context.levels_gained += old_skill_context.levels_gained;
-                        removeMessage(message);
+                        message_to_replace = message;
                     }
                 }
             }
@@ -982,8 +983,12 @@ function handleEvents() {
                 break;
         }
 
-        messages.insertBefore(message_div, messages.firstChild);
+        messages.insertBefore(message_div, message_to_replace ? message_to_replace : messages.firstChild);
         RENDERING.message_contexts.set(message_div, event);
+
+        if (message_to_replace) {
+            removeMessage(message_to_replace);
+        }
 
         while (messages.children.length > 5) {
             removeMessage(messages.lastElementChild as Element);
