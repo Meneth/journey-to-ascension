@@ -93,7 +93,7 @@ export var ITEMS: ItemDefinition[] = [
     },
     {
         enum: ItemType.ScrollOfHaste, name: `Scroll of Haste`, tooltip: `The next Task you start is ${HASTE_MULT}x as fast`, icon: `⚡`,
-        get_effect_text: (amount) => { return `Next ${amount} tasks are ${HASTE_MULT}x as fast`; },
+        get_effect_text: (amount) => { return `Next ${amount} Tasks are ${HASTE_MULT}x as fast`; },
         on_consume: (amount) => { GAMESTATE.queued_scrolls_of_haste += amount; },
     },
     {

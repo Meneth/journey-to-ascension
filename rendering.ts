@@ -933,7 +933,7 @@ function handleEvents() {
             case EventType.UnlockedTask:
                 {
                     var unlock_context = context as UnlockedTaskContext;
-                    message_div.innerHTML = `Unlocked task ${unlock_context.task_definition.name}`;
+                    message_div.innerHTML = `Unlocked Task ${unlock_context.task_definition.name}`;
                     recreateTasks();
                     break;
                 }
@@ -941,7 +941,7 @@ function handleEvents() {
                 {
                     var unlock_skill_context = context as UnlockedSkillContext;
                     const skill_definition = SKILL_DEFINITIONS[unlock_skill_context.skill] as SkillDefinition;
-                    message_div.innerHTML = `Unlocked skill ${skill_definition.icon}${skill_definition.name}`;
+                    message_div.innerHTML = `Unlocked Skill ${skill_definition.icon}${skill_definition.name}`;
                     recreateSkills();
                     break;
                 }
@@ -1039,16 +1039,16 @@ function setupAutomationControls() {
     });
 
     setupTooltip(all_control, function() { return `Automate ${all_control.textContent}`;}, function () {
-        var tooltip = "Toggle between automating tasks in all zones, and not automating";
-        tooltip += "<br>Right-click tasks to designate them as automated";
+        var tooltip = "Toggle between automating Ttasks in all zones, and not automating";
+        tooltip += "<br>Right-click Ttasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
 
         return tooltip;
     });
 
     setupTooltip(zone_control, function() { return `Automate ${zone_control.textContent}`;}, function () {
-        var tooltip = "Toggle between automating tasks in the current zone, and not automating";
-        tooltip += "<br>Right-click tasks to designate them as automated";
+        var tooltip = "Toggle between automating Tasks in the current zone, and not automating";
+        tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
 
         return tooltip;
@@ -1082,7 +1082,7 @@ function updateExtraStats() {
         RENDERING.attunement_element.style.display = "flex";
         setupTooltip(RENDERING.attunement_element, function() { return `🌀Attunement - ${formatNumber(GAMESTATE.attunement, false)}`;}, function () {
             var tooltip = `Increases ${getSkillString(SkillType.Study)}, ${getSkillString(SkillType.Magic)}, and ${getSkillString(SkillType.Druid)} speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
-            tooltip += `<br><br>Increased by all tasks it boosts`;
+            tooltip += `<br><br>Increased by all Tasks it boosts`;
 
             return tooltip;
         });
