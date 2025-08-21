@@ -5,15 +5,26 @@
     --element-background-color: rgb(35, 108, 168);
     --element-foreground-color: rgb(49, 144, 221);
     --game-width: 1100px;
-    --font-family: Helvetica, Arial, sans-serif;
+    --font-family: "Merriweather", Arial, sans-serif;
     --font-weight: 500;
+    --default-border-radius: 8px;
+
+    --palette-dark-gray-darker: #616161;
+    --tooltip-line-height: 1.6;
+    --tooltip-header-size: 1.25rem;
+    --tooltip-subtitle-size: 1rem;
+
+    --tooltip-palette-text-primary: rgba(255, 255, 255, 0.7);
+    --tooltip-palette-surface: #000000AA;
+
+    --tooltip-palette-table-lines: rgba(255, 255, 255, 0.12);
 }
 
 /* MARK: Main areas
 */
 
 * {
-    
+    font-family: var(--font-family);
 }
 
 body {
@@ -76,7 +87,7 @@ body {
     display: flex;
     gap: 10px;
     background: var(--element-background-color);
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
     position: fixed;
     top: -8px;
     padding: 5px;
@@ -88,7 +99,7 @@ body {
 }
 
 button {
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
     background: var(--element-foreground-color);
 }
 
@@ -116,7 +127,7 @@ button:hover:enabled {
 .task {
     margin-bottom: 8px;
     background: var(--element-background-color);
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
     padding: 5px;
     display: flex;
     flex-direction: column-reverse;
@@ -125,10 +136,10 @@ button:hover:enabled {
 .task button {
     position: relative;
     width: 50%;
-    height: 30px;
+    height: 32px;
     display: flex;
     align-items: center;
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
     margin-bottom: 5px;
 }
 
@@ -249,7 +260,7 @@ button:hover:enabled {
     width: 100%;
     text-align: center;
     background: var(--element-background-color);
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
     padding: 5px;
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -269,7 +280,7 @@ button:hover:enabled {
 .sidebar-section {
     position: relative;
     background: var(--element-background-color);
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
     padding: 5px;
 }
 
@@ -288,7 +299,7 @@ button:hover:enabled {
     width: 48px;
     height: 48px;
     text-align: center;
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
     background: var(--element-foreground-color);
 }
 
@@ -367,18 +378,23 @@ button:hover:enabled {
 
 #tooltip {
     position: absolute;
-    background: #000000AA;
-    color: #FFF;
+    background-color: var(--tooltip-palette-surface);
+    color: var(--tooltip-palette-text-primary);
     margin-left: 5px;
     margin-right: 5px;
     padding: 5px;
-    border-radius: 5px;
+    border-radius: var(--default-border-radius);
     z-index: 1000;
 }
 
 #tooltip h3 {
     margin-top: 3px;
     margin-bottom: 8px;
+}
+
+.tooltip hr {
+    border: none;
+    border-bottom: 1px solid var(--tooltip-palette-table-lines);
 }
 
 /* MARK: Progress bars
@@ -416,7 +432,7 @@ button:hover:enabled {
     justify-content: center;
     align-items: center;
     background: var(--element-background-color);
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
     border: #000;
     border-width: 2px;
     border-style: solid;
@@ -458,5 +474,5 @@ footer {
     color: #fff;
     margin: 3px 0;
     padding: 5px 10px;
-    border-radius: 8px;
+    border-radius: var(--default-border-radius);
 }

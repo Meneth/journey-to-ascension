@@ -27,9 +27,8 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
     skill_div.appendChild(name);
     skill_div.appendChild(progressBar);
 
-    setupTooltip(skill_div, function () {
-        var tooltip = `<h3>${skill_definition.name} - Level ${skill.level}</h3>`;
-        tooltip += `Speed multiplier: x${formatNumber(calcSkillTaskProgressMultiplier(skill.type))}`;
+    setupTooltip(skill_div, function() { return `${skill_definition.name} - Level ${skill.level}`; }, function () {
+        var tooltip = `Speed multiplier: x${formatNumber(calcSkillTaskProgressMultiplier(skill.type))}`;
         const other_sources_mult = calcSkillTaskProgressWithoutLevel(skill.type);
         if (other_sources_mult != 1) {
             tooltip += `<br>From level: x${formatNumber(calcSkillTaskProgressMultiplierFromLevel(skill.level))}`;
@@ -163,10 +162,8 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     task_div.appendChild(progressBar);
     task_div.appendChild(task_upper_div);
 
-    setupTooltip(task_div, function () {
-        var tooltip = `<h3>${task.task_definition.name}</h3>`;
-
-        tooltip += `<p>Type: ${TASK_TYPE_NAMES[task.task_definition.type]}</p>`;
+    setupTooltip(task_div, function() {return `${task.task_definition.name}`;}, function () {
+        var tooltip = `<p>Type: ${TASK_TYPE_NAMES[task.task_definition.type]}</p>`;
 
         if (task.task_definition.item != ItemType.Count) {
             tooltip += `<p>Gives Item ${ITEMS[task.task_definition.item]?.icon}${ITEMS[task.task_definition.item]?.name}</p>`;
@@ -338,17 +335,27 @@ function estimateTotalTaskEnergyConsumption(task: Task): number {
 // MARK: Tooltips
 type tooltipLambda = () => string;
 interface ElementWithTooltip extends HTMLElement {
-    generateTooltip?: tooltipLambda;
+    generateTooltipHeader?: tooltipLambda;
+    generateTooltipBody?: tooltipLambda;
 }
 
-function setupTooltip(element: ElementWithTooltip, callback: tooltipLambda) {
-    element.generateTooltip = callback;
+function setupTooltip(element: ElementWithTooltip, header_callback: tooltipLambda, body_callback: tooltipLambda) {
+    element.generateTooltipHeader = header_callback;
+    element.generateTooltipBody = body_callback;
     element.addEventListener("pointerenter", (e) => {
         showTooltip(element);
     });
     element.addEventListener("pointerleave", (e) => {
         hideTooltip();
     });
+}
+
+function setupTooltipStaticHeader(element: ElementWithTooltip, header: string, body_callback: tooltipLambda) {
+    setupTooltip(element, () => { return header; }, body_callback);
+}
+
+function setupTooltipStatic(element: ElementWithTooltip, header: string, body: string) {
+    setupTooltip(element, () => { return header; }, () => { return body; });
 }
 
 function setupInfoTooltips() {
@@ -359,9 +366,8 @@ function setupInfoTooltips() {
         return;
     }
 
-    setupTooltip(item_info, function () {
-        var tooltip = `<h3>Items</h3>`;
-        tooltip += `Items can be used to get bonuses that last until the next Energy Reset`;
+    setupTooltipStaticHeader(item_info, `Items`, function () {
+        var tooltip = `Items can be used to get bonuses that last until the next Energy Reset`;
         tooltip += `<br>The bonuses stack additively; 2 +100% results in 3x speed, not 4x`;
         tooltip += `<br>Right-click to use all rather than just one`;
         return tooltip;
@@ -374,9 +380,8 @@ function setupInfoTooltips() {
         return;
     }
 
-    setupTooltip(perk_info, function () {
-        var tooltip = `<h3>Perks</h3>`;
-        tooltip += `Perks are permanent bonuses with a variety of effects`;
+    setupTooltipStaticHeader(perk_info,`Perks`, function () {
+        var tooltip = `Perks are permanent bonuses with a variety of effects`;
         tooltip += `<br>The bonuses stack multiplicatively; 2 +100% results in 4x speed, not 3x`;
         return tooltip;
     });
@@ -403,11 +408,7 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     button.addEventListener("click", () => { clickItem(item, false); });
     button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
 
-    setupTooltip(button, function () {
-        var tooltip = `<h3>${item_definition.name}</h3>`;
-        tooltip += `${item_definition.tooltip}`;
-        return tooltip;
-    });
+    setupTooltipStatic(button, `${item_definition.name}`, `${item_definition.tooltip}`);
 
     items_div.appendChild(button);
     RENDERING.item_elements.set(item, button);
@@ -471,10 +472,8 @@ function setupAutoUseItemsControl() {
         setItemControlName();
     });
 
-    setupTooltip(item_control, function () {
-        var tooltip = `<h3>${item_control.textContent}</h3>`;
-
-        tooltip += "Toggle between items being used automatically, and only being used manually";
+    setupTooltipStaticHeader(item_control, `${item_control.textContent}`, function () {
+        var tooltip = "Toggle between items being used automatically, and only being used manually";
         tooltip += "<br>Won't use the Scroll of Haste";
 
         return tooltip;
@@ -497,11 +496,7 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement) {
 
     perk_text.textContent = perk_definition.icon;
 
-    setupTooltip(perk_div, function () {
-        var tooltip = `<h3>${perk_definition.name}</h3>`;
-        tooltip += `${perk_definition.tooltip}`;
-        return tooltip;
-    });
+    setupTooltipStatic(perk_div, `${perk_definition.name}`, `${perk_definition.tooltip}`);
 
     perk_div.appendChild(perk_text);
     perks_div.appendChild(perk_div);
@@ -702,11 +697,7 @@ function setupSettings(settings_div: HTMLElement) {
         settings_div.style.display = "flex";
     });
 
-    setupTooltip(open_button, function () {
-        var tooltip = `<h3>Open Settings Menu</h3>`;
-        tooltip += `Lets you Save and Load from disk`;
-        return tooltip;
-    });
+    setupTooltipStatic(open_button, `Open Settings Menu`, `Lets you Save and Load from disk`);
 
     var close_button = settings_div.querySelector<HTMLElement>("#close-settings");
 
@@ -720,10 +711,7 @@ function setupSettings(settings_div: HTMLElement) {
         settings_div.style.display = "none";
     });
 
-    setupTooltip(close_button, function () {
-        var tooltip = `<h3>Close Settings Menu</h3>`;
-        return tooltip;
-    });
+    setupTooltipStatic(close_button, `Close Settings Menu`, ``);
 
     setupPersistence(settings_div);
 }
@@ -759,11 +747,7 @@ function setupPersistence(settings_div: HTMLElement) {
         URL.revokeObjectURL(url);
     });
 
-    setupTooltip(save_button, function () {
-        var tooltip = `<h3>Export Save</h3>`;
-        tooltip += `Save the game's progress to disk`;
-        return tooltip;
-    });
+    setupTooltipStatic(save_button, `Export Save`, `Save the game's progress to disk`);
 
     var load_button = settings_div.querySelector<HTMLElement>("#load");
 
@@ -792,11 +776,7 @@ function setupPersistence(settings_div: HTMLElement) {
         input.click();
     });
 
-    setupTooltip(load_button, function () {
-        var tooltip = `<h3>Import Save</h3>`;
-        tooltip += `Load the game's progress from disk`;
-        return tooltip;
-    });
+    setupTooltipStatic(load_button, `Import Save`, `Load the game's progress from disk`);
 }
 
 // MARK: Events
@@ -939,12 +919,8 @@ function setupRepeatTasksControl() {
         setRepControlName();
     });
 
-    setupTooltip(rep_control, function () {
-        var tooltip = `<h3>${rep_control.textContent}</h3>`;
-
-        tooltip += "Toggle between repeating Tasks if they have multiple reps, or only doing a single rep";
-
-        return tooltip;
+    setupTooltip(rep_control, function () { return rep_control.textContent; }, function () {
+        return "Toggle between repeating Tasks if they have multiple reps, or only doing a single rep";
     });
 
     RENDERING.controls_list_element.appendChild(rep_control);
@@ -986,20 +962,16 @@ function setupAutomationControls() {
         setAutomationClasses();
     });
 
-    setupTooltip(all_control, function () {
-        var tooltip = `<h3>Automate ${all_control.textContent}</h3>`;
-
-        tooltip += "Toggle between automating tasks in all zones, and not automating";
+    setupTooltip(all_control, function() { return `Automate ${all_control.textContent}`;}, function () {
+        var tooltip = "Toggle between automating tasks in all zones, and not automating";
         tooltip += "<br>Right-click tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
 
         return tooltip;
     });
 
-    setupTooltip(zone_control, function () {
-        var tooltip = `<h3> Automate ${zone_control.textContent}</h3>`;
-
-        tooltip += "Toggle between automating tasks in the current zone, and not automating";
+    setupTooltip(zone_control, function() { return `Automate ${zone_control.textContent}`;}, function () {
+        var tooltip = "Toggle between automating tasks in the current zone, and not automating";
         tooltip += "<br>Right-click tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
 
@@ -1017,10 +989,8 @@ function setupAutomationControls() {
 function updateExtraStats() {
     if (GAMESTATE.has_unlocked_power && RENDERING.power_element.style.display == "none") {
         RENDERING.power_element.style.display = "flex";
-        setupTooltip(RENDERING.power_element, function () {
-            var tooltip = `<h3>💪Power - ${formatNumber(GAMESTATE.power, false)}</h3>`;
-
-            tooltip += `Increases Combat and Fortitude speed by ${formatNumber(GAMESTATE.power, false)}%`;
+        setupTooltip(RENDERING.power_element, function() { return `💪Power - ${formatNumber(GAMESTATE.power, false)}`;}, function () {
+            var tooltip = `Increases Combat and Fortitude speed by ${formatNumber(GAMESTATE.power, false)}%`;
             tooltip += `<br><br>Increased by fighting Bosses`;
 
             return tooltip;
@@ -1034,10 +1004,8 @@ function updateExtraStats() {
 
     if (hasPerk(PerkType.Attunement) && RENDERING.attunement_element.style.display == "none") {
         RENDERING.attunement_element.style.display = "flex";
-        setupTooltip(RENDERING.attunement_element, function () {
-            var tooltip = `<h3>🌀Attunement - ${formatNumber(GAMESTATE.attunement, false)}</h3>`;
-
-            tooltip += `Increases Study, Magic, and Druid speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
+        setupTooltip(RENDERING.attunement_element, function() { return `🌀Attunement - ${formatNumber(GAMESTATE.attunement, false)}`;}, function () {
+            var tooltip = `Increases Study, Magic, and Druid speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
             tooltip += `<br><br>Increased by all tasks it boosts`;
 
             return tooltip;
@@ -1099,10 +1067,8 @@ export class Rendering {
 
         this.energy_element = getElement("energy");
 
-        setupTooltip(this.energy_element, function () {
-            var tooltip = `<h3>Energy - ${GAMESTATE.current_energy.toFixed(0)}/${GAMESTATE.max_energy.toFixed(0)}</h3>`;
-            tooltip += `Energy goes down over time while you have a Task active`;
-            return tooltip;
+        setupTooltip(this.energy_element, function() { return `Energy - ${GAMESTATE.current_energy.toFixed(0)}/${GAMESTATE.max_energy.toFixed(0)}`; }, function () {
+            return `Energy goes down over time while you have a Task active`;
         });
 
         this.tooltip_element = getElement("tooltip");
@@ -1167,7 +1133,7 @@ function hideTooltip() {
 }
 
 function showTooltip(element: ElementWithTooltip) {
-    if (!element.generateTooltip) {
+    if (!element.generateTooltipBody || !element.generateTooltipHeader) {
         console.error("No generateTooltip callback");
         return;
     }
@@ -1180,7 +1146,12 @@ function showTooltip(element: ElementWithTooltip) {
     RENDERING.tooltipped_element = element;
 
     var tooltip_element = RENDERING.tooltip_element;
-    tooltip_element.innerHTML = element.generateTooltip();
+    tooltip_element.innerHTML = `<h3>${element.generateTooltipHeader()}</h3>`;
+    const body_text = element.generateTooltipBody();
+    if (body_text != ``) {
+        tooltip_element.innerHTML += `<hr />`;
+        tooltip_element.innerHTML += body_text;
+    }
 
     tooltip_element.style.top = "";
     tooltip_element.style.bottom = "";

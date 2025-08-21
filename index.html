@@ -2,6 +2,9 @@
 <html lang="en">
 
 <head></head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css" />
 <title>Test Game</title>
 
@@ -34,12 +37,12 @@
                         </div>
                         <div id="items" class="sidebar-section">
                             <h3 class="section-name">Items</h3>
-                            <h3 class="section-info">?</h3>
+                            <h3 class="section-info">ℹ</h3>
                             <div id="items-list" class="elements-list"></div>
                         </div>
                         <div id="perks" class="sidebar-section">
                             <h3 class="section-name">Perks</h3>
-                            <h3 class="section-info">?</h3>
+                            <h3 class="section-info">ℹ</h3>
                             <div id="perks-list" class="elements-list"></div>
                         </div>
                     </div>
@@ -94,7 +97,7 @@
         <div id="messages"></div>
     </footer>
 
-    <div id="tooltip" style="display:none"></div>
+    <div id="tooltip" class="tooltip" style="display:none"></div>
 
     <script type="module" src="./build/game.js"></script>
     <script type="module" src="./build/simulation.js"></script>
