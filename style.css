@@ -432,23 +432,30 @@ button:hover:enabled {
 
 #prestige-box {
     position: relative;
-    height: 400px;
-    width: 400px;
-    justify-content: center;
-    align-items: center;
+    height: 650px;
+    width: 500px;
+    
     background: var(--element-background-color);
     border-radius: var(--default-border-radius);
     border: #000;
     border-width: 2px;
     border-style: solid;
+    
+    color: var(--default-text-color);
+}
+
+.scroll-area {
+    height: 100%;
+    width: 100%;
+
+    align-items: center;
+
     padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 10px;
 
     overflow-y: auto;
-    
-    color: var(--default-text-color);
 }
 
 .close {
@@ -460,9 +467,29 @@ button:hover:enabled {
     font-size: 1em;
 }
 
+#prestige-box .close {
+    right: 20px;
+}
+
+.prestige-purchase {
+    width: 100px;
+    height: 64px;
+}
+
+.prestige-purchase.prestige-purchase-repeatable {
+    height: 84px;
+}
+
 .prestige-section {
     width: 100%;
     border-top: 1px solid var(--tooltip-palette-table-lines);
+}
+
+.prestige-purchases {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
 }
 
 /* MARK: Tooltips

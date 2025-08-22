@@ -1,5 +1,5 @@
 export enum PrestigeUnlockType {
-    DummyUnlock1,
+    PermanentAutomation,
     DummyUnlock2,
     DummyUnlock3,
     DummyUnlock4,
@@ -33,10 +33,10 @@ export class PrestigeRepeatable {
 
 export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
-        type: PrestigeUnlockType.DummyUnlock1,
-        name: "Test",
-        description: "Test",
-        cost: 42
+        type: PrestigeUnlockType.PermanentAutomation,
+        name: "Permanent Automation",
+        description: "Permanently unlocks the Deep Trance Perk",
+        cost: 0.01
     },
     {
         type: PrestigeUnlockType.DummyUnlock2,
@@ -61,7 +61,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
 export const PRESTIGE_UPGRADES: PrestigeRepeatable[] = [
     {
         type: PrestigeRepeatableType.DummyRepeatable1,
-        name: "Test",
+        name: "XP Boost Two Lines",
         description: "Test",
         initial_cost: 42,
         scaling_base: 1.5

@@ -779,19 +779,24 @@ function populatePrestigeView() {
 
     prestige_div.innerHTML = "";
 
-    const close_button = createChildElement(prestige_div, "button");
-    close_button.className = "close";
-    close_button.textContent = "X";
+    const scroll_area = createChildElement(prestige_div, "div");
+    scroll_area.className = "scroll-area";
 
-    close_button.addEventListener("click", () => {
-        prestige_overlay.style.display = "none";
-    });
-
-    setupTooltipStatic(close_button, `Close Prestige Menu`, ``);
-
-    
     {
-        const summary_div = createChildElement(prestige_div, "div");
+        const close_button = createChildElement(prestige_div, "button");
+        close_button.className = "close";
+        close_button.textContent = "X";
+
+        close_button.addEventListener("click", () => {
+            prestige_overlay.style.display = "none";
+        });
+
+        setupTooltipStatic(close_button, `Close Prestige Menu`, ``);
+    }
+
+
+    {
+        const summary_div = createChildElement(scroll_area, "div");
         const header = createChildElement(summary_div, "h1");
         header.textContent = "Prestige";
 
@@ -811,32 +816,38 @@ function populatePrestigeView() {
     }
 
     {
-        const touch_the_divine_div = createChildElement(prestige_div, "div");
+        const touch_the_divine_div = createChildElement(scroll_area, "div");
         touch_the_divine_div.className = "prestige-section";
 
         const header = createChildElement(touch_the_divine_div, "h2");
         header.textContent = "Touch the Divine";
-        
+
         const unlockables_div = createChildElement(touch_the_divine_div, "div");
         const unlockables_header = createChildElement(unlockables_div, "h3");
         unlockables_header.textContent = "Unlockables";
+        const unlockables_purchases = createChildElement(unlockables_div, "div");
+        unlockables_purchases.className = "prestige-purchases";
 
         for (const unlock of PRESTIGE_UNLOCKABLES) {
-            const unlock_div = createChildElement(unlockables_div, "button");
-            unlock_div.innerHTML = `${unlock.name}<br>${unlock.cost}`;
+            const unlock_button = createChildElement(unlockables_purchases, "button");
+            unlock_button.className = "prestige-purchase";
+            unlock_button.innerHTML = `${unlock.name}<br>Cost: ${unlock.cost}`;
 
-            setupTooltipStatic(unlock_div, unlock.name, unlock.description);
+            setupTooltipStatic(unlock_button, unlock.name, unlock.description);
         }
 
         const upgrades_div = createChildElement(touch_the_divine_div, "div");
         const upgrades_header = createChildElement(upgrades_div, "h3");
         upgrades_header.textContent = "Repeatable Upgrades";
+        const repeatables_purchases = createChildElement(upgrades_div, "div");
+        repeatables_purchases.className = "prestige-purchases";
 
         for (const upgrade of PRESTIGE_UPGRADES) {
-            const unlock_div = createChildElement(upgrades_div, "button");
-            unlock_div.innerHTML = `${upgrade.name}<br>${upgrade.initial_cost}`;
+            const unlock_button = createChildElement(repeatables_purchases, "button");
+            unlock_button.className = "prestige-purchase prestige-purchase-repeatable";
+            unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${upgrade.initial_cost}<br>Level: 0`;
 
-            setupTooltipStatic(unlock_div, upgrade.name, upgrade.description);
+            setupTooltipStatic(unlock_button, upgrade.name, upgrade.description);
         }
     }
 }
@@ -852,11 +863,11 @@ function setupPrestige() {
     });
 
     setupTooltip(open_button, function () { return `Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}`; }, function () {
-            let tooltip = `Prestige Tooltip`;
-            tooltip += " TODO";
+        let tooltip = `Prestige Tooltip`;
+        tooltip += " TODO";
 
-            return tooltip;
-        });
+        return tooltip;
+    });
 }
 
 // MARK: Formatting
