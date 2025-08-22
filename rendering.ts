@@ -216,12 +216,12 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         }
 
         {
-            var table = createTableSection("Completions");
+            const table = createTableSection("Completions");
             table.appendChild(createTwoElementRow(`${completions}`, ""));
         }
 
         {
-            var table = createTableSection("Rewards");
+            const table = createTableSection("Rewards");
 
             if (task.task_definition.item != ItemType.Count) {
                 const item = ITEMS[task.task_definition.item] as ItemDefinition;
@@ -281,7 +281,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         }
 
         {
-            var table = createTableSection("Cost Estimate");
+            const table = createTableSection("Cost Estimate");
 
             const energy_cost = completions * estimateTotalTaskEnergyConsumption(task);
             const energy_cost_ratio = energy_cost / GAMESTATE.current_energy;
@@ -312,7 +312,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         }
 
         {
-            var table = createTableSection("Modifiers");
+            const table = createTableSection("Modifiers");
             const mult = task.task_definition.xp_mult;
             let mult_class = "";
             if (mult != 1) { mult_class = mult > 1 ? "good" : "bad"; }
@@ -439,10 +439,10 @@ interface ElementWithTooltip extends HTMLElement {
 function setupTooltip(element: ElementWithTooltip, header_callback: tooltipLambda, body_callback: tooltipLambda) {
     element.generateTooltipHeader = header_callback;
     element.generateTooltipBody = body_callback;
-    element.addEventListener("pointerenter", (e) => {
+    element.addEventListener("pointerenter", () => {
         showTooltip(element);
     });
-    element.addEventListener("pointerleave", (e) => {
+    element.addEventListener("pointerleave", () => {
         hideTooltip();
     });
 }
@@ -529,7 +529,7 @@ function recreateItems() {
 
     sortItems(items);
 
-    for (const [item, amount] of items) {
+    for (const [item, ] of items) {
         createItemDiv(item, items_div);
     }
 }
@@ -664,7 +664,7 @@ function populateGameOver(game_over_div: HTMLElement) {
     const info = GAMESTATE.game_over_info;
 
     for (const [skill, skill_diff] of info.skill_gains) {
-        var skill_gain_text = document.createElement("p");
+        const skill_gain_text = document.createElement("p");
         const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
         skill_gain_text.textContent = `${skill_definition.icon}${skill_definition.name}: +${skill_diff} (x${calcSkillTaskProgressMultiplierFromLevel(skill_diff).toFixed(2)} speed)`;
 
@@ -697,7 +697,7 @@ function populateGameOver(game_over_div: HTMLElement) {
     }
 
     if (skill_gain.childNodes.length == 0) {
-        var skill_gain_text = document.createElement("p");
+        const skill_gain_text = document.createElement("p");
         skill_gain_text.textContent = `None`;
 
         skill_gain.appendChild(skill_gain_text);

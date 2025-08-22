@@ -327,14 +327,14 @@ function finishTask(task: Task) {
 function updateEnabledTasks() {
     let has_unfinished_mandatory_task = false;
 
-    for (var task of GAMESTATE.tasks) {
+    for (const task of GAMESTATE.tasks) {
         const finished = task.reps >= task.task_definition.max_reps;
         task.enabled = !finished;
         has_unfinished_mandatory_task = has_unfinished_mandatory_task || (task.task_definition.type == TaskType.Mandatory && !finished);
     }
 
     if (has_unfinished_mandatory_task) {
-        for (var task of GAMESTATE.tasks) {
+        for (const task of GAMESTATE.tasks) {
             if (task.task_definition.type == TaskType.Travel) {
                 task.enabled = false;
             }
@@ -687,6 +687,7 @@ function populateGameOverInfo() {
 export const SAVE_LOCATION = "incrementalGameSave";
 
 export function saveGame() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const saveData: any = {};
 
     for (const key in GAMESTATE) {
@@ -697,7 +698,8 @@ export function saveGame() {
             continue;
         }
 
-        if (GAMESTATE.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(GAMESTATE, key)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const value = (GAMESTATE as any)[key];
             // Check if the value is a Map and convert it to an array
             if (value instanceof Map) {
@@ -719,7 +721,7 @@ export function saveGame() {
     localStorage.setItem(SAVE_LOCATION, json);
 }
 
-function parseSave(save: string): any {
+function parseSave(save: string): unknown {
     const data = JSON.parse(save, function (key, value) {
         if (key == "task_definition") {
             return TASK_LOOKUP.get(value); // Replace ID with the actual object
@@ -740,22 +742,21 @@ function loadGame(): boolean {
         const data = parseSave(saved_game);
         loadGameFromData(data);
     } catch (e) {
+        console.log(e);
         return false;
     }
 
     return true;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadGameFromData(data: any) {
     Object.keys(data).forEach(key => {
         const value = data[key];
 
         // Convert it back to a Map if that's what we want
-        if ((GAMESTATE as any)[key] instanceof Map) {
-            (GAMESTATE as any)[key] = new Map(value);
-        } else {
-            (GAMESTATE as any)[key] = value;
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (GAMESTATE as any)[key] = (GAMESTATE as any)[key] instanceof Map ? new Map(value) : value;
     });
 }
 
@@ -847,6 +848,9 @@ export function updateGamestate() {
     checkEnergyReset();
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).setProgressMult = (new_mult: number) => progress_mult = new_mult;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).saveGame = () => saveGame();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).doEnergyReset = () => doEnergyReset();
