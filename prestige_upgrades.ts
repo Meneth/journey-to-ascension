@@ -36,7 +36,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         type: PrestigeUnlockType.PermanentAutomation,
         name: "Permanent Automation",
         description: "Permanently unlocks the Deep Trance Perk",
-        cost: 0.01
+        cost: 1
     },
     {
         type: PrestigeUnlockType.DummyUnlock2,

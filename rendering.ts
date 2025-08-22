@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcPrestigeGain, calcPrestigeGainFromHighestZoneFullyCompleted, calcPrestigeGainFromHighestZone } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
@@ -801,14 +801,20 @@ function populatePrestigeView() {
         header.textContent = "Prestige";
 
         const currency = createChildElement(summary_div, "p");
-        currency.textContent = `Currency: ${formatNumber(GAMESTATE.prestige_currency, false)} (+${42})`;
+        currency.textContent = `Currency: ${formatNumber(GAMESTATE.prestige_currency, false)} (+${calcPrestigeGain()})`;
 
         const currency_gain = createChildElement(summary_div, "p");
-        currency_gain.textContent = `Currency Gain: Highest Zone ^ 3`;
+        currency_gain.innerHTML = `Currency gain:<br>Highest Zone ^ ${PRESTIGE_GAIN_EXPONENT} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${PRESTIGE_GAIN_EXPONENT})`;
+        currency_gain.innerHTML += `<br>Gain divisor: ${PRESTIGE_GAIN_DIVISOR}`;
 
         const currency_gain_stats = createChildElement(summary_div, "p");
-        currency_gain_stats.innerHTML = `Highest Zone Reached: ${GAMESTATE.current_zone + 1}`;
-        currency_gain_stats.innerHTML += `<br>Currency Gain in Zone ${GAMESTATE.current_zone + 2}: ${1337}`;
+        currency_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
+        currency_gain_stats.innerHTML = `Highest Zone fully completed: ${GAMESTATE.highest_zone_fully_completed + 1}`;
+
+        const potentialReachGain = calcPrestigeGainFromHighestZone(GAMESTATE.highest_zone + 1) - calcPrestigeGainFromHighestZone(GAMESTATE.highest_zone);
+        currency_gain_stats.innerHTML += `<br>Additional Currency for reaching ${GAMESTATE.highest_zone + 2}: ${potentialReachGain.toFixed(0)}`;
+        const potentialFullCompletionGain = calcPrestigeGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed + 1) - calcPrestigeGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
+        currency_gain_stats.innerHTML += `<br>Additional Currency for fully completing ${GAMESTATE.highest_zone_fully_completed + 2}: ${potentialFullCompletionGain.toFixed(0)}`;
 
         const prestige_button = createChildElement(summary_div, "button");
         prestige_button.textContent = "Prestige";

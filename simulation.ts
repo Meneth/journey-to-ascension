@@ -696,6 +696,27 @@ export function hasUnlockedPrestige() {
     return GAMESTATE.prestige_available || GAMESTATE.prestige_count > 0;
 }
 
+export const PRESTIGE_GAIN_EXPONENT = 3;
+export const PRESTIGE_FULLY_COMPLETED_MULT = 3;
+export const PRESTIGE_GAIN_DIVISOR = 100;
+
+export function calcPrestigeGainFromHighestZone(zone: number) {
+    return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT) / PRESTIGE_GAIN_DIVISOR;
+}
+
+export function calcPrestigeGainFromHighestZoneFullyCompleted(zone: number) {
+    return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT)  * PRESTIGE_FULLY_COMPLETED_MULT / PRESTIGE_GAIN_DIVISOR;
+}
+
+export function calcPrestigeGain() {
+    let gain = 0;
+
+    gain += calcPrestigeGainFromHighestZone(GAMESTATE.highest_zone);
+    gain += calcPrestigeGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
+
+    return Math.ceil(gain);
+}
+
 // MARK: Persistence
 
 export const SAVE_LOCATION = "incrementalGameSave";
@@ -784,6 +805,7 @@ export class Gamestate {
     unlocked_tasks: number[] = [];
     current_zone: number = 0;
     highest_zone: number = 0;
+    highest_zone_fully_completed: number = 0;
 
     repeat_tasks = true;
     automation_mode = AutomationMode.Off;
