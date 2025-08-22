@@ -1,12 +1,12 @@
 import { Task, TaskDefinition, ZONES, TaskType } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcPrestigeGain, calcPrestigeGainFromHighestZoneFullyCompleted, calcPrestigeGainFromHighestZone } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcPrestigeGain, calcPrestigeGainFromHighestZoneFullyCompleted, calcPrestigeGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT } from "./prestige_upgrades.js";
 
 // MARK: Helpers
 
@@ -835,9 +835,21 @@ function populatePrestigeView() {
         unlockables_purchases.className = "prestige-purchases";
 
         for (const unlock of PRESTIGE_UNLOCKABLES) {
-            const unlock_button = createChildElement(unlockables_purchases, "button");
+            const is_unlocked = hasPrestigeUnlock(unlock.type);
+            const unlock_button = createChildElement(unlockables_purchases, is_unlocked ? "div" : "button");
             unlock_button.className = "prestige-purchase";
-            unlock_button.innerHTML = `${unlock.name}<br>Cost: ${unlock.cost}`;
+            if (is_unlocked) {
+                unlock_button.classList.add("prestige-upgrade-unlocked");
+            }
+
+            unlock_button.innerHTML = `${unlock.name}`;
+            if (!is_unlocked) {
+                unlock_button.innerHTML += `<br>Cost: ${unlock.cost}`;
+            }
+
+            if (!is_unlocked) {
+                (unlock_button as HTMLInputElement).disabled = unlock.cost > GAMESTATE.prestige_currency;
+            }
 
             setupTooltipStatic(unlock_button, unlock.name, unlock.description);
         }
@@ -851,9 +863,30 @@ function populatePrestigeView() {
         for (const upgrade of PRESTIGE_REPEATABLES) {
             const unlock_button = createChildElement(repeatables_purchases, "button");
             unlock_button.className = "prestige-purchase prestige-purchase-repeatable";
-            unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${upgrade.initial_cost}<br>Level: 0`;
+            const cost = calcPrestigeRepeatableCost(upgrade.type);
+            const level = getPrestigeRepeatableLevel(upgrade.type);
+            unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${cost}<br>Level: ${level}`;
 
-            setupTooltipStatic(unlock_button, upgrade.name, upgrade.description);
+            (unlock_button as HTMLInputElement).disabled = cost > GAMESTATE.prestige_currency;
+
+            setupTooltipStaticHeader(unlock_button, upgrade.name, () => {
+                let desc = upgrade.description;
+                desc += "<br><br>Current Effect: ";
+
+                switch (upgrade.type) {
+                    case PrestigeRepeatableType.XPBooster:
+                        desc += `+${formatNumber(PRESTIGE_XP_BOOSTER_MULT * level, false)}%`
+                        break;
+                    case PrestigeRepeatableType.UnlimitedPower:
+                        desc += `x${formatNumber(Math.pow(2, level), false)}`
+                        break;
+                    default:
+                        console.error("Unhandled upgrade");
+                        break;
+                }
+
+                return desc;
+            });
         }
     }
 }
