@@ -1,11 +1,11 @@
 import { Task, TaskDefinition, ZONES, TaskType } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcPrestigeGain, calcPrestigeGainFromHighestZoneFullyCompleted, calcPrestigeGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
+import { DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT } from "./prestige_upgrades.js";
 
 // MARK: Helpers
@@ -700,7 +700,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
 
     if (hasPerk(PerkType.EnergeticMemory)) {
         const energetic_memory_gain_text = document.createElement("p");
-        energetic_memory_gain_text.textContent = `Max ${ENERGY_TEXT}: +${info.energetic_memory_gain} (Energetic Memory Perk)`;
+        energetic_memory_gain_text.textContent = `Max ${ENERGY_TEXT}: +${info.energetic_memory_gain.toFixed(1)} (Energetic Memory Perk)`;
 
         skill_gain.appendChild(energetic_memory_gain_text);
     }
@@ -800,21 +800,21 @@ function populatePrestigeView() {
         const header = createChildElement(summary_div, "h1");
         header.textContent = "Prestige";
 
-        const currency = createChildElement(summary_div, "p");
-        currency.textContent = `Currency: ${formatNumber(GAMESTATE.prestige_currency, false)} (+${formatNumber(calcPrestigeGain(), false)})`;
+        const divine_spark = createChildElement(summary_div, "p");
+        divine_spark.textContent = `${DIVINE_SPARK_TEXT}: ${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})`;
 
-        const currency_gain = createChildElement(summary_div, "p");
-        currency_gain.innerHTML = `Currency gain:<br>Highest Zone ^ ${PRESTIGE_GAIN_EXPONENT} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${PRESTIGE_GAIN_EXPONENT})`;
-        currency_gain.innerHTML += `<br>Gain divisor: ${PRESTIGE_GAIN_DIVISOR}`;
+        const divine_spark_gain = createChildElement(summary_div, "p");
+        divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} gain:<br>Highest Zone ^ ${PRESTIGE_GAIN_EXPONENT} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${PRESTIGE_GAIN_EXPONENT})`;
+        divine_spark_gain.innerHTML += `<br>Gain divisor: ${PRESTIGE_GAIN_DIVISOR}`;
 
-        const currency_gain_stats = createChildElement(summary_div, "p");
-        currency_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
-        currency_gain_stats.innerHTML += `<br>Highest Zone fully completed: ${GAMESTATE.highest_zone_fully_completed + 1}`;
+        const divine_spark_gain_stats = createChildElement(summary_div, "p");
+        divine_spark_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
+        divine_spark_gain_stats.innerHTML += `<br>Highest Zone fully completed: ${GAMESTATE.highest_zone_fully_completed + 1}`;
 
-        const potentialReachGain = calcPrestigeGainFromHighestZone(GAMESTATE.highest_zone + 1) - calcPrestigeGainFromHighestZone(GAMESTATE.highest_zone);
-        currency_gain_stats.innerHTML += `<br>Additional Currency for reaching Zone ${GAMESTATE.highest_zone + 2}: ${formatNumber(potentialReachGain, false)}`;
-        const potentialFullCompletionGain = calcPrestigeGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed + 1) - calcPrestigeGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
-        currency_gain_stats.innerHTML += `<br>Additional Currency for fully completing Zone ${GAMESTATE.highest_zone_fully_completed + 2}: ${formatNumber(potentialFullCompletionGain, false)}`;
+        const potentialReachGain = calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone + 1) - calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone);
+        divine_spark_gain_stats.innerHTML += `<br>Additional ${DIVINE_SPARK_TEXT} for reaching Zone ${GAMESTATE.highest_zone + 2}: ${formatNumber(potentialReachGain, false)}`;
+        const potentialFullCompletionGain = calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed + 1) - calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
+        divine_spark_gain_stats.innerHTML += `<br>Additional ${DIVINE_SPARK_TEXT} for fully completing Zone ${GAMESTATE.highest_zone_fully_completed + 2}: ${formatNumber(potentialFullCompletionGain, false)}`;
 
         const prestige_button = createChildElement(summary_div, "button");
         prestige_button.textContent = "Prestige";
@@ -827,7 +827,7 @@ function populatePrestigeView() {
                 desc += `<p class="disable-reason">Disabled until you complete the <span class="Prestige">Prestige</span> task in Zone 15</p>`;
             }
 
-            desc += "Will reset <b><i>everything</i></b> except that which is granted by Prestige itself, but gives Prestige currency in return";
+            desc += `Will reset <b><i>everything</i></b> except that which is granted by Prestige itself, but gives ${DIVINE_SPARK_TEXT} in return`;
 
             return desc;
         });
@@ -865,7 +865,7 @@ function populatePrestigeView() {
             }
 
             if (!is_unlocked) {
-                (unlock_button as HTMLInputElement).disabled = unlock.cost > GAMESTATE.prestige_currency;
+                (unlock_button as HTMLInputElement).disabled = unlock.cost > GAMESTATE.divine_spark;
             }
 
             setupTooltipStatic(unlock_button, unlock.name, unlock.description);
@@ -891,7 +891,7 @@ function populatePrestigeView() {
             const level = getPrestigeRepeatableLevel(upgrade.type);
             unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${cost}<br>Level: ${level}`;
 
-            (unlock_button as HTMLInputElement).disabled = cost > GAMESTATE.prestige_currency;
+            (unlock_button as HTMLInputElement).disabled = cost > GAMESTATE.divine_spark;
 
             setupTooltipStaticHeader(unlock_button, upgrade.name, () => {
                 let desc = upgrade.description;
@@ -929,8 +929,8 @@ function setupPrestige() {
         prestige_overlay.style.display = "flex";
     });
 
-    setupTooltip(open_button, function () { return `Divine Spark - ${formatNumber(GAMESTATE.prestige_currency, false)}`; }, function () {
-        const tooltip = `Within this menu you can Prestige to gain Divine Spark, and buy powerful upgrades`;
+    setupTooltip(open_button, function () { return `${DIVINE_SPARK_TEXT} - ${formatNumber(GAMESTATE.divine_spark, false)}`; }, function () {
+        const tooltip = `Within this menu you can Prestige to gain ${DIVINE_SPARK_TEXT}, and buy powerful upgrades`;
 
         return tooltip;
     });
@@ -1324,7 +1324,7 @@ function updateExtraStats() {
         RENDERING.prestige_element.style.display = "block";
     }
 
-    const prestige_text = `<h2>Divine Spark - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(+${formatNumber(calcPrestigeGain(), false)})</h2>`;
+    const prestige_text = `<h2>${DIVINE_SPARK_TEXT}<br>${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})</h2>`;
     if (RENDERING.prestige_element.innerHTML != prestige_text) {
         RENDERING.prestige_element.innerHTML = prestige_text;
     }

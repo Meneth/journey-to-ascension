@@ -52,7 +52,7 @@ export const PERKS: PerkDefinition[] = [
         enum: PerkType.Amulet, name: `Mysterious Amulet`, tooltip: `Improves ${getSkillString(SkillType.Magic)} Task speed by 50%`, icon: `📿`,
     },
     {
-        enum: PerkType.EnergySpell, name: `Energetic Spell`, tooltip: `Increases starting ${ENERGY_TEXT} by 50`, icon: `✨`,
+        enum: PerkType.EnergySpell, name: `Energetic Spell`, tooltip: `Increases starting ${ENERGY_TEXT} by 50`, icon: `⚡️`,
     },
     {
         enum: PerkType.ExperiencedTraveler, name: `Experienced Traveler`, tooltip: `Improves ${getSkillString(SkillType.Travel)} Task speed by 50%`, icon: `🦶`,

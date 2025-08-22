@@ -720,19 +720,19 @@ export const PRESTIGE_GAIN_EXPONENT = 3;
 export const PRESTIGE_FULLY_COMPLETED_MULT = 3;
 export const PRESTIGE_GAIN_DIVISOR = 100;
 
-export function calcPrestigeGainFromHighestZone(zone: number) {
+export function calcDivineSparkGainFromHighestZone(zone: number) {
     return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT) / PRESTIGE_GAIN_DIVISOR;
 }
 
-export function calcPrestigeGainFromHighestZoneFullyCompleted(zone: number) {
+export function calcDivineSparkGainFromHighestZoneFullyCompleted(zone: number) {
     return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT)  * PRESTIGE_FULLY_COMPLETED_MULT / PRESTIGE_GAIN_DIVISOR;
 }
 
-export function calcPrestigeGain() {
+export function calcDivineSparkGain() {
     let gain = 0;
 
-    gain += calcPrestigeGainFromHighestZone(GAMESTATE.highest_zone);
-    gain += calcPrestigeGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
+    gain += calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone);
+    gain += calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
 
     return Math.ceil(gain);
 }
@@ -753,12 +753,12 @@ export function addPrestigeUnlock(unlock: PrestigeUnlockType) {
 
     const definition = PRESTIGE_UNLOCKABLES[unlock] as PrestigeUnlock;
 
-    if (GAMESTATE.prestige_currency < definition.cost) {
+    if (GAMESTATE.divine_spark < definition.cost) {
         console.error("Not enough prestige currency");
         return;
     }
 
-    GAMESTATE.prestige_currency -= definition.cost;
+    GAMESTATE.divine_spark -= definition.cost;
     GAMESTATE.prestige_unlocks.push(unlock);
 
     if (unlock == PrestigeUnlockType.PermanentAutomation) {
@@ -772,14 +772,15 @@ export function addPrestigeUnlock(unlock: PrestigeUnlockType) {
 export function calcPrestigeRepeatableCost(repeatable: PrestigeRepeatableType) {
     const definition = PRESTIGE_REPEATABLES[repeatable] as PrestigeRepeatable;
     const current_level = getPrestigeRepeatableLevel(repeatable);
+    const base_cost = definition.initial_cost;
 
-    return Math.floor(Math.pow(current_level + 1, definition.scaling_exponent));
+    return base_cost * Math.floor(Math.pow(current_level + 1, definition.scaling_exponent));
 }
 
 export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableType) {
     const cost = calcPrestigeRepeatableCost(repeatable);
 
-    if (GAMESTATE.prestige_currency < cost) {
+    if (GAMESTATE.divine_spark < cost) {
         console.error("Not enough prestige currency");
         return;
     }
@@ -800,7 +801,7 @@ function applyGameStartPrestigeEffects() {
 export function doPrestige() {
     doAnyReset();
     GAMESTATE.prestige_count++;
-    GAMESTATE.prestige_currency += calcPrestigeGain();
+    GAMESTATE.divine_spark += calcDivineSparkGain();
 
     // Reset most game state
     GAMESTATE.unlocked_tasks = [];
@@ -948,7 +949,7 @@ export class Gamestate {
 
     prestige_available = false;
     prestige_count = 0;
-    prestige_currency = 0;
+    divine_spark = 0;
     prestige_unlocks: PrestigeUnlockType[] = [];
     prestige_repeatables: Map<PrestigeRepeatableType, number> = new Map();
 

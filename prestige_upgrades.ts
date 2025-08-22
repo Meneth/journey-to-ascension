@@ -67,7 +67,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     {
         type: PrestigeRepeatableType.XPBooster,
         name: "XP Booster",
-        description: `Increases all ${XP_TEXT} by ${PRESTIGE_XP_BOOSTER_MULT * 100}%`,
+        description: `Increases ${XP_TEXT} gain by ${PRESTIGE_XP_BOOSTER_MULT * 100}%`,
         initial_cost: 10,
         scaling_exponent: 1.25
     },
