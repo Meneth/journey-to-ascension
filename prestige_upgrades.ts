@@ -1,15 +1,18 @@
+import { PERKS, PerkType, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_EXPONENT as REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_EXPONENT as REFLECTIONS_ON_THE_JOURNEY_BASE } from "./perks.js";
+import { XP_TEXT } from "./rendering_constants.js";
+
 export enum PrestigeUnlockType {
     PermanentAutomation,
-    DummyUnlock2,
-    DummyUnlock3,
+    DivineInspiration,
+    LookInTheMirror,
     DummyUnlock4,
     
     Count
 }
 
 export enum PrestigeRepeatableType {
-    DummyRepeatable1,
-    DummyRepeatable2,
+    XPBooster,
+    UnlimitedPower,
     DummyRepeatable3,
     DummyRepeatable4,
 
@@ -28,63 +31,65 @@ export class PrestigeRepeatable {
     name = "";
     description = "";
     initial_cost = 0;
-    scaling_base = 0;
+    scaling_exponent = 0;
 }
 
 export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
         type: PrestigeUnlockType.PermanentAutomation,
         name: "Permanent Automation",
-        description: "Permanently unlocks the Deep Trance Perk",
+        description: `Permanently unlocks the ${PERKS[PerkType.DeepTrance]?.icon}Deep Trance Perk`,
         cost: 1
     },
     {
-        type: PrestigeUnlockType.DummyUnlock2,
-        name: "Test",
-        description: "Test",
-        cost: 43
+        type: PrestigeUnlockType.DivineInspiration,
+        name: "Divine Inspiration",
+        description: `Doubles ${XP_TEXT} gain`,
+        cost: 1
     },
     {
-        type: PrestigeUnlockType.DummyUnlock3,
-        name: "Test",
-        description: "Test",
-        cost: 44
+        type: PrestigeUnlockType.LookInTheMirror,
+        name: "Look in the Mirror",
+        description: `Permanently unlocks the ${PERKS[PerkType.ReflectionsOnTheJourney]?.icon}Reflections on the Journey Perk<br>Boosts its base from ${REFLECTIONS_ON_THE_JOURNEY_BASE} to ${REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE}`,
+        cost: 100
     },
     {
         type: PrestigeUnlockType.DummyUnlock4,
         name: "Test",
         description: "Test",
-        cost: 45
+        cost: 500
     },
 ];
 
-export const PRESTIGE_UPGRADES: PrestigeRepeatable[] = [
+export const PRESTIGE_XP_BOOSTER_MULT = 0.5;
+
+export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     {
-        type: PrestigeRepeatableType.DummyRepeatable1,
-        name: "XP Boost Two Lines",
-        description: "Test",
-        initial_cost: 42,
-        scaling_base: 1.5
+        type: PrestigeRepeatableType.XPBooster,
+        name: "XP Booster",
+        description: `Increases all ${XP_TEXT} by ${PRESTIGE_XP_BOOSTER_MULT * 100}%`,
+        initial_cost: 10,
+        scaling_exponent: 1.25
     },
     {
-        type: PrestigeRepeatableType.DummyRepeatable2,
-        name: "Test",
-        description: "Test",
-        initial_cost: 43,
-        scaling_base: 1.5
+        type: PrestigeRepeatableType.UnlimitedPower,
+        name: "Unlimited Power",
+        description: "Doubles 💪Power Gain",
+        initial_cost: 10,
+        scaling_exponent: 3
     },
     {
         type: PrestigeRepeatableType.DummyRepeatable3,
         name: "Test",
         description: "Test",
         initial_cost: 44,
-        scaling_base: 1.5
+        scaling_exponent: 1.5
     },
     {
         type: PrestigeRepeatableType.DummyRepeatable4,
         name: "Test",
         description: "Test",
         initial_cost: 45,
-        scaling_base: 1.5
+        scaling_exponent: 1.5
     },
 ];

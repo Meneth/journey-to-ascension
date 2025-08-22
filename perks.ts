@@ -35,6 +35,8 @@ export class PerkDefinition {
 }
 
 export const ENERGETIC_MEMORY_MULT = 0.1;
+export const REFLECTIONS_ON_THE_JOURNEY_EXPONENT = 0.95;
+export const REFLECTIONS_ON_THE_JOURNEY_BOOSTED_EXPONENT = 0.9;
 
 export const PERKS: PerkDefinition[] = [
     {
@@ -86,7 +88,7 @@ export const PERKS: PerkDefinition[] = [
         enum: PerkType.WalkWithoutRhythm, name: `Walk Without Rhythm`, tooltip: `Improves ${getSkillString(SkillType.Subterfuge)} Task speed by 40% and ${getSkillString(SkillType.Travel)} Task speed by 20%`, icon: `👣`,
     },
     {
-        enum: PerkType.ReflectionsOnTheJourney, name: `Reflections on the Journey`, tooltip: `Reduce ${ENERGY_TEXT} drain based on the highest zone reached<br>In each zone ${ENERGY_TEXT} consumption is reduced 5% compounding for each zone you've reached past it<br>So zone 12 has ${ENERGY_TEXT} cost multiplied by 0.95^2 if the highest zone reached is 14`, icon: `🕰️`,
+        enum: PerkType.ReflectionsOnTheJourney, name: `Reflections on the Journey`, tooltip: `Reduce ${ENERGY_TEXT} drain based on the highest zone reached<br>In each zone ${ENERGY_TEXT} consumption is reduced 5% compounding for each zone you've reached past it<br>So zone 12 has ${ENERGY_TEXT} cost multiplied by ${REFLECTIONS_ON_THE_JOURNEY_EXPONENT}^2 if the highest zone reached is 14`, icon: `🕰️`,
     },
     {
         enum: PerkType.PurgedBureaucracy, name: `Purged Bureaucracy`, tooltip: `Improves ${getSkillString(SkillType.Charisma)} and ${getSkillString(SkillType.Crafting)} Task speed by 30%`, icon: `⚖️`,

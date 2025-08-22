@@ -1,9 +1,10 @@
 import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } from "./items.js";
-import { ENERGETIC_MEMORY_MULT, PerkType } from "./perks.js";
+import { ENERGETIC_MEMORY_MULT, PerkType, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_EXPONENT, REFLECTIONS_ON_THE_JOURNEY_EXPONENT } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT } from "./prestige_upgrades.js";
 
 // MARK: Skills
 
@@ -27,6 +28,12 @@ export function calcSkillXp(task: Task, task_progress: number): number {
     if (hasPerk(PerkType.Writing)) {
         xp *= 1.5;
     }
+
+    if (hasPrestigeUnlock(PrestigeUnlockType.DivineInspiration)) {
+        xp *= 2;
+    }
+
+    xp *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.XPBooster) * PRESTIGE_XP_BOOSTER_MULT;
 
     xp *= Math.pow(1.25, task.task_definition.zone_id);
 
@@ -289,7 +296,7 @@ export function clickTask(task: Task) {
 
 function fullyFinishTask(task: Task) {
     if (task.task_definition.perk != PerkType.Count) {
-        addPerk(task.task_definition.perk);
+        tryAddPerk(task.task_definition.perk);
     }
 
     if (task.task_definition.unlocks_task >= 0) {
@@ -426,7 +433,8 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
 
     if (hasPerk(PerkType.ReflectionsOnTheJourney)) {
         const zone_diff = GAMESTATE.highest_zone - task.task_definition.zone_id;
-        drain *= Math.pow(0.95, zone_diff);
+        const base = hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror) ? REFLECTIONS_ON_THE_JOURNEY_BOOSTED_EXPONENT : REFLECTIONS_ON_THE_JOURNEY_EXPONENT;
+        drain *= Math.pow(base, zone_diff);
     }
 
     return drain;
@@ -449,6 +457,7 @@ export function doEnergyReset() {
     removeTemporarySkillBonuses();
     halveItemCounts();
     storeLoopStartNumbersForNextGameOver();
+    applyGameStartPrestigeEffects();
     saveGame();
 }
 
@@ -503,7 +512,7 @@ function autoUseItems() {
 }
 
 // MARK: Perks
-function addPerk(perk: PerkType) {
+function tryAddPerk(perk: PerkType) {
     if (hasPerk(perk)) {
         return;
     }
@@ -544,7 +553,8 @@ export function calcPowerGain(task: Task) {
     }
 
     const mult = task.task_definition.zone_id - 1; // First boss is zone 3, which is internally 2
-    const powerAmount = 5 * mult;
+    let powerAmount = 5 * mult;
+    powerAmount *= Math.pow(2, getPrestigeRepeatableLevel(PrestigeRepeatableType.UnlimitedPower));
     return powerAmount;
 }
 
@@ -721,6 +731,66 @@ export function calcPrestigeGain() {
     return Math.ceil(gain);
 }
 
+export function hasPrestigeUnlock(unlock: PrestigeUnlockType) {
+    return GAMESTATE.prestige_unlocks.includes(unlock);
+}
+
+export function getPrestigeRepeatableLevel(repeatable: PrestigeRepeatableType) {
+    return GAMESTATE.prestige_repeatables.get(repeatable) ?? 0;
+}
+
+export function addPrestigeUnlock(unlock: PrestigeUnlockType) {
+    if (hasPrestigeUnlock(unlock)) {
+        console.error("Already has prestige unlock");
+        return;
+    }
+
+    const definition = PRESTIGE_UNLOCKABLES[unlock] as PrestigeUnlock;
+
+    if (GAMESTATE.prestige_currency < definition.cost) {
+        console.error("Not enough prestige currency");
+        return;
+    }
+
+    GAMESTATE.prestige_currency -= definition.cost;
+    GAMESTATE.prestige_unlocks.push(unlock);
+
+    if (unlock == PrestigeUnlockType.PermanentAutomation) {
+        tryAddPerk(PerkType.DeepTrance);
+    }
+    if (unlock == PrestigeUnlockType.LookInTheMirror) {
+        tryAddPerk(PerkType.ReflectionsOnTheJourney);
+    }
+}
+
+export function calcPrestigeRepeatableCost(repeatable: PrestigeRepeatableType) {
+    const definition = PRESTIGE_REPEATABLES[repeatable] as PrestigeRepeatable;
+    const current_level = getPrestigeRepeatableLevel(repeatable);
+
+    return Math.floor(Math.pow(current_level + 1, definition.scaling_exponent));
+}
+
+export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableType) {
+    const cost = calcPrestigeRepeatableCost(repeatable);
+
+    if (GAMESTATE.prestige_currency < cost) {
+        console.error("Not enough prestige currency");
+        return;
+    }
+
+    const current_level = getPrestigeRepeatableLevel(repeatable);
+    GAMESTATE.prestige_repeatables.set(repeatable, current_level + 1);
+}
+
+function applyGameStartPrestigeEffects() {
+    if (hasPrestigeUnlock(PrestigeUnlockType.PermanentAutomation)) {
+        tryAddPerk(PerkType.DeepTrance);
+    }
+    if (hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror)) {
+        tryAddPerk(PerkType.ReflectionsOnTheJourney);
+    }
+}
+
 // MARK: Persistence
 
 export const SAVE_LOCATION = "incrementalGameSave";
@@ -842,6 +912,8 @@ export class Gamestate {
     prestige_available = false;
     prestige_count = 0;
     prestige_currency = 0;
+    prestige_unlocks: PrestigeUnlockType[] = [];
+    prestige_repeatables: Map<PrestigeRepeatableType, number> = new Map();
 
     pending_render_events: RenderEvent[] = [];
 

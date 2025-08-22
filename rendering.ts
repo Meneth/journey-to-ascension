@@ -6,7 +6,7 @@ import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_UPGRADES } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES } from "./prestige_upgrades.js";
 
 // MARK: Helpers
 
@@ -848,7 +848,7 @@ function populatePrestigeView() {
         const repeatables_purchases = createChildElement(upgrades_div, "div");
         repeatables_purchases.className = "prestige-purchases";
 
-        for (const upgrade of PRESTIGE_UPGRADES) {
+        for (const upgrade of PRESTIGE_REPEATABLES) {
             const unlock_button = createChildElement(repeatables_purchases, "button");
             unlock_button.className = "prestige-purchase prestige-purchase-repeatable";
             unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${upgrade.initial_cost}<br>Level: 0`;
@@ -1110,7 +1110,7 @@ function handleEvents() {
                 }
             case EventType.UnlockedPower:
                 {
-                    message_div.innerHTML = `Unlocked Power mechanic`;
+                    message_div.innerHTML = `Unlocked 💪Power mechanic`;
                     message_div.innerHTML += `<br>Boosts ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)}`;
                     recreateTasks();
                     break;
