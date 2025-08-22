@@ -347,12 +347,6 @@ function recreateTasks() {
 }
 
 function updateTaskRendering() {
-    if (GAMESTATE.energy_reset_count != RENDERING.energy_reset_count) {
-        RENDERING.energy_reset_count = GAMESTATE.energy_reset_count;
-        recreateTasks();
-        recreateItems();
-    }
-
     for (const task of GAMESTATE.tasks) {
         const task_element = RENDERING.task_elements.get(task.task_definition) as HTMLElement;
         const fill = task_element.querySelector<HTMLDivElement>(".progress-fill");
@@ -1420,8 +1414,8 @@ export class Rendering {
     }
 }
 
-function checkZone() {
-    if (RENDERING.current_zone == GAMESTATE.current_zone) {
+function checkForZoneAndReset() {
+    if (RENDERING.current_zone == GAMESTATE.current_zone && RENDERING.energy_reset_count == GAMESTATE.energy_reset_count) {
         return;
     }
 
@@ -1508,7 +1502,7 @@ function showTooltip(element: ElementWithTooltip) {
 
 export function updateRendering() {
     handleEvents();
-    checkZone();
+    checkForZoneAndReset();
     updateTaskRendering();
     updateSkillRendering();
     updateEnergyRendering();
