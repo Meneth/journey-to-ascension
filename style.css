@@ -424,6 +424,35 @@ button:hover:enabled {
     background-color: var(--prestige-color);
 }
 
+#prestige-box {
+    position: relative;
+    height: 200px;
+    width: 200px;
+    justify-content: center;
+    align-items: center;
+    background: var(--element-background-color);
+    border-radius: var(--default-border-radius);
+    border: #000;
+    border-width: 2px;
+    border-style: solid;
+    padding: 8px;
+    display: flex;
+    gap: 10px;
+}
+
+#prestige-overlay button {
+    font-size: 1em;
+}
+
+.close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    font-size: 1em;
+}
+
 /* MARK: Tooltips
 */
 
@@ -560,15 +589,6 @@ button:hover:enabled {
 }
 
 #settings button {
-    font-size: 1em;
-}
-
-#close-settings {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 32px;
-    height: 32px;
     font-size: 1em;
 }
 

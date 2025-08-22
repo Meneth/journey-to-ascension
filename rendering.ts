@@ -758,6 +758,39 @@ function updateGameOver() {
     }
 }
 
+// MARK: Prestige
+
+function setupPrestige() {
+    const prestige_div = RENDERING.prestige_overlay_element;
+    const open_button = RENDERING.prestige_element;
+
+    open_button.addEventListener("click", () => {
+        console.log("Test");
+        prestige_div.style.display = "flex";
+    });
+
+    setupTooltip(open_button, function () { return `Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}`; }, function () {
+            let tooltip = `Prestige Tooltip`;
+            tooltip += " TODO";
+
+            return tooltip;
+        });
+
+    const close_button = prestige_div.querySelector<HTMLElement>(".close");
+
+    if (!close_button) {
+        console.error("No close button");
+        return;
+    }
+
+
+    close_button.addEventListener("click", () => {
+        prestige_div.style.display = "none";
+    });
+
+    setupTooltipStatic(close_button, `Close Prestige Menu`, ``);
+}
+
 // MARK: Formatting
 
 function formatOrdinal(n: number): string {
@@ -803,7 +836,8 @@ function formatNumber(n: number, allow_decimals: boolean = true): string {
 
 // MARK: Settings
 
-function setupSettings(settings_div: HTMLElement) {
+function setupSettings() {
+    const settings_div = RENDERING.settings_element;
     const open_button = document.querySelector<HTMLElement>("#open-settings");
 
     if (!open_button) {
@@ -817,10 +851,10 @@ function setupSettings(settings_div: HTMLElement) {
 
     setupTooltipStatic(open_button, `Open Settings Menu`, `Lets you Save and Load from disk`);
 
-    const close_button = settings_div.querySelector<HTMLElement>("#close-settings");
+    const close_button = settings_div.querySelector<HTMLElement>(".close");
 
     if (!close_button) {
-        console.error("No close settings button");
+        console.error("No close button");
         return;
     }
 
@@ -1143,15 +1177,9 @@ function updateExtraStats() {
 
     if (hasUnlockedPrestige() && RENDERING.prestige_element.style.display == "none") {
         RENDERING.prestige_element.style.display = "block";
-        setupTooltip(RENDERING.prestige_element, function () { return `Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}`; }, function () {
-            let tooltip = `Prestige Tooltip`;
-            tooltip += " TODO";
-
-            return tooltip;
-        });
     }
 
-    const prestige_text = `<h3>Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(${42})</button>`;
+    const prestige_text = `<h2>Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(${42})</h2>`;
     if (RENDERING.prestige_element.innerHTML != prestige_text) {
         RENDERING.prestige_element.innerHTML = prestige_text;
     }
@@ -1171,6 +1199,7 @@ export class Rendering {
     power_element: HTMLElement;
     attunement_element: HTMLElement;
     prestige_element: HTMLElement;
+    prestige_overlay_element: HTMLElement;
     task_elements: Map<TaskDefinition, ElementWithTooltip> = new Map();
     skill_elements: Map<SkillType, HTMLElement> = new Map();
     item_elements: Map<ItemType, HTMLElement> = new Map();
@@ -1220,13 +1249,15 @@ export class Rendering {
         this.power_element = getElement("power");
         this.attunement_element = getElement("attunement");
         this.prestige_element = getElement("prestige");
+        this.prestige_overlay_element = getElement("prestige-overlay");
     }
 
     public initialize() {
         setupEnergyReset(this.energy_reset_element);
-        setupSettings(this.settings_element);
+        setupSettings();
         setupControls();
         setupInfoTooltips();
+        setupPrestige();
     }
 
     public start() {
