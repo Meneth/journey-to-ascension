@@ -193,8 +193,8 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 114, name: "Dive as a Squid", cost_multiplier: 1.5, max_reps: 3, xp_mult: 0.5, skills: [SkillType.Druid, SkillType.Search], perk: PerkType.SunkenTreasure }),
             new TaskDefinition({ id: 115, name: "Look for Land", cost_multiplier: 0.5, max_reps: 3, xp_mult: 8, skills: [SkillType.Search] }),
             new TaskDefinition({ id: 116, name: "Practice Transforming", cost_multiplier: 1, xp_mult: 4, skills: [SkillType.Druid] }),
-            new TaskDefinition({ id: 117, name: "Kraken", type: TaskType.Boss, cost_multiplier: 15000, xp_mult: 0.2, skills: [SkillType.Combat], item:ItemType.Calamari, unlocks_task: 118 }),
-            new TaskDefinition({ id: 118, name: "Explore Kraken's Lair", cost_multiplier: 25000, skills: [SkillType.Search, SkillType.Druid], xp_mult: 0.1, perk:PerkType.DeepSeaDiving, hidden_by_default: true }),
+            new TaskDefinition({ id: 117, name: "Kraken", type: TaskType.Boss, cost_multiplier: 15000, xp_mult: 0.2, skills: [SkillType.Combat], item: ItemType.Calamari, unlocks_task: 118 }),
+            new TaskDefinition({ id: 118, name: "Explore Kraken's Lair", cost_multiplier: 25000, skills: [SkillType.Search, SkillType.Druid], xp_mult: 0.1, perk: PerkType.DeepSeaDiving, hidden_by_default: true }),
         ],
     },
     {

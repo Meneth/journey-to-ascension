@@ -1,4 +1,4 @@
-import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition,  } from "./zones.js";
+import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } from "./items.js";
 import { ENERGETIC_MEMORY_MULT, PerkType } from "./perks.js";
@@ -255,7 +255,7 @@ function updateActiveTask() {
     const cost = calcTaskCost(active_task);
     progress = Math.min(progress, cost - active_task.progress);
     active_task.progress += progress;
-    
+
     const is_single_tick = progress >= cost;
     modifyEnergy(-calcEnergyDrainPerTick(active_task, is_single_tick));
 

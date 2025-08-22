@@ -29,7 +29,7 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
     skill_div.appendChild(name);
     skill_div.appendChild(progressBar);
 
-    setupTooltip(skill_div, function() { return `${skill_definition.icon}${skill_definition.name} - Level ${skill.level}`; }, function () {
+    setupTooltip(skill_div, function () { return `${skill_definition.icon}${skill_definition.name} - Level ${skill.level}`; }, function () {
         var tooltip = `Speed multiplier: x${formatNumber(calcSkillTaskProgressMultiplier(skill.type))}`;
         const other_sources_mult = calcSkillTaskProgressWithoutLevel(skill.type);
         if (other_sources_mult != 1) {
@@ -167,10 +167,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     task_div.appendChild(progressBar);
     task_div.appendChild(task_upper_div);
 
-    setupTooltip(task_div, function() {return `${task.task_definition.name}`;}, function () {
+    setupTooltip(task_div, function () { return `${task.task_definition.name}`; }, function () {
         const task_type = TASK_TYPE_NAMES[task.task_definition.type];
         var tooltip = `<p class="subheader ${task_type}">${task_type} Task</p>`;
-        
+
         if (!task.enabled) {
             if (task.task_definition.type == TaskType.Travel) {
                 tooltip += `<p class="disable-reason">Disabled until you complete the <span class="Mandatory">Mandatory</span> tasks</p>`;
@@ -225,16 +225,16 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
             if (task.task_definition.item != ItemType.Count) {
                 const item = ITEMS[task.task_definition.item] as ItemDefinition;
-                table.appendChild(createTwoElementRow(`${completions}`, `${item.icon}${item.name} Item` ));
+                table.appendChild(createTwoElementRow(`${completions}`, `${item.icon}${item.name} Item`));
             }
 
             if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
                 const perk = PERKS[task.task_definition.perk] as PerkDefinition;
                 const is_last_rep = (task.reps + completions) == task.task_definition.max_reps;
                 if (!is_last_rep) { ++asterisk_count; perk_asterisk_index = asterisk_count; }
-                table.appendChild(createTwoElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, `${perk.icon}Mystery Perk` ));
+                table.appendChild(createTwoElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, `${perk.icon}Mystery Perk`));
             }
-            
+
             asterisk_count += 1; // Levels will always produce one
             level_asterisks = "*".repeat(asterisk_count);
             for (const skill of task.task_definition.skills) {
@@ -265,10 +265,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                     }
                 }
 
-                
+
                 table.appendChild(createTwoElementRow(levels, `${skill_definition.icon}${skill_definition.name}`));
             }
-            
+
             const attunement_gain = completions * calcAttunementGain(task);
             if (attunement_gain > 0) {
                 table.appendChild(createTwoElementRow(`${attunement_gain}`, `🌀Attunement`));
@@ -288,8 +288,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             var energy_cost_class = "";
             if (energy_cost_ratio < 0.05) {
                 energy_cost_class = "very-low";
-            }
-            else if (energy_cost_ratio < 0.5) {
+            } else if (energy_cost_ratio < 0.5) {
                 energy_cost_class = "low";
             } else if (energy_cost_ratio < 0.75) {
                 energy_cost_class = "normal";
@@ -479,7 +478,7 @@ function setupInfoTooltips() {
         return;
     }
 
-    setupTooltipStaticHeader(perk_info,`Perks`, function () {
+    setupTooltipStaticHeader(perk_info, `Perks`, function () {
         var tooltip = `Perks are permanent bonuses with a variety of effects`;
         tooltip += `<br>The bonuses stack multiplicatively; 2 +100% results in 4x speed, not 3x`;
         return tooltip;
@@ -538,11 +537,10 @@ function recreateItems() {
 function sortItems(items: [type: ItemType, amount: number][]) {
     items.sort((a, b) => {
         // Items we actually have first
-        if ((a[1] == 0) != (b[1] == 0))
-        {
+        if ((a[1] == 0) != (b[1] == 0)) {
             return (a[1] == 0) ? 1 : -1;
         }
-            
+
         // Then special items
         if (ITEMS_TO_NOT_AUTO_USE.includes(a[0]) != ITEMS_TO_NOT_AUTO_USE.includes(b[0])) {
             return ITEMS_TO_NOT_AUTO_USE.includes(a[0]) ? -1 : 1;
@@ -638,10 +636,10 @@ function populateGameOver(game_over_div: HTMLElement) {
 
     if (GAMESTATE.is_in_game_over) {
         game_over_div.innerHTML = "<h2>Run Over</h2>" +
-                "<p>You used up all your Energy.</p>" +
-                "<p>You keep half your Items (rounded up).</p>" +
-                "<p>The effects of used Items disappear.</p>" +
-                "<p>You keep all your Skills and Perks.</p>";
+            "<p>You used up all your Energy.</p>" +
+            "<p>You keep half your Items (rounded up).</p>" +
+            "<p>The effects of used Items disappear.</p>" +
+            "<p>You keep all your Skills and Perks.</p>";
     } else {
         game_over_div.innerHTML = "<h2>Last Run</h2>";
     }
@@ -727,7 +725,7 @@ function setupGameOver(game_over_div: HTMLElement) {
 
     open_button.disabled = GAMESTATE.energy_reset_count == 0;
 
-    setupTooltipStaticHeader(open_button, `View Last Energy Reset Summary`, function() {
+    setupTooltipStaticHeader(open_button, `View Last Energy Reset Summary`, function () {
         var tooltip = `Lets you reopen the last Energy Reset Summary`;
         if (open_button?.disabled) {
             tooltip += `<p class="disable-reason">Disabled until you do your first Energy Reset</p>`
@@ -1088,7 +1086,7 @@ function setupAutomationControls() {
         setAutomationClasses();
     });
 
-    setupTooltip(all_control, function() { return `Automate ${all_control.textContent}`;}, function () {
+    setupTooltip(all_control, function () { return `Automate ${all_control.textContent}`; }, function () {
         var tooltip = "Toggle between automating Ttasks in all zones, and not automating";
         tooltip += "<br>Right-click Ttasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
@@ -1096,7 +1094,7 @@ function setupAutomationControls() {
         return tooltip;
     });
 
-    setupTooltip(zone_control, function() { return `Automate ${zone_control.textContent}`;}, function () {
+    setupTooltip(zone_control, function () { return `Automate ${zone_control.textContent}`; }, function () {
         var tooltip = "Toggle between automating Tasks in the current zone, and not automating";
         tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
@@ -1115,7 +1113,7 @@ function setupAutomationControls() {
 function updateExtraStats() {
     if (GAMESTATE.has_unlocked_power && RENDERING.power_element.style.display == "none") {
         RENDERING.power_element.style.display = "flex";
-        setupTooltip(RENDERING.power_element, function() { return `💪Power - ${formatNumber(GAMESTATE.power, false)}`;}, function () {
+        setupTooltip(RENDERING.power_element, function () { return `💪Power - ${formatNumber(GAMESTATE.power, false)}`; }, function () {
             var tooltip = `Increases ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} speed by ${formatNumber(GAMESTATE.power, false)}%`;
             tooltip += `<br><br>Increased by fighting Bosses`;
 
@@ -1130,7 +1128,7 @@ function updateExtraStats() {
 
     if (hasPerk(PerkType.Attunement) && RENDERING.attunement_element.style.display == "none") {
         RENDERING.attunement_element.style.display = "flex";
-        setupTooltip(RENDERING.attunement_element, function() { return `🌀Attunement - ${formatNumber(GAMESTATE.attunement, false)}`;}, function () {
+        setupTooltip(RENDERING.attunement_element, function () { return `🌀Attunement - ${formatNumber(GAMESTATE.attunement, false)}`; }, function () {
             var tooltip = `Increases ${getSkillString(SkillType.Study)}, ${getSkillString(SkillType.Magic)}, and ${getSkillString(SkillType.Druid)} speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
             tooltip += `<br><br>Increased by all Tasks it boosts`;
 
@@ -1193,7 +1191,7 @@ export class Rendering {
 
         this.energy_element = getElement("energy");
 
-        setupTooltip(this.energy_element, function() { return `${ENERGY_TEXT} - ${GAMESTATE.current_energy.toFixed(0)}/${GAMESTATE.max_energy.toFixed(0)}`; }, function () {
+        setupTooltip(this.energy_element, function () { return `${ENERGY_TEXT} - ${GAMESTATE.current_energy.toFixed(0)}/${GAMESTATE.max_energy.toFixed(0)}`; }, function () {
             return `${ENERGY_TEXT} goes down over time while you have a Task active`;
         });
 
