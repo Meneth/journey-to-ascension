@@ -430,7 +430,7 @@ export function doEnergyReset() {
 
     GAMESTATE.current_energy = GAMESTATE.max_energy;
     GAMESTATE.energy_reset_count += 1;
-    GAMESTATE.is_in_game_over = false;
+    GAMESTATE.is_in_energy_reset = false;
     GAMESTATE.automation_mode = AutomationMode.Off;
     GAMESTATE.queued_scrolls_of_haste = 0;
 
@@ -633,9 +633,9 @@ export function setAutomationMode(mode: AutomationMode) {
     GAMESTATE.automation_mode = mode;
 }
 
-// MARK: Game over
+// MARK: Energy Reset
 
-export class GameOverInfo {
+export class EnergyResetInfo {
     skill_gains: [SkillType, number][] = [];
     power_at_start = 0;
     power_at_end = 0;
@@ -649,14 +649,14 @@ function checkEnergyReset() {
         return;
     }
 
-    GAMESTATE.is_in_game_over = true;
+    GAMESTATE.is_in_energy_reset = true;
     GAMESTATE.current_energy = 0;
 
-    populateGameOverInfo();
+    populateEnergyResetInfo();
 }
 
-function populateGameOverInfo() {
-    const info = new GameOverInfo();
+function populateEnergyResetInfo() {
+    const info = new EnergyResetInfo();
 
     for (let i = 0; i < SkillType.Count; i++) {
         const current_level = getSkill(i).level;
@@ -679,7 +679,7 @@ function populateGameOverInfo() {
         info.energetic_memory_gain = (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
     }
 
-    GAMESTATE.game_over_info = info;
+    GAMESTATE.energy_reset_info = info;
 }
 
 // MARK: Persistence
@@ -786,9 +786,9 @@ export class Gamestate {
     items: Map<ItemType, number> = new Map();
     queued_scrolls_of_haste = 0;
 
-    is_in_game_over = false;
+    is_in_energy_reset = false;
     is_at_end_of_content = false;
-    game_over_info = new GameOverInfo();
+    energy_reset_info = new EnergyResetInfo();
 
     current_energy = 100;
     max_energy = 100;
@@ -839,7 +839,7 @@ function advanceZone() {
 }
 
 export function updateGamestate() {
-    if (GAMESTATE.is_in_game_over) {
+    if (GAMESTATE.is_in_energy_reset) {
         return;
     }
 
