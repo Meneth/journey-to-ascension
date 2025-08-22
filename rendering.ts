@@ -6,6 +6,15 @@ import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_UPGRADES } from "./prestige_upgrades.js";
+
+// MARK: Helpers
+
+function createChildElement(parent: Element, child_type: string): HTMLElement {
+    const child = document.createElement(child_type);
+    parent.appendChild(child);
+    return child;
+}
 
 // MARK: Skills
 
@@ -760,13 +769,86 @@ function updateGameOver() {
 
 // MARK: Prestige
 
+function populatePrestigeView() {
+    const prestige_overlay = RENDERING.prestige_overlay_element;
+    const prestige_div = prestige_overlay.querySelector("#prestige-box");
+    if (!prestige_div) {
+        console.error("No prestige-box");
+        return;
+    }
+
+    prestige_div.innerHTML = "";
+
+    const close_button = createChildElement(prestige_div, "button");
+    close_button.className = "close";
+    close_button.textContent = "X";
+
+    close_button.addEventListener("click", () => {
+        prestige_overlay.style.display = "none";
+    });
+
+    setupTooltipStatic(close_button, `Close Prestige Menu`, ``);
+
+    
+    {
+        const summary_div = createChildElement(prestige_div, "div");
+        const header = createChildElement(summary_div, "h1");
+        header.textContent = "Prestige";
+
+        const currency = createChildElement(summary_div, "p");
+        currency.textContent = `Currency: ${formatNumber(GAMESTATE.prestige_currency, false)} (+${42})`;
+
+        const currency_gain = createChildElement(summary_div, "p");
+        currency_gain.textContent = `Currency Gain: Highest Zone ^ 3`;
+
+        const currency_gain_stats = createChildElement(summary_div, "p");
+        currency_gain_stats.innerHTML = `Highest Zone Reached: ${GAMESTATE.current_zone + 1}`;
+        currency_gain_stats.innerHTML += `<br>Currency Gain in Zone ${GAMESTATE.current_zone + 2}: ${1337}`;
+
+        const prestige_button = createChildElement(summary_div, "button");
+        prestige_button.textContent = "Prestige";
+        prestige_button.className = "do-prestige";
+    }
+
+    {
+        const touch_the_divine_div = createChildElement(prestige_div, "div");
+        touch_the_divine_div.className = "prestige-section";
+
+        const header = createChildElement(touch_the_divine_div, "h2");
+        header.textContent = "Touch the Divine";
+        
+        const unlockables_div = createChildElement(touch_the_divine_div, "div");
+        const unlockables_header = createChildElement(unlockables_div, "h3");
+        unlockables_header.textContent = "Unlockables";
+
+        for (const unlock of PRESTIGE_UNLOCKABLES) {
+            const unlock_div = createChildElement(unlockables_div, "button");
+            unlock_div.innerHTML = `${unlock.name}<br>${unlock.cost}`;
+
+            setupTooltipStatic(unlock_div, unlock.name, unlock.description);
+        }
+
+        const upgrades_div = createChildElement(touch_the_divine_div, "div");
+        const upgrades_header = createChildElement(upgrades_div, "h3");
+        upgrades_header.textContent = "Repeatable Upgrades";
+
+        for (const upgrade of PRESTIGE_UPGRADES) {
+            const unlock_div = createChildElement(upgrades_div, "button");
+            unlock_div.innerHTML = `${upgrade.name}<br>${upgrade.initial_cost}`;
+
+            setupTooltipStatic(unlock_div, upgrade.name, upgrade.description);
+        }
+    }
+}
+
 function setupPrestige() {
-    const prestige_div = RENDERING.prestige_overlay_element;
+    const prestige_overlay = RENDERING.prestige_overlay_element;
     const open_button = RENDERING.prestige_element;
 
     open_button.addEventListener("click", () => {
         console.log("Test");
-        prestige_div.style.display = "flex";
+        populatePrestigeView();
+        prestige_overlay.style.display = "flex";
     });
 
     setupTooltip(open_button, function () { return `Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}`; }, function () {
@@ -775,20 +857,6 @@ function setupPrestige() {
 
             return tooltip;
         });
-
-    const close_button = prestige_div.querySelector<HTMLElement>(".close");
-
-    if (!close_button) {
-        console.error("No close button");
-        return;
-    }
-
-
-    close_button.addEventListener("click", () => {
-        prestige_div.style.display = "none";
-    });
-
-    setupTooltipStatic(close_button, `Close Prestige Menu`, ``);
 }
 
 // MARK: Formatting
@@ -1179,7 +1247,7 @@ function updateExtraStats() {
         RENDERING.prestige_element.style.display = "block";
     }
 
-    const prestige_text = `<h2>Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(${42})</h2>`;
+    const prestige_text = `<h2>Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(+${42})</h2>`;
     if (RENDERING.prestige_element.innerHTML != prestige_text) {
         RENDERING.prestige_element.innerHTML = prestige_text;
     }
@@ -1248,7 +1316,7 @@ export class Rendering {
         this.controls_list_element = getElement("controls-list");
         this.power_element = getElement("power");
         this.attunement_element = getElement("attunement");
-        this.prestige_element = getElement("prestige");
+        this.prestige_element = getElement("open-prestige");
         this.prestige_overlay_element = getElement("prestige-overlay");
     }
 

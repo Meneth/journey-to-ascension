@@ -44,7 +44,7 @@ export class ItemDefinition {
 
 export const HASTE_MULT = 5;
 
-export var ITEMS: ItemDefinition[] = [
+export const ITEMS: ItemDefinition[] = [
     {
         enum: ItemType.Food, name: `Food`, tooltip: `Gives 5 ${ENERGY_TEXT} each<br>Can take you above your Max Energy`, icon: `🍲`,
         get_effect_text: (amount) => { return `Gained ${amount * 5} ${ENERGY_TEXT}`; },
@@ -195,4 +195,4 @@ export var ITEMS: ItemDefinition[] = [
     },
 ]
 
-export var ITEMS_TO_NOT_AUTO_USE = [ItemType.ScrollOfHaste];
+export const ITEMS_TO_NOT_AUTO_USE = [ItemType.ScrollOfHaste];

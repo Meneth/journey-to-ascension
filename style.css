@@ -10,6 +10,7 @@
     --default-border-radius: 8px;
     --progress-bar-fill-color: #00BB00;
     --progress-bar-fill-warning-color: #018101;
+    --default-text-color: #000;
 
     --palette-dark-gray-darker: #616161;
     --tooltip-line-height: 1.6;
@@ -36,7 +37,7 @@
 }
 
 body {
-    color: #000;
+    color: var(--default-text-color);
     margin: 8px;
     min-height: calc(100vh - (8px * 2));
     background: linear-gradient(120deg, #102661, #8c386d) fixed;
@@ -420,14 +421,19 @@ button:hover:enabled {
 /* MARK: Prestige
 */
 
-#prestige {
+#open-prestige {
     background-color: var(--prestige-color);
+}
+
+.do-prestige {
+    background-color: var(--prestige-color);
+    font-size: 2em;
 }
 
 #prestige-box {
     position: relative;
-    height: 200px;
-    width: 200px;
+    height: 400px;
+    width: 400px;
     justify-content: center;
     align-items: center;
     background: var(--element-background-color);
@@ -437,11 +443,12 @@ button:hover:enabled {
     border-style: solid;
     padding: 8px;
     display: flex;
+    flex-direction: column;
     gap: 10px;
-}
 
-#prestige-overlay button {
-    font-size: 1em;
+    overflow-y: auto;
+    
+    color: var(--default-text-color);
 }
 
 .close {
@@ -451,6 +458,11 @@ button:hover:enabled {
     width: 32px;
     height: 32px;
     font-size: 1em;
+}
+
+.prestige-section {
+    width: 100%;
+    border-top: 1px solid var(--tooltip-palette-table-lines);
 }
 
 /* MARK: Tooltips
