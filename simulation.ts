@@ -30,7 +30,7 @@ export function calcSkillXp(task: Task, task_progress: number): number {
     }
 
     if (hasPrestigeUnlock(PrestigeUnlockType.DivineInspiration)) {
-        xp *= 2;
+        xp *= 1.5;
     }
 
     xp *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.XPBooster) * PRESTIGE_XP_BOOSTER_MULT;
@@ -590,8 +590,13 @@ export function calcAttunementGain(task: Task): number {
         return 0;
     }
 
-    const zone_mult = task.task_definition.zone_id + 1;
-    return zone_mult;
+    let value = task.task_definition.zone_id + 1;
+    if (hasPrestigeUnlock(PrestigeUnlockType.DivineInspiration))
+    {
+        value *= 1.5;
+    }
+
+    return value;
 }
 
 // MARK: Automation
