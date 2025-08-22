@@ -12,6 +12,7 @@ export enum EventType {
     UnlockedSkill,
     UnlockedPower,
     TaskCompleted,
+    PrestigeAvailable,
 
     Count
 }

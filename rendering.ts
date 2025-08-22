@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
@@ -529,7 +529,7 @@ function recreateItems() {
 
     sortItems(items);
 
-    for (const [item, ] of items) {
+    for (const [item,] of items) {
         createItemDiv(item, items_div);
     }
 }
@@ -1140,6 +1140,21 @@ function updateExtraStats() {
     if (RENDERING.attunement_element.innerHTML != attunement_text) {
         RENDERING.attunement_element.innerHTML = attunement_text;
     }
+
+    if (hasUnlockedPrestige() && RENDERING.prestige_element.style.display == "none") {
+        RENDERING.prestige_element.style.display = "block";
+        setupTooltip(RENDERING.prestige_element, function () { return `Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}`; }, function () {
+            let tooltip = `Prestige Tooltip`;
+            tooltip += " TODO";
+
+            return tooltip;
+        });
+    }
+
+    const prestige_text = `<h3>Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(${42})</button>`;
+    if (RENDERING.prestige_element.innerHTML != prestige_text) {
+        RENDERING.prestige_element.innerHTML = prestige_text;
+    }
 }
 
 // MARK: Rendering
@@ -1155,6 +1170,7 @@ export class Rendering {
     message_contexts: Map<Element, RenderEvent> = new Map();
     power_element: HTMLElement;
     attunement_element: HTMLElement;
+    prestige_element: HTMLElement;
     task_elements: Map<TaskDefinition, ElementWithTooltip> = new Map();
     skill_elements: Map<SkillType, HTMLElement> = new Map();
     item_elements: Map<ItemType, HTMLElement> = new Map();
@@ -1203,6 +1219,7 @@ export class Rendering {
         this.controls_list_element = getElement("controls-list");
         this.power_element = getElement("power");
         this.attunement_element = getElement("attunement");
+        this.prestige_element = getElement("prestige");
     }
 
     public initialize() {

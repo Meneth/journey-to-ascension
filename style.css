@@ -20,6 +20,9 @@
     --tooltip-palette-surface: #000000AA;
 
     --tooltip-palette-table-lines: rgba(255, 255, 255, 0.12);
+
+    --prestige-color: rgb(141, 23, 196);
+    --prestige-color-brighter: rgb(162, 54, 204);
 }
 
 /* MARK: Main areas
@@ -191,12 +194,12 @@ button:hover:enabled {
 }
 
 .task.Prestige button:enabled {
-    background: linear-gradient(5deg, rgb(141, 23, 196), rgb(162, 54, 204));
+    background: linear-gradient(5deg, var(--prestige-color), var(--prestige-color-brighter));
     animation: prestige-glow 1s infinite alternate;
 }
 
 .tooltip .Prestige {
-    color: rgb(141, 23, 196);
+    color: var(--prestige-color);
 }
 
 .task .indicator {
@@ -412,6 +415,13 @@ button:hover:enabled {
 
 #game-over-overlay p {
     margin: 0.7em;
+}
+
+/* MARK: Prestige
+*/
+
+#prestige {
+    background-color: var(--prestige-color);
 }
 
 /* MARK: Tooltips

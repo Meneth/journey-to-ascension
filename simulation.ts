@@ -282,6 +282,8 @@ export function clickTask(task: Task) {
 
     if (task.task_definition.type == TaskType.Prestige) {
         GAMESTATE.prestige_available = true;
+        const event = new RenderEvent(EventType.PrestigeAvailable, {});
+        GAMESTATE.queueRenderEvent(event);
     }
 }
 
