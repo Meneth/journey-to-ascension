@@ -821,6 +821,17 @@ function populatePrestigeView() {
         prestige_button.className = "do-prestige";
         (prestige_button as HTMLInputElement).disabled = !GAMESTATE.prestige_available;
 
+        setupTooltipStaticHeader(prestige_button, "Do Prestige Reset", () => {
+            let desc = "";
+            if (!GAMESTATE.prestige_available) {
+                desc += `<p class="disable-reason">Disabled until you complete the <span class="Prestige">Prestige</span> task in Zone 15</p>`;
+            }
+
+            desc += "Will reset <b><i>everything</i></b> except that which is granted by Prestige itself, but gives Prestige currency in return";
+
+            return desc;
+        });
+
         prestige_button.addEventListener("click", () => {
             doPrestige();
             prestige_overlay.style.display = "none";
@@ -862,6 +873,7 @@ function populatePrestigeView() {
             if (!is_unlocked) {
                 unlock_button.addEventListener("click", () => {
                     addPrestigeUnlock(unlock.type);
+                    populatePrestigeView();
                 });
             }
         }
@@ -902,6 +914,7 @@ function populatePrestigeView() {
 
             unlock_button.addEventListener("click", () => {
                 increasePrestigeRepeatableLevel(upgrade.type);
+                populatePrestigeView();
             });
         }
     }
@@ -916,9 +929,8 @@ function setupPrestige() {
         prestige_overlay.style.display = "flex";
     });
 
-    setupTooltip(open_button, function () { return `Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}`; }, function () {
-        let tooltip = `Prestige Tooltip`;
-        tooltip += " TODO";
+    setupTooltip(open_button, function () { return `Divine Spark - ${formatNumber(GAMESTATE.prestige_currency, false)}`; }, function () {
+        const tooltip = `Within this menu you can Prestige to gain Divine Spark, and buy powerful upgrades`;
 
         return tooltip;
     });
@@ -1312,7 +1324,7 @@ function updateExtraStats() {
         RENDERING.prestige_element.style.display = "block";
     }
 
-    const prestige_text = `<h2>Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(+${formatNumber(calcPrestigeGain(), false)})</h2>`;
+    const prestige_text = `<h2>Divine Spark - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(+${formatNumber(calcPrestigeGain(), false)})</h2>`;
     if (RENDERING.prestige_element.innerHTML != prestige_text) {
         RENDERING.prestige_element.innerHTML = prestige_text;
     }

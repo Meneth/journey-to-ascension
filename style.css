@@ -10,6 +10,7 @@
     --default-border-radius: 8px;
     --progress-bar-fill-color: #00BB00;
     --progress-bar-fill-warning-color: #018101;
+    --prestige-unlock-bought-color: rgb(22, 196, 88);
     --default-text-color: #000;
 
     --palette-dark-gray-darker: #616161;
@@ -474,6 +475,15 @@ button:hover:enabled {
 .prestige-purchase {
     width: 100px;
     height: 84px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+div.prestige-purchase {
+    background-color: var(--prestige-unlock-bought-color);
+    border-radius: var(--default-border-radius);
 }
 
 .prestige-purchase.prestige-purchase-repeatable {
