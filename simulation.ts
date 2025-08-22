@@ -264,7 +264,7 @@ function updateActiveTask() {
     }
 
     if (active_task.progress >= cost) {
-        finishTask(active_task);
+        finishTaskRep(active_task);
     }
 }
 
@@ -279,9 +279,23 @@ export function clickTask(task: Task) {
             GAMESTATE.queued_scrolls_of_haste--;
         }
     }
+
+    if (task.task_definition.type == TaskType.Prestige) {
+        GAMESTATE.prestige_available = true;
+    }
 }
 
-function finishTask(task: Task) {
+function fullyFinishTask(task: Task) {
+    if (task.task_definition.perk != PerkType.Count) {
+        addPerk(task.task_definition.perk);
+    }
+
+    if (task.task_definition.unlocks_task >= 0) {
+        unlockTask(task.task_definition.unlocks_task);
+    }
+}
+
+function finishTaskRep(task: Task) {
     if (task.task_definition.type == TaskType.Travel) {
         advanceZone();
     }
@@ -297,24 +311,16 @@ function finishTask(task: Task) {
 
     task.hasted = false;
 
-    const fully_finished = task.reps == task.task_definition.max_reps;
-    if (fully_finished && task.task_definition.perk != PerkType.Count) {
-        addPerk(task.task_definition.perk);
-    }
-
-    if (fully_finished && task.task_definition.unlocks_task >= 0) {
-        unlockTask(task.task_definition.unlocks_task);
-    }
-
     addPower(calcPowerGain(task));
     addAttunement(calcAttunementGain(task));
 
-    if (!GAMESTATE.repeat_tasks || fully_finished) {
-        GAMESTATE.active_task = null;
+    const fully_finished = task.reps == task.task_definition.max_reps;
+    if (fully_finished) {
+        fullyFinishTask(task);
     }
 
-    if (task.task_definition.type == TaskType.Prestige) {
-        GAMESTATE.is_at_end_of_content = true;
+    if (!GAMESTATE.repeat_tasks || fully_finished) {
+        GAMESTATE.active_task = null;
     }
 
     updateEnabledTasks();
@@ -682,6 +688,12 @@ function populateEnergyResetInfo() {
     GAMESTATE.energy_reset_info = info;
 }
 
+// MARK: Prestige
+
+export function hasUnlockedPrestige() {
+    return GAMESTATE.prestige_available || GAMESTATE.prestige_count > 0;
+}
+
 // MARK: Persistence
 
 export const SAVE_LOCATION = "incrementalGameSave";
@@ -798,6 +810,10 @@ export class Gamestate {
     has_unlocked_power = false;
 
     attunement = 0;
+
+    prestige_available = false;
+    prestige_count = 0;
+    prestige_currency = 0;
 
     pending_render_events: RenderEvent[] = [];
 
