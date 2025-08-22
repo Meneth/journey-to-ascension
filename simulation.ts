@@ -295,13 +295,13 @@ function fullyFinishTask(task: Task) {
     if (task.task_definition.unlocks_task >= 0) {
         unlockTask(task.task_definition.unlocks_task);
     }
-}
 
-function finishTaskRep(task: Task) {
     if (task.task_definition.type == TaskType.Travel) {
         advanceZone();
     }
+}
 
+function finishTaskRep(task: Task) {
     if (task.task_definition.item != ItemType.Count) {
         addItem(task.task_definition.item, 1);
     }
@@ -401,6 +401,10 @@ function unlockTask(task_id: number) {
     const context: UnlockedTaskContext = { task_definition: task };
     const event = new RenderEvent(EventType.UnlockedTask, context);
     GAMESTATE.queueRenderEvent(event);
+}
+
+function isTaskFullyCompleted(task: Task) : boolean {
+    return task.reps >= task.task_definition.max_reps;
 }
 
 // MARK: Energy
@@ -805,7 +809,7 @@ export class Gamestate {
     unlocked_tasks: number[] = [];
     current_zone: number = 0;
     highest_zone: number = 0;
-    highest_zone_fully_completed: number = 0;
+    highest_zone_fully_completed: number = -1;
 
     repeat_tasks = true;
     automation_mode = AutomationMode.Off;
@@ -868,6 +872,11 @@ function advanceZone() {
         GAMESTATE.is_at_end_of_content = true;
         return;
     }
+
+    if (GAMESTATE.tasks.every((task: Task) => { return isTaskFullyCompleted(task); })) {
+        GAMESTATE.highest_zone_fully_completed = Math.max(GAMESTATE.highest_zone_fully_completed, GAMESTATE.current_zone);
+    }
+    
 
     GAMESTATE.current_zone += 1;
     GAMESTATE.highest_zone = Math.max(GAMESTATE.highest_zone, GAMESTATE.current_zone);

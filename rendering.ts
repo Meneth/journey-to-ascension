@@ -801,7 +801,7 @@ function populatePrestigeView() {
         header.textContent = "Prestige";
 
         const currency = createChildElement(summary_div, "p");
-        currency.textContent = `Currency: ${formatNumber(GAMESTATE.prestige_currency, false)} (+${calcPrestigeGain()})`;
+        currency.textContent = `Currency: ${formatNumber(GAMESTATE.prestige_currency, false)} (+${formatNumber(calcPrestigeGain(), false)})`;
 
         const currency_gain = createChildElement(summary_div, "p");
         currency_gain.innerHTML = `Currency gain:<br>Highest Zone ^ ${PRESTIGE_GAIN_EXPONENT} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${PRESTIGE_GAIN_EXPONENT})`;
@@ -809,12 +809,12 @@ function populatePrestigeView() {
 
         const currency_gain_stats = createChildElement(summary_div, "p");
         currency_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
-        currency_gain_stats.innerHTML = `Highest Zone fully completed: ${GAMESTATE.highest_zone_fully_completed + 1}`;
+        currency_gain_stats.innerHTML += `<br>Highest Zone fully completed: ${GAMESTATE.highest_zone_fully_completed + 1}`;
 
         const potentialReachGain = calcPrestigeGainFromHighestZone(GAMESTATE.highest_zone + 1) - calcPrestigeGainFromHighestZone(GAMESTATE.highest_zone);
-        currency_gain_stats.innerHTML += `<br>Additional Currency for reaching ${GAMESTATE.highest_zone + 2}: ${potentialReachGain.toFixed(0)}`;
+        currency_gain_stats.innerHTML += `<br>Additional Currency for reaching Zone ${GAMESTATE.highest_zone + 2}: ${formatNumber(potentialReachGain, false)}`;
         const potentialFullCompletionGain = calcPrestigeGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed + 1) - calcPrestigeGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
-        currency_gain_stats.innerHTML += `<br>Additional Currency for fully completing ${GAMESTATE.highest_zone_fully_completed + 2}: ${potentialFullCompletionGain.toFixed(0)}`;
+        currency_gain_stats.innerHTML += `<br>Additional Currency for fully completing Zone ${GAMESTATE.highest_zone_fully_completed + 2}: ${formatNumber(potentialFullCompletionGain, false)}`;
 
         const prestige_button = createChildElement(summary_div, "button");
         prestige_button.textContent = "Prestige";
@@ -1264,7 +1264,7 @@ function updateExtraStats() {
         RENDERING.prestige_element.style.display = "block";
     }
 
-    const prestige_text = `<h2>Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(+${42})</h2>`;
+    const prestige_text = `<h2>Prestige - ${formatNumber(GAMESTATE.prestige_currency, false)}<br>(+${formatNumber(calcPrestigeGain(), false)})</h2>`;
     if (RENDERING.prestige_element.innerHTML != prestige_text) {
         RENDERING.prestige_element.innerHTML = prestige_text;
     }
