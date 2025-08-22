@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcPrestigeGain, calcPrestigeGainFromHighestZoneFullyCompleted, calcPrestigeGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcPrestigeGain, calcPrestigeGainFromHighestZoneFullyCompleted, calcPrestigeGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
@@ -819,6 +819,12 @@ function populatePrestigeView() {
         const prestige_button = createChildElement(summary_div, "button");
         prestige_button.textContent = "Prestige";
         prestige_button.className = "do-prestige";
+        (prestige_button as HTMLInputElement).disabled = !GAMESTATE.prestige_available;
+
+        prestige_button.addEventListener("click", () => {
+            doPrestige();
+            prestige_overlay.style.display = "none";
+        });
     }
 
     {
@@ -852,6 +858,12 @@ function populatePrestigeView() {
             }
 
             setupTooltipStatic(unlock_button, unlock.name, unlock.description);
+
+            if (!is_unlocked) {
+                unlock_button.addEventListener("click", () => {
+                    addPrestigeUnlock(unlock.type);
+                });
+            }
         }
 
         const upgrades_div = createChildElement(touch_the_divine_div, "div");
@@ -887,6 +899,10 @@ function populatePrestigeView() {
 
                 return desc;
             });
+
+            unlock_button.addEventListener("click", () => {
+                increasePrestigeRepeatableLevel(upgrade.type);
+            });
         }
     }
 }
@@ -896,7 +912,6 @@ function setupPrestige() {
     const open_button = RENDERING.prestige_element;
 
     open_button.addEventListener("click", () => {
-        console.log("Test");
         populatePrestigeView();
         prestige_overlay.style.display = "flex";
     });

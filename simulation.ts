@@ -196,6 +196,9 @@ export function getSkill(skill: SkillType): Skill {
 }
 
 function initializeSkills() {
+    GAMESTATE.skills = [];
+    GAMESTATE.skills_at_start_of_reset = [];
+
     for (let i = 0; i < SkillType.Count; i++) {
         GAMESTATE.skills.push(new Skill(i));
         GAMESTATE.skills_at_start_of_reset.push(0);
@@ -440,24 +443,27 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
     return drain;
 }
 
+function doAnyReset() {
+    GAMESTATE.current_zone = 0;
+    resetTasks();
+    GAMESTATE.current_energy = GAMESTATE.max_energy;
+    GAMESTATE.is_in_energy_reset = false;
+    GAMESTATE.automation_mode = AutomationMode.Off;
+    GAMESTATE.queued_scrolls_of_haste = 0;
+    removeTemporarySkillBonuses();
+    storeLoopStartNumbersForNextGameOver();
+    
+}
+
 export function doEnergyReset() {
     if (hasPerk(PerkType.EnergeticMemory)) {
         GAMESTATE.max_energy += (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
     }
 
-    GAMESTATE.current_zone = 0;
-    resetTasks();
-
-    GAMESTATE.current_energy = GAMESTATE.max_energy;
+    doAnyReset(); // Gotta be after the current_zone check
     GAMESTATE.energy_reset_count += 1;
-    GAMESTATE.is_in_energy_reset = false;
-    GAMESTATE.automation_mode = AutomationMode.Off;
-    GAMESTATE.queued_scrolls_of_haste = 0;
-
-    removeTemporarySkillBonuses();
     halveItemCounts();
-    storeLoopStartNumbersForNextGameOver();
-    applyGameStartPrestigeEffects();
+    
     saveGame();
 }
 
@@ -791,6 +797,35 @@ function applyGameStartPrestigeEffects() {
     }
 }
 
+export function doPrestige() {
+    doAnyReset();
+    GAMESTATE.prestige_count++;
+    GAMESTATE.prestige_currency += calcPrestigeGain();
+
+    // Reset most game state
+    GAMESTATE.unlocked_tasks = [];
+    GAMESTATE.highest_zone = 0;
+    GAMESTATE.highest_zone_fully_completed = 0;
+    initializeSkills();
+    GAMESTATE.perks = new Map();
+    GAMESTATE.items = new Map();
+    GAMESTATE.energy_reset_info = new EnergyResetInfo();
+    GAMESTATE.energy_reset_count = 0;
+    GAMESTATE.max_energy = STARTING_ENERGY;
+    GAMESTATE.power = 0;
+    GAMESTATE.attunement = 0;
+    GAMESTATE.prestige_available = false;
+
+    // Things not reset:
+    // has_unlocked_power - No reason to hide that from the UI
+    // unlocked_skills - No reason to hide that either
+    // Any prestige variable, duh. Except prestige_available
+
+    resetTasks();
+    applyGameStartPrestigeEffects();
+    saveGame();
+}
+
 // MARK: Persistence
 
 export const SAVE_LOCATION = "incrementalGameSave";
@@ -871,6 +906,8 @@ function loadGameFromData(data: any) {
 
 // MARK: Gamestate
 
+const STARTING_ENERGY = 100;
+
 export class Gamestate {
     tick_interval_ms = 100;
 
@@ -900,8 +937,8 @@ export class Gamestate {
     is_at_end_of_content = false;
     energy_reset_info = new EnergyResetInfo();
 
-    current_energy = 100;
-    max_energy = 100;
+    current_energy = STARTING_ENERGY;
+    max_energy = STARTING_ENERGY;
     energy_reset_count = 0;
 
     power = 0;
