@@ -36,7 +36,7 @@ export class PerkDefinition {
 
 export const ENERGETIC_MEMORY_MULT = 0.1;
 
-export var PERKS: PerkDefinition[] = [
+export const PERKS: PerkDefinition[] = [
     {
         enum: PerkType.Reading, name: `How to Read`, tooltip: `Improves ${getSkillString(SkillType.Study)} Task speed by 50%`, icon: `📖`,
     },

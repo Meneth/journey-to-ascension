@@ -7,7 +7,7 @@ import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 
 // MARK: Skills
 
-var progress_mult = 1;
+let progress_mult = 1;
 
 export class Skill {
     type: SkillType;
@@ -22,7 +22,7 @@ export class Skill {
 
 export function calcSkillXp(task: Task, task_progress: number): number {
     const xp_mult = 8;
-    var xp = task_progress * xp_mult * task.task_definition.xp_mult;
+    let xp = task_progress * xp_mult * task.task_definition.xp_mult;
 
     if (hasPerk(PerkType.Writing)) {
         xp *= 1.5;
@@ -46,10 +46,10 @@ export function calcSkillXpNeededAtLevel(level: number, skill_type: SkillType): 
 }
 
 function addSkillXp(skill: SkillType, xp: number) {
-    var skill_entry = getSkill(skill);
+    const skill_entry = getSkill(skill);
 
     skill_entry.progress += xp;
-    var xp_to_level_up = calcSkillXpNeeded(skill_entry);
+    let xp_to_level_up = calcSkillXpNeeded(skill_entry);
 
     const old_level = skill_entry.level;
     while (skill_entry.progress >= xp_to_level_up) {
@@ -66,7 +66,7 @@ function addSkillXp(skill: SkillType, xp: number) {
 }
 
 function removeTemporarySkillBonuses() {
-    for (var skill of GAMESTATE.skills.values()) {
+    for (const skill of GAMESTATE.skills.values()) {
         skill.speed_modifier = 1;
     }
 }
@@ -77,9 +77,9 @@ export function calcSkillTaskProgressMultiplierFromLevel(level: number): number 
 }
 
 export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number {
-    var mult = 1;
+    let mult = 1;
 
-    var skill = getSkill(skill_type);
+    const skill = getSkill(skill_type);
     mult *= skill.speed_modifier;
 
     switch (skill_type) {
@@ -173,8 +173,8 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
 }
 
 export function calcSkillTaskProgressMultiplier(skill_type: SkillType): number {
-    var skill = getSkill(skill_type);
-    var mult = calcSkillTaskProgressWithoutLevel(skill_type);
+    const skill = getSkill(skill_type);
+    let mult = calcSkillTaskProgressWithoutLevel(skill_type);
     mult *= calcSkillTaskProgressMultiplierFromLevel(skill.level);
     return mult;
 }
@@ -216,9 +216,9 @@ export function calcTaskCost(task: Task): number {
 }
 
 export function calcTaskProgressMultiplier(task: Task): number {
-    var mult = 1;
+    let mult = 1;
 
-    var skill_level_mult = 1;
+    let skill_level_mult = 1;
     for (const skill_type of task.task_definition.skills) {
         skill_level_mult *= calcSkillTaskProgressMultiplierFromLevel(getSkill(skill_type).level);
     }
@@ -242,7 +242,7 @@ function calcTaskProgressPerTick(task: Task): number {
 }
 
 function updateActiveTask() {
-    var active_task = GAMESTATE.active_task;
+    let active_task = GAMESTATE.active_task;
     if (!active_task) {
         GAMESTATE.active_task = pickNextTaskInAutomationQueue();
         active_task = GAMESTATE.active_task;
@@ -251,7 +251,7 @@ function updateActiveTask() {
         return;
     }
 
-    var progress = calcTaskProgressPerTick(active_task);
+    let progress = calcTaskProgressPerTick(active_task);
     const cost = calcTaskCost(active_task);
     progress = Math.min(progress, cost - active_task.progress);
     active_task.progress += progress;
@@ -325,7 +325,7 @@ function finishTask(task: Task) {
 }
 
 function updateEnabledTasks() {
-    var has_unfinished_mandatory_task = false;
+    let has_unfinished_mandatory_task = false;
 
     for (var task of GAMESTATE.tasks) {
         const finished = task.reps >= task.task_definition.max_reps;
@@ -402,7 +402,7 @@ function modifyEnergy(delta: number) {
 }
 
 export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): number {
-    var drain = 1;
+    let drain = 1;
 
     if (is_single_tick && hasPerk(PerkType.MinorTimeCompression)) {
         drain *= 0.2;
@@ -443,7 +443,7 @@ export function doEnergyReset() {
 // MARK: Items
 
 function addItem(item: ItemType, count: number) {
-    var oldValue = GAMESTATE.items.get(item) ?? 0;
+    const oldValue = GAMESTATE.items.get(item) ?? 0;
     GAMESTATE.items.set(item, oldValue + count);
 
     const event = new RenderEvent(EventType.GainedItem, {});
@@ -451,8 +451,8 @@ function addItem(item: ItemType, count: number) {
 }
 
 export function clickItem(item: ItemType, use_all: boolean) {
-    var definition = ITEMS[item] as ItemDefinition;
-    var old_value = GAMESTATE.items.get(item) ?? 0;
+    const definition = ITEMS[item] as ItemDefinition;
+    const old_value = GAMESTATE.items.get(item) ?? 0;
 
     if (old_value <= 0) {
         console.error("Not held item?");
@@ -469,7 +469,7 @@ export function clickItem(item: ItemType, use_all: boolean) {
 }
 
 function halveItemCounts() {
-    for (var [key, value] of GAMESTATE.items) {
+    for (const [key, value] of GAMESTATE.items) {
         GAMESTATE.items.set(key, Math.ceil(value / 2));
     }
 }
@@ -479,7 +479,7 @@ function autoUseItems() {
         return;
     }
 
-    for (var [key, value] of GAMESTATE.items) {
+    for (const [key, value] of GAMESTATE.items) {
         if (ITEMS_TO_NOT_AUTO_USE.includes(key)) {
             continue;
         }
@@ -579,7 +579,7 @@ export function toggleAutomation(task: Task) {
         GAMESTATE.automation_prios.set(task.task_definition.zone_id, []);
     }
 
-    var prios = GAMESTATE.automation_prios.get(task.task_definition.zone_id) as number[];
+    const prios = GAMESTATE.automation_prios.get(task.task_definition.zone_id) as number[];
     if (prios.includes(task.task_definition.id)) {
         prios.splice(prios.indexOf(task.task_definition.id), 1);
     }
@@ -602,7 +602,7 @@ function pickNextTaskInAutomationQueue(): Task | null {
         return null;
     }
 
-    var prios = GAMESTATE.automation_prios.get(GAMESTATE.current_zone);
+    const prios = GAMESTATE.automation_prios.get(GAMESTATE.current_zone);
     if (!prios) {
         return null;
     }
@@ -656,7 +656,7 @@ function checkEnergyReset() {
 }
 
 function populateGameOverInfo() {
-    var info = new GameOverInfo();
+    const info = new GameOverInfo();
 
     for (let i = 0; i < SkillType.Count; i++) {
         const current_level = getSkill(i).level;
@@ -748,7 +748,7 @@ function loadGame(): boolean {
 
 function loadGameFromData(data: any) {
     Object.keys(data).forEach(key => {
-        var value = data[key];
+        const value = data[key];
 
         // Convert it back to a Map if that's what we want
         if ((GAMESTATE as any)[key] instanceof Map) {
@@ -812,7 +812,7 @@ export class Gamestate {
     }
 
     public popRenderEvents(): RenderEvent[] {
-        var events = this.pending_render_events;
+        const events = this.pending_render_events;
         this.pending_render_events = [];
         return events;
     }

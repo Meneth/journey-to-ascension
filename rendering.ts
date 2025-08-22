@@ -30,7 +30,7 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
     skill_div.appendChild(progressBar);
 
     setupTooltip(skill_div, function () { return `${skill_definition.icon}${skill_definition.name} - Level ${skill.level}`; }, function () {
-        var tooltip = `Speed multiplier: x${formatNumber(calcSkillTaskProgressMultiplier(skill.type))}`;
+        let tooltip = `Speed multiplier: x${formatNumber(calcSkillTaskProgressMultiplier(skill.type))}`;
         const other_sources_mult = calcSkillTaskProgressWithoutLevel(skill.type);
         if (other_sources_mult != 1) {
             tooltip += `<br>From level: x${formatNumber(calcSkillTaskProgressMultiplierFromLevel(skill.level))}`;
@@ -49,7 +49,7 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
 }
 
 function recreateSkills() {
-    var skills_div = document.getElementById("skills");
+    const skills_div = document.getElementById("skills");
     if (!skills_div) {
         console.error("The element with ID 'skills' was not found.");
         return;
@@ -69,13 +69,13 @@ function updateSkillRendering() {
             continue;
         }
 
-        var element = RENDERING.skill_elements.get(skill.type) as HTMLElement;
-        var fill = element.querySelector<HTMLDivElement>(".progress-fill");
+        const element = RENDERING.skill_elements.get(skill.type) as HTMLElement;
+        const fill = element.querySelector<HTMLDivElement>(".progress-fill");
         if (fill) {
             fill.style.width = `${skill.progress * 100 / calcSkillXpNeeded(skill)}%`;
         }
 
-        var name = element.querySelector<HTMLDivElement>(".sidebar-item-text");
+        const name = element.querySelector<HTMLDivElement>(".sidebar-item-text");
         if (name) {
             const skill_definition = SKILL_DEFINITIONS[skill.type] as SkillDefinition;
             const new_html = `<span>${skill_definition.icon}${skill_definition.name}</span><span>${skill.level}</span>`;
@@ -94,7 +94,7 @@ export function getSkillString(type: SkillType) {
 
 // MARK: Tasks
 
-let TASK_TYPE_NAMES = ["Normal", "Travel", "Mandatory", "Prestige", "Boss"];
+const TASK_TYPE_NAMES = ["Normal", "Travel", "Mandatory", "Prestige", "Boss"];
 
 function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering) {
     const task_div = document.createElement("div");
@@ -123,8 +123,8 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
     const skillsUsed = document.createElement("p");
     skillsUsed.className = "skills-used-text";
-    var skillText = "Skills: ";
-    var skillStrings: string[] = [];
+    let skillText = "Skills: ";
+    const skillStrings: string[] = [];
     for (const skill of task.task_definition.skills) {
         const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
         skillStrings.push(`${skill_definition.icon}${skill_definition.name}`);
@@ -133,7 +133,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     skillsUsed.textContent = skillText;
 
     if (task.task_definition.item != ItemType.Count) {
-        var item_indicator = document.createElement("div");
+        const item_indicator = document.createElement("div");
         item_indicator.className = "task-item-indicator";
         item_indicator.classList.add("indicator");
         item_indicator.textContent = ITEMS[task.task_definition.item]?.icon as string;
@@ -141,7 +141,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     }
 
     if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
-        var perk_indicator = document.createElement("div");
+        const perk_indicator = document.createElement("div");
         perk_indicator.className = "task-perk-indicator";
         perk_indicator.classList.add("indicator");
         perk_indicator.textContent = PERKS[task.task_definition.perk]?.icon as string;
@@ -153,7 +153,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     task_reps_div.className = "task-reps";
 
     if (task.task_definition.type != TaskType.Travel) {
-        for (var i = 0; i < task.task_definition.max_reps; ++i) {
+        for (let i = 0; i < task.task_definition.max_reps; ++i) {
             const task_rep_div = document.createElement("div");
             task_rep_div.className = "task-rep";
             task_reps_div.appendChild(task_rep_div);
@@ -169,7 +169,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
     setupTooltip(task_div, function () { return `${task.task_definition.name}`; }, function () {
         const task_type = TASK_TYPE_NAMES[task.task_definition.type];
-        var tooltip = `<p class="subheader ${task_type}">${task_type} Task</p>`;
+        let tooltip = `<p class="subheader ${task_type}">${task_type} Task</p>`;
 
         if (!task.enabled) {
             if (task.task_definition.type == TaskType.Travel) {
@@ -183,29 +183,29 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             }
         }
 
-        var task_table = document.createElement("table");
+        const task_table = document.createElement("table");
         task_table.className = "table simple-table";
 
-        var asterisk_count = 0;
-        var perk_asterisk_index = -1;
-        var level_asterisks = "";
+        let asterisk_count = 0;
+        let perk_asterisk_index = -1;
+        let level_asterisks = "";
         const remaining_completions = (task.reps == task.task_definition.max_reps) ? task.task_definition.max_reps : (task.task_definition.max_reps - task.reps);
         const completions = GAMESTATE.repeat_tasks ? remaining_completions : 1;
 
         function createTwoElementRow(x: string, y: string) {
-            var row = document.createElement("tr");
+            const row = document.createElement("tr");
             row.innerHTML = `<td>${y}</td><td>${x}</td>`;
             return row;
         }
 
         function createTableSection(name: string) {
-            var row = document.createElement("tr");
-            var header = document.createElement("td");
+            const row = document.createElement("tr");
+            const header = document.createElement("td");
             header.innerHTML = name;
             row.appendChild(header);
 
-            var contents = document.createElement("td");
-            var table = document.createElement("table");
+            const contents = document.createElement("td");
+            const table = document.createElement("table");
             table.className = "table simple-table";
 
             contents.appendChild(table);
@@ -241,9 +241,9 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 const skill_progress = getSkill(skill);
                 const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
 
-                var xp_gained = completions * calcSkillXp(task, calcTaskCost(task));
-                var resulting_level = skill_progress.level;
-                var xp_needed = calcSkillXpNeeded(skill_progress) - skill_progress.progress;
+                let xp_gained = completions * calcSkillXp(task, calcTaskCost(task));
+                let resulting_level = skill_progress.level;
+                let xp_needed = calcSkillXpNeeded(skill_progress) - skill_progress.progress;
 
                 while (xp_gained > xp_needed) {
                     xp_gained -= xp_needed;
@@ -251,7 +251,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                     xp_needed = calcSkillXpNeededAtLevel(resulting_level, skill);
                 }
 
-                var levels = ``;
+                let levels = ``;
 
                 const levels_diff = resulting_level - skill_progress.level;
                 if (levels_diff > 0) {
@@ -285,7 +285,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
             const energy_cost = completions * estimateTotalTaskEnergyConsumption(task);
             const energy_cost_ratio = energy_cost / GAMESTATE.current_energy;
-            var energy_cost_class = "";
+            let energy_cost_class = "";
             if (energy_cost_ratio < 0.05) {
                 energy_cost_class = "very-low";
             } else if (energy_cost_ratio < 0.5) {
@@ -314,7 +314,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         {
             var table = createTableSection("Modifiers");
             const mult = task.task_definition.xp_mult;
-            var mult_class = "";
+            let mult_class = "";
             if (mult != 1) { mult_class = mult > 1 ? "good" : "bad"; }
             table.appendChild(createTwoElementRow(`<span class="${mult_class}">x${mult}</span>`, `${XP_TEXT} Multiplier`));
         }
@@ -345,8 +345,8 @@ function updateTaskRendering() {
     }
 
     for (const task of GAMESTATE.tasks) {
-        var task_element = RENDERING.task_elements.get(task.task_definition) as HTMLElement;
-        var fill = task_element.querySelector<HTMLDivElement>(".progress-fill");
+        const task_element = RENDERING.task_elements.get(task.task_definition) as HTMLElement;
+        const fill = task_element.querySelector<HTMLDivElement>(".progress-fill");
         if (fill) {
             fill.style.width = `${task.progress * 100 / calcTaskCost(task)}%`;
         }
@@ -354,7 +354,7 @@ function updateTaskRendering() {
             console.error("No progress-fill");
         }
 
-        var button = task_element.querySelector<HTMLInputElement>(".task-button");
+        const button = task_element.querySelector<HTMLInputElement>(".task-button");
         if (button) {
             button.disabled = !task.enabled;
         }
@@ -362,9 +362,9 @@ function updateTaskRendering() {
             console.error("No task-button");
         }
 
-        var automation = task_element.querySelector<HTMLDivElement>(".task-automation");
+        const automation = task_element.querySelector<HTMLDivElement>(".task-automation");
         if (automation) {
-            var prios = GAMESTATE.automation_prios.get(GAMESTATE.current_zone);
+            const prios = GAMESTATE.automation_prios.get(GAMESTATE.current_zone);
             if (prios) {
                 const index = prios.indexOf(task.task_definition.id);
                 const index_str = index >= 0 ? `${index + 1}` : "";
@@ -378,8 +378,8 @@ function updateTaskRendering() {
         }
 
         if (task.task_definition.type != TaskType.Travel) {
-            var reps = task_element.getElementsByClassName("task-rep");
-            for (var i = 0; i < task.reps; ++i) {
+            const reps = task_element.getElementsByClassName("task-rep");
+            for (let i = 0; i < task.reps; ++i) {
                 (reps[i] as HTMLElement).classList.add("finished");
             }
         }
@@ -387,7 +387,7 @@ function updateTaskRendering() {
 }
 
 function estimateTotalTaskTicks(task: Task): number {
-    var progress_mult = calcTaskProgressMultiplier(task);
+    let progress_mult = calcTaskProgressMultiplier(task);
     if (!task.hasted && GAMESTATE.queued_scrolls_of_haste > 0) {
         progress_mult *= HASTE_MULT;
     }
@@ -402,12 +402,12 @@ function estimateTaskTimeInSeconds(task: Task): number {
 
 // MARK: Energy
 function updateEnergyRendering() {
-    var fill = RENDERING.energy_element.querySelector<HTMLDivElement>(".progress-fill");
+    const fill = RENDERING.energy_element.querySelector<HTMLDivElement>(".progress-fill");
     if (fill) {
         fill.style.width = `${GAMESTATE.current_energy * 100 / GAMESTATE.max_energy}%`;
     }
 
-    var value = RENDERING.energy_element.querySelector<HTMLDivElement>(".progress-value");
+    const value = RENDERING.energy_element.querySelector<HTMLDivElement>(".progress-value");
     if (value) {
         const new_html = `${GAMESTATE.current_energy.toFixed(0)}`;
         // Avoid flickering in the debugger
@@ -464,7 +464,7 @@ function setupInfoTooltips() {
     }
 
     setupTooltipStaticHeader(item_info, `Items`, function () {
-        var tooltip = `Items can be used to get bonuses that last until the next Energy Reset`;
+        let tooltip = `Items can be used to get bonuses that last until the next Energy Reset`;
         tooltip += `<br>The bonuses stack additively; 2 +100% results in 3x speed, not 4x`;
         tooltip += `<br>Bonuses to different Task types stack multiplicatively with one another`;
         tooltip += `<br>Right-click to use all rather than just one`;
@@ -479,7 +479,7 @@ function setupInfoTooltips() {
     }
 
     setupTooltipStaticHeader(perk_info, `Perks`, function () {
-        var tooltip = `Perks are permanent bonuses with a variety of effects`;
+        let tooltip = `Perks are permanent bonuses with a variety of effects`;
         tooltip += `<br>The bonuses stack multiplicatively; 2 +100% results in 4x speed, not 3x`;
         return tooltip;
     });
@@ -498,8 +498,8 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     button.className = "item-button";
     button.classList.add("element");
 
-    var item_definition = ITEMS[item] as ItemDefinition;
-    var item_count = GAMESTATE.items.get(item);
+    const item_definition = ITEMS[item] as ItemDefinition;
+    const item_count = GAMESTATE.items.get(item);
     button.textContent = `${item_definition.icon} (${item_count})`;
     button.disabled = item_count == 0;
 
@@ -513,7 +513,7 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
 }
 
 function recreateItems() {
-    var items_div = document.getElementById("items-list");
+    const items_div = document.getElementById("items-list");
     if (!items_div) {
         console.error("The element with ID 'items-list' was not found.");
         return;
@@ -521,7 +521,7 @@ function recreateItems() {
 
     items_div.innerHTML = "";
 
-    var items: [type: ItemType, amount: number][] = [];
+    const items: [type: ItemType, amount: number][] = [];
 
     for (const [item, amount] of GAMESTATE.items) {
         items.push([item, amount]);
@@ -556,7 +556,7 @@ function setupAutoUseItemsControl() {
         return;
     }
 
-    var item_control = document.createElement("button");
+    const item_control = document.createElement("button");
     item_control.className = "element";
 
     function setItemControlName() {
@@ -570,7 +570,7 @@ function setupAutoUseItemsControl() {
     });
 
     setupTooltipStaticHeader(item_control, `${item_control.textContent}`, function () {
-        var tooltip = "Toggle between items being used automatically, and only being used manually";
+        let tooltip = "Toggle between items being used automatically, and only being used manually";
         tooltip += "<br>Won't use the Scroll of Haste";
 
         return tooltip;
@@ -589,7 +589,7 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement) {
     const perk_text = document.createElement("span");
     perk_text.className = "perk-text";
 
-    var perk_definition = PERKS[perk] as PerkDefinition;
+    const perk_definition = PERKS[perk] as PerkDefinition;
 
     perk_text.textContent = perk_definition.icon;
 
@@ -601,7 +601,7 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement) {
 }
 
 function createPerks() {
-    var perks_div = document.getElementById("perks-list");
+    const perks_div = document.getElementById("perks-list");
     if (!perks_div) {
         console.error("The element with ID 'perks-list' was not found.");
         return;
@@ -623,7 +623,7 @@ function updatePerks() {
 // MARK: Game over
 
 function populateGameOver(game_over_div: HTMLElement) {
-    var open_button = document.querySelector<HTMLInputElement>("#open-energy-reset");
+    const open_button = document.querySelector<HTMLInputElement>("#open-energy-reset");
     if (!open_button) {
         console.error("No open-energy-reset button");
         return;
@@ -644,7 +644,7 @@ function populateGameOver(game_over_div: HTMLElement) {
         game_over_div.innerHTML = "<h2>Last Run</h2>";
     }
 
-    var button = document.createElement("button");
+    const button = document.createElement("button");
     button.className = "game-over-dismiss";
     button.textContent = GAMESTATE.is_in_game_over ? "Restart" : "Dismiss";
 
@@ -657,7 +657,7 @@ function populateGameOver(game_over_div: HTMLElement) {
     setupTooltipStatic(button, button.textContent, GAMESTATE.is_in_game_over ? "Do Energy Reset" : "Return to the game");
     game_over_div.appendChild(button);
 
-    var skill_gain = document.createElement("div");
+    const skill_gain = document.createElement("div");
 
     skill_gain.innerHTML = "";
 
@@ -673,7 +673,7 @@ function populateGameOver(game_over_div: HTMLElement) {
 
     const power_gain = info.power_at_end - info.power_at_start;
     if (power_gain > 0) {
-        var power_gain_text = document.createElement("p");
+        const power_gain_text = document.createElement("p");
         const speed_bonus = calcPowerSpeedBonusAtLevel(info.power_at_end) / calcPowerSpeedBonusAtLevel(info.power_at_start);
         power_gain_text.textContent = `Power: +${power_gain} (x${speed_bonus.toFixed(2)} speed)`;
 
@@ -682,7 +682,7 @@ function populateGameOver(game_over_div: HTMLElement) {
 
     const attunement_gain = info.attunement_at_end - info.attunement_at_start;
     if (attunement_gain > 0) {
-        var attunement_gain_text = document.createElement("p");
+        const attunement_gain_text = document.createElement("p");
         const speed_bonus = calcAttunementSpeedBonusAtLevel(info.attunement_at_end) / calcAttunementSpeedBonusAtLevel(info.attunement_at_start);
         attunement_gain_text.textContent = `Attunement: +${attunement_gain} (x${speed_bonus.toFixed(2)} speed)`;
 
@@ -690,7 +690,7 @@ function populateGameOver(game_over_div: HTMLElement) {
     }
 
     if (hasPerk(PerkType.EnergeticMemory)) {
-        var energetic_memory_gain_text = document.createElement("p");
+        const energetic_memory_gain_text = document.createElement("p");
         energetic_memory_gain_text.textContent = `Max ${ENERGY_TEXT}: +${info.energetic_memory_gain} (Energetic Memory Perk)`;
 
         skill_gain.appendChild(energetic_memory_gain_text);
@@ -705,13 +705,13 @@ function populateGameOver(game_over_div: HTMLElement) {
 
     game_over_div.appendChild(skill_gain);
 
-    var reset_count = document.createElement("h3");
+    const reset_count = document.createElement("h3");
     reset_count.textContent = GAMESTATE.is_in_game_over ? `You've now done your ${formatOrdinal(GAMESTATE.energy_reset_count + 1)} Energy Reset` : `This was your ${formatOrdinal(GAMESTATE.energy_reset_count)} Energy Reset`;
     game_over_div.appendChild(reset_count);
 }
 
 function setupGameOver(game_over_div: HTMLElement) {
-    var open_button = document.querySelector<HTMLInputElement>("#open-energy-reset");
+    const open_button = document.querySelector<HTMLInputElement>("#open-energy-reset");
 
     if (!open_button) {
         console.error("No open-energy-reset button");
@@ -726,7 +726,7 @@ function setupGameOver(game_over_div: HTMLElement) {
     open_button.disabled = GAMESTATE.energy_reset_count == 0;
 
     setupTooltipStaticHeader(open_button, `View Last Energy Reset Summary`, function () {
-        var tooltip = `Lets you reopen the last Energy Reset Summary`;
+        let tooltip = `Lets you reopen the last Energy Reset Summary`;
         if (open_button?.disabled) {
             tooltip += `<p class="disable-reason">Disabled until you do your first Energy Reset</p>`
         }
@@ -737,7 +737,7 @@ function setupGameOver(game_over_div: HTMLElement) {
 function populateEndOfContent(end_of_content_div: HTMLElement) {
     end_of_content_div.style.display = "flex";
 
-    var reset_count = end_of_content_div.querySelector("#end-of-content-reset-count");
+    const reset_count = end_of_content_div.querySelector("#end-of-content-reset-count");
     if (!reset_count) {
         console.error("No reset count text");
         return;
@@ -785,7 +785,7 @@ function formatNumber(n: number, allow_decimals: boolean = true): string {
     }
 
     const postfixes = ["k", "M", "B", "T"];
-    var postfix_index = -1;
+    let postfix_index = -1;
 
     while (n > 1000 && (postfix_index + 1) < postfixes.length) {
         n = n / 1000;
@@ -804,7 +804,7 @@ function formatNumber(n: number, allow_decimals: boolean = true): string {
 // MARK: Settings
 
 function setupSettings(settings_div: HTMLElement) {
-    var open_button = document.querySelector<HTMLElement>("#open-settings");
+    const open_button = document.querySelector<HTMLElement>("#open-settings");
 
     if (!open_button) {
         console.error("No open settings button");
@@ -817,7 +817,7 @@ function setupSettings(settings_div: HTMLElement) {
 
     setupTooltipStatic(open_button, `Open Settings Menu`, `Lets you Save and Load from disk`);
 
-    var close_button = settings_div.querySelector<HTMLElement>("#close-settings");
+    const close_button = settings_div.querySelector<HTMLElement>("#close-settings");
 
     if (!close_button) {
         console.error("No close settings button");
@@ -837,7 +837,7 @@ function setupSettings(settings_div: HTMLElement) {
 // MARK: Settings: Saves
 
 function setupPersistence(settings_div: HTMLElement) {
-    var save_button = settings_div.querySelector<HTMLElement>("#save");
+    const save_button = settings_div.querySelector<HTMLElement>("#save");
 
     if (!save_button) {
         console.error("No save button");
@@ -852,7 +852,7 @@ function setupPersistence(settings_div: HTMLElement) {
             return;
         }
 
-        var file_name = `Incremental_save_Reset_${GAMESTATE.energy_reset_count}_energy_${GAMESTATE.current_energy.toFixed(0)}.json`;
+        const file_name = `Incremental_save_Reset_${GAMESTATE.energy_reset_count}_energy_${GAMESTATE.current_energy.toFixed(0)}.json`;
 
         const blob = new Blob([save_data], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -867,7 +867,7 @@ function setupPersistence(settings_div: HTMLElement) {
 
     setupTooltipStatic(save_button, `Export Save`, `Save the game's progress to disk`);
 
-    var load_button = settings_div.querySelector<HTMLElement>("#load");
+    const load_button = settings_div.querySelector<HTMLElement>("#load");
 
     if (!load_button) {
         console.error("No load button");
@@ -879,7 +879,7 @@ function setupPersistence(settings_div: HTMLElement) {
         input.type = "file";
         input.accept = "application/json";
         input.addEventListener("change", (e) => {
-            var element = e.target as HTMLInputElement;
+            const element = e.target as HTMLInputElement;
             const file = (element.files as FileList)[0];
             if (!file) return;
             const reader = new FileReader();
@@ -900,9 +900,9 @@ function setupPersistence(settings_div: HTMLElement) {
 // MARK: Events
 
 function handleEvents() {
-    var events = GAMESTATE.popRenderEvents();
-    var messages = RENDERING.messages_element;
-    for (var event of events) {
+    const events = GAMESTATE.popRenderEvents();
+    const messages = RENDERING.messages_element;
+    for (const event of events) {
         if (event.type == EventType.TaskCompleted) {
             updateTooltip();
             continue; // No message, just forces tooltips to update
@@ -915,19 +915,19 @@ function handleEvents() {
 
         const message_div = document.createElement("div");
         message_div.className = "message";
-        var message_to_replace: Element | null = null;
+        let message_to_replace: Element | null = null;
 
         function removeMessage(message: Element) {
             messages.removeChild(message);
             RENDERING.message_contexts.delete(message);
         }
 
-        var context = event.context;
+        const context = event.context;
         if (event.type == EventType.UsedItem) {
-            var new_item_context = context as UsedItemContext;
+            const new_item_context = context as UsedItemContext;
             for (const [message, old_event] of RENDERING.message_contexts) {
                 if (old_event.type == event.type) {
-                    var old_item_context = old_event.context as UsedItemContext;
+                    const old_item_context = old_event.context as UsedItemContext;
                     if (old_item_context.item == new_item_context.item) {
                         new_item_context.count += old_item_context.count;
                         message_to_replace = message;
@@ -935,10 +935,10 @@ function handleEvents() {
                 }
             }
         } else if (event.type == EventType.SkillUp) {
-            var new_skill_context = context as SkillUpContext;
+            const new_skill_context = context as SkillUpContext;
             for (const [message, old_event] of RENDERING.message_contexts) {
                 if (old_event.type == event.type) {
-                    var old_skill_context = old_event.context as SkillUpContext;
+                    const old_skill_context = old_event.context as SkillUpContext;
                     if (old_skill_context.skill == new_skill_context.skill) {
                         new_skill_context.levels_gained += old_skill_context.levels_gained;
                         message_to_replace = message;
@@ -950,14 +950,14 @@ function handleEvents() {
         switch (event.type) {
             case EventType.SkillUp:
                 {
-                    var skill_context = context as SkillUpContext;
+                    const skill_context = context as SkillUpContext;
                     const skill_definition = SKILL_DEFINITIONS[skill_context.skill] as SkillDefinition;
                     message_div.textContent = `${skill_definition.icon}${skill_definition.name} is now ${skill_context.new_level} (+${skill_context.levels_gained})`;
                     break;
                 }
             case EventType.GainedPerk:
                 {
-                    var perk_context = context as GainedPerkContext;
+                    const perk_context = context as GainedPerkContext;
                     const perk = PERKS[perk_context.perk] as PerkDefinition;
                     message_div.innerHTML = `Unlocked ${perk.icon}${perk.name}`;
                     message_div.innerHTML += `<br>${perk.tooltip}`;
@@ -967,7 +967,7 @@ function handleEvents() {
                 }
             case EventType.UsedItem:
                 {
-                    var item_context = context as UsedItemContext;
+                    const item_context = context as UsedItemContext;
                     const item = ITEMS[item_context.item] as ItemDefinition;
                     message_div.innerHTML = `Used ${item_context.count} ${item.icon}${item.name}`;
                     message_div.innerHTML += `<br>${item.get_effect_text(item_context.count)}`;
@@ -976,14 +976,14 @@ function handleEvents() {
                 }
             case EventType.UnlockedTask:
                 {
-                    var unlock_context = context as UnlockedTaskContext;
+                    const unlock_context = context as UnlockedTaskContext;
                     message_div.innerHTML = `Unlocked Task ${unlock_context.task_definition.name}`;
                     recreateTasks();
                     break;
                 }
             case EventType.UnlockedSkill:
                 {
-                    var unlock_skill_context = context as UnlockedSkillContext;
+                    const unlock_skill_context = context as UnlockedSkillContext;
                     const skill_definition = SKILL_DEFINITIONS[unlock_skill_context.skill] as SkillDefinition;
                     message_div.innerHTML = `Unlocked Skill ${skill_definition.icon}${skill_definition.name}`;
                     recreateSkills();
@@ -1030,7 +1030,7 @@ function setupControls() {
 }
 
 function setupRepeatTasksControl() {
-    var rep_control = document.createElement("button");
+    const rep_control = document.createElement("button");
     rep_control.className = "element";
 
     function setRepControlName() {
@@ -1057,15 +1057,15 @@ function setupAutomationControls() {
         return;
     }
 
-    var automation = document.createElement("div");
+    const automation = document.createElement("div");
     automation.className = "automation";
 
-    var automation_text = document.createElement("div");
+    const automation_text = document.createElement("div");
     automation_text.className = "automation-text";
     automation.textContent = "Automation";
 
-    var all_control = document.createElement("button");
-    var zone_control = document.createElement("button");
+    const all_control = document.createElement("button");
+    const zone_control = document.createElement("button");
 
     all_control.textContent = "All";
     zone_control.textContent = "Zone";
@@ -1087,7 +1087,7 @@ function setupAutomationControls() {
     });
 
     setupTooltip(all_control, function () { return `Automate ${all_control.textContent}`; }, function () {
-        var tooltip = "Toggle between automating Ttasks in all zones, and not automating";
+        let tooltip = "Toggle between automating Ttasks in all zones, and not automating";
         tooltip += "<br>Right-click Ttasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
 
@@ -1095,7 +1095,7 @@ function setupAutomationControls() {
     });
 
     setupTooltip(zone_control, function () { return `Automate ${zone_control.textContent}`; }, function () {
-        var tooltip = "Toggle between automating Tasks in the current zone, and not automating";
+        let tooltip = "Toggle between automating Tasks in the current zone, and not automating";
         tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
 
@@ -1114,7 +1114,7 @@ function updateExtraStats() {
     if (GAMESTATE.has_unlocked_power && RENDERING.power_element.style.display == "none") {
         RENDERING.power_element.style.display = "flex";
         setupTooltip(RENDERING.power_element, function () { return `💪Power - ${formatNumber(GAMESTATE.power, false)}`; }, function () {
-            var tooltip = `Increases ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} speed by ${formatNumber(GAMESTATE.power, false)}%`;
+            let tooltip = `Increases ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} speed by ${formatNumber(GAMESTATE.power, false)}%`;
             tooltip += `<br><br>Increased by fighting Bosses`;
 
             return tooltip;
@@ -1129,7 +1129,7 @@ function updateExtraStats() {
     if (hasPerk(PerkType.Attunement) && RENDERING.attunement_element.style.display == "none") {
         RENDERING.attunement_element.style.display = "flex";
         setupTooltip(RENDERING.attunement_element, function () { return `🌀Attunement - ${formatNumber(GAMESTATE.attunement, false)}`; }, function () {
-            var tooltip = `Increases ${getSkillString(SkillType.Study)}, ${getSkillString(SkillType.Magic)}, and ${getSkillString(SkillType.Druid)} speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
+            let tooltip = `Increases ${getSkillString(SkillType.Study)}, ${getSkillString(SkillType.Magic)}, and ${getSkillString(SkillType.Druid)} speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
             tooltip += `<br><br>Increased by all Tasks it boosts`;
 
             return tooltip;
@@ -1165,7 +1165,7 @@ export class Rendering {
     current_zone: number = 0;
 
     public createTasks() {
-        var tasks_div = document.getElementById("tasks");
+        const tasks_div = document.getElementById("tasks");
         if (!tasks_div) {
             console.error("The element with ID 'tasks' was not found.");
             return;
@@ -1179,7 +1179,7 @@ export class Rendering {
 
     constructor() {
         function getElement(name: string): HTMLElement {
-            var energy_div = document.getElementById(name);
+            const energy_div = document.getElementById(name);
             if (energy_div) {
                 return energy_div;
             }
@@ -1239,7 +1239,7 @@ function checkZone() {
 }
 
 function setupZone() {
-    var zone_name = document.getElementById("zone-name");
+    const zone_name = document.getElementById("zone-name");
     if (!zone_name) {
         console.error("The element with ID 'zone-name' was not found.");
         return;
@@ -1269,7 +1269,7 @@ function showTooltip(element: ElementWithTooltip) {
 
     RENDERING.tooltipped_element = element;
 
-    var tooltip_element = RENDERING.tooltip_element;
+    const tooltip_element = RENDERING.tooltip_element;
     tooltip_element.innerHTML = `<h3>${element.generateTooltipHeader()}</h3>`;
     const body_text = element.generateTooltipBody();
     if (body_text != ``) {
@@ -1285,8 +1285,8 @@ function showTooltip(element: ElementWithTooltip) {
     const elementRect = element.getBoundingClientRect();
     const beyondVerticalCenter = elementRect.top > (window.innerHeight / 2);
     const beyondHorizontalCenter = elementRect.left > (window.innerWidth / 2);
-    var x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
-    var y = (beyondVerticalCenter ? elementRect.bottom : elementRect.top) + window.scrollY;
+    let x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
+    let y = (beyondVerticalCenter ? elementRect.bottom : elementRect.top) + window.scrollY;
 
     // Energy element covers basically full width so needs its own logic to look good
     if (element.id == "energy") {
