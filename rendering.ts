@@ -6,7 +6,7 @@ import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_MULT } from "./prestige_upgrades.js";
 
 // MARK: Helpers
 
@@ -515,7 +515,7 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     button.addEventListener("click", () => { clickItem(item, false); });
     button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
 
-    setupTooltipStatic(button, `${item_definition.name}`, `${item_definition.tooltip}`);
+    setupTooltipStatic(button, `${item_definition.name}`, `${item_definition.get_tooltip()}`);
 
     items_div.appendChild(button);
     RENDERING.item_elements.set(item, button);
@@ -632,11 +632,7 @@ function updatePerks() {
 // MARK: Energy reset
 
 function populateEnergyReset(energy_reset_div: HTMLElement) {
-    const open_button = document.querySelector<HTMLInputElement>("#open-energy-reset");
-    if (!open_button) {
-        console.error("No open-energy-reset button");
-        return;
-    }
+    const open_button = RENDERING.open_energy_reset_element;
 
     open_button.disabled = false;
 
@@ -720,12 +716,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
 }
 
 function setupEnergyReset(energy_reset_div: HTMLElement) {
-    const open_button = document.querySelector<HTMLInputElement>("#open-energy-reset");
-
-    if (!open_button) {
-        console.error("No open-energy-reset button");
-        return;
-    }
+    const open_button = RENDERING.open_energy_reset_element;
 
     open_button.addEventListener("click", () => {
         populateEnergyReset(RENDERING.energy_reset_element);
@@ -813,6 +804,7 @@ function populatePrestigeView() {
 
         const potentialReachGain = calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone + 1) - calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone);
         divine_spark_gain_stats.innerHTML += `<br>Additional ${DIVINE_SPARK_TEXT} for reaching Zone ${GAMESTATE.highest_zone + 2}: ${formatNumber(potentialReachGain, false)}`;
+
         const potentialFullCompletionGain = calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed + 1) - calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
         divine_spark_gain_stats.innerHTML += `<br>Additional ${DIVINE_SPARK_TEXT} for fully completing Zone ${GAMESTATE.highest_zone_fully_completed + 2}: ${formatNumber(potentialFullCompletionGain, false)}`;
 
@@ -834,7 +826,7 @@ function populatePrestigeView() {
 
         prestige_button.addEventListener("click", () => {
             doPrestige();
-            prestige_overlay.style.display = "none";
+            populatePrestigeView();
         });
     }
 
@@ -899,10 +891,16 @@ function populatePrestigeView() {
 
                 switch (upgrade.type) {
                     case PrestigeRepeatableType.XPBooster:
-                        desc += `+${formatNumber(PRESTIGE_XP_BOOSTER_MULT * level, false)}%`
+                        desc += `+${formatNumber(PRESTIGE_XP_BOOSTER_MULT * level * 100, false)}%`
                         break;
                     case PrestigeRepeatableType.UnlimitedPower:
                         desc += `x${formatNumber(Math.pow(2, level), false)}`
+                        break;
+                    case PrestigeRepeatableType.Gourmet:
+                        desc += `+${formatNumber(GOURMET_ENERGY_ITEM_BOOST_MULT * level * 100, false)}%`
+                        break;
+                    case PrestigeRepeatableType.GottaGoFast:
+                        desc += `+${formatNumber(GOTTA_GO_FAST_MULT * level * 100, false)}%`
                         break;
                     default:
                         console.error("Unhandled upgrade");
@@ -1261,7 +1259,7 @@ function setupAutomationControls() {
         setAutomationClasses();
     });
     zone_control.addEventListener("click", () => {
-        setAutomationMode(GAMESTATE.automation_mode == AutomationMode.All ? AutomationMode.Off : AutomationMode.Zone);
+        setAutomationMode(GAMESTATE.automation_mode == AutomationMode.Zone ? AutomationMode.Off : AutomationMode.Zone);
         setAutomationClasses();
     });
 
@@ -1336,6 +1334,7 @@ export class Rendering {
     tooltipped_element: ElementWithTooltip | null = null;
     tooltip_element: HTMLElement;
     energy_reset_element: HTMLElement;
+    open_energy_reset_element: HTMLInputElement;
     end_of_content_element: HTMLElement;
     settings_element: HTMLElement;
     energy_element: HTMLElement;
@@ -1387,6 +1386,7 @@ export class Rendering {
 
         this.tooltip_element = getElement("tooltip");
         this.energy_reset_element = getElement("game-over-overlay");
+        this.open_energy_reset_element = getElement("open-energy-reset") as HTMLInputElement;
         this.end_of_content_element = getElement("end-of-content-overlay");
         this.settings_element = getElement("settings-overlay");
         this.messages_element = getElement("messages");
@@ -1429,6 +1429,7 @@ function checkZone() {
     recreateTasks();
     setupControls();
     setupZone();
+    RENDERING.open_energy_reset_element.disabled = GAMESTATE.energy_reset_count == 0;
 }
 
 function setupZone() {

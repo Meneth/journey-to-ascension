@@ -1,5 +1,5 @@
 import { PERKS, PerkType, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_EXPONENT as REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_EXPONENT as REFLECTIONS_ON_THE_JOURNEY_BASE } from "./perks.js";
-import { XP_TEXT } from "./rendering_constants.js";
+import { ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
 
 export enum PrestigeUnlockType {
     PermanentAutomation,
@@ -13,8 +13,8 @@ export enum PrestigeUnlockType {
 export enum PrestigeRepeatableType {
     XPBooster,
     UnlimitedPower,
-    DummyRepeatable3,
-    DummyRepeatable4,
+    Gourmet,
+    GottaGoFast,
 
     Count
 }
@@ -62,6 +62,8 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
 ];
 
 export const PRESTIGE_XP_BOOSTER_MULT = 0.5;
+export const GOURMET_ENERGY_ITEM_BOOST_MULT = 0.2;
+export const GOTTA_GO_FAST_MULT = 0.1;
 
 export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     {
@@ -79,17 +81,17 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         scaling_exponent: 3
     },
     {
-        type: PrestigeRepeatableType.DummyRepeatable3,
-        name: "Test",
-        description: "Test",
-        initial_cost: 44,
-        scaling_exponent: 1.5
+        type: PrestigeRepeatableType.Gourmet,
+        name: "Gourmet",
+        description: `Increases ${ENERGY_TEXT} gained from Items by ${GOURMET_ENERGY_ITEM_BOOST_MULT * 100}%`,
+        initial_cost: 40,
+        scaling_exponent: 2.5
     },
     {
-        type: PrestigeRepeatableType.DummyRepeatable4,
-        name: "Test",
-        description: "Test",
-        initial_cost: 45,
-        scaling_exponent: 1.5
+        type: PrestigeRepeatableType.GottaGoFast,
+        name: "Gotta Go Fast",
+        description: `Increases Task speed by ${GOTTA_GO_FAST_MULT * 100}%`,
+        initial_cost: 50,
+        scaling_exponent: 2
     },
 ];

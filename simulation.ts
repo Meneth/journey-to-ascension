@@ -4,7 +4,7 @@ import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } fr
 import { ENERGETIC_MEMORY_MULT, PerkType, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_EXPONENT, REFLECTIONS_ON_THE_JOURNEY_EXPONENT } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT } from "./prestige_upgrades.js";
 
 // MARK: Skills
 
@@ -467,6 +467,10 @@ export function doEnergyReset() {
     saveGame();
 }
 
+export function calcItemEnergyGain(base_energy: number) {
+    return base_energy * (1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.Gourmet) * GOURMET_ENERGY_ITEM_BOOST_MULT);
+}
+
 // MARK: Items
 
 function addItem(item: ItemType, count: number) {
@@ -774,7 +778,7 @@ export function calcPrestigeRepeatableCost(repeatable: PrestigeRepeatableType) {
     const current_level = getPrestigeRepeatableLevel(repeatable);
     const base_cost = definition.initial_cost;
 
-    return base_cost * Math.floor(Math.pow(current_level + 1, definition.scaling_exponent));
+    return Math.floor(base_cost * Math.pow(definition.scaling_exponent, current_level));
 }
 
 export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableType) {
@@ -787,6 +791,7 @@ export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableTy
 
     const current_level = getPrestigeRepeatableLevel(repeatable);
     GAMESTATE.prestige_repeatables.set(repeatable, current_level + 1);
+    GAMESTATE.divine_spark -= cost;
 }
 
 function applyGameStartPrestigeEffects() {
@@ -813,9 +818,11 @@ export function doPrestige() {
     GAMESTATE.energy_reset_info = new EnergyResetInfo();
     GAMESTATE.energy_reset_count = 0;
     GAMESTATE.max_energy = STARTING_ENERGY;
+    GAMESTATE.current_energy = STARTING_ENERGY;
     GAMESTATE.power = 0;
     GAMESTATE.attunement = 0;
     GAMESTATE.prestige_available = false;
+    GAMESTATE.auto_use_items = false;
 
     // Things not reset:
     // has_unlocked_power - No reason to hide that from the UI
