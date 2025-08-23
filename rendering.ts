@@ -292,7 +292,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         {
             const table = createTableSection("Cost Estimate");
 
-            const energy_cost = completions * estimateTotalTaskEnergyConsumption(task);
+            const energy_cost = estimateTotalTaskEnergyConsumption(task, completions);
             const energy_cost_ratio = energy_cost / GAMESTATE.current_energy;
             let energy_cost_class = "";
             if (energy_cost_ratio < 0.05) {
@@ -312,9 +312,9 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             const energy_cost_text = `<span class="${energy_cost_class}">${formatNumber(energy_cost)}</span>`;
             table.appendChild(createTwoElementRow(`${energy_cost_text}`, ENERGY_TEXT));
 
-            const task_ticks = completions * estimateTotalTaskTicks(task);
+            const task_ticks = estimateTotalTaskTicks(task, completions);
             if (task_ticks != completions) {
-                table.appendChild(createTwoElementRow(formatNumber(completions * estimateTaskTimeInSeconds(task)), `⏰Seconds`));
+                table.appendChild(createTwoElementRow(formatNumber(estimateTaskTimeInSeconds(task, completions)), `⏰Seconds`));
             } else {
                 table.appendChild(createTwoElementRow(`${completions}`, `⏰Ticks`));
             }
@@ -389,18 +389,27 @@ function updateTaskRendering() {
     }
 }
 
-function estimateTotalTaskTicks(task: Task): number {
-    let progress_mult = calcTaskProgressMultiplier(task);
-    if (!task.hasted && GAMESTATE.queued_scrolls_of_haste > 0) {
-        progress_mult *= HASTE_MULT;
+function estimateTotalTaskTicks(task: Task, completions: number): number {
+    
+    let haste_stacks = GAMESTATE.queued_scrolls_of_haste;
+    if (task.hasted) {
+        haste_stacks += 1;
     }
+    const haste_completions = Math.min(completions, haste_stacks);
+    const non_haste_completion = completions - haste_completions;
 
-    const num_ticks = Math.ceil(calcTaskCost(task) / progress_mult);
+    let num_ticks = 0;
+    let progress_mult = calcTaskProgressMultiplier(task, true);
+
+    num_ticks += Math.ceil(calcTaskCost(task) / progress_mult) * non_haste_completion;
+    progress_mult *= HASTE_MULT;
+    num_ticks += Math.ceil(calcTaskCost(task) / progress_mult) * haste_completions;
+
     return num_ticks;
 }
 
-function estimateTaskTimeInSeconds(task: Task): number {
-    return estimateTotalTaskTicks(task) * GAMESTATE.tick_interval_ms / 1000;
+function estimateTaskTimeInSeconds(task: Task, completions: number): number {
+    return estimateTotalTaskTicks(task, completions) * GAMESTATE.tick_interval_ms / 1000;
 }
 
 // MARK: Energy
@@ -427,9 +436,11 @@ function updateEnergyRendering() {
     }
 }
 
-function estimateTotalTaskEnergyConsumption(task: Task): number {
-    const num_ticks = estimateTotalTaskTicks(task);
-    return num_ticks * calcEnergyDrainPerTick(task, num_ticks == 1);
+function estimateTotalTaskEnergyConsumption(task: Task, completions: number): number {
+    const num_ticks = estimateTotalTaskTicks(task, completions);
+    // Note that this will be an overestimate if you use haste to get stuff down to 1 tick
+    // Not fixing atm because why would you ever do that? And pessimism isn't too bad
+    return num_ticks * calcEnergyDrainPerTick(task, num_ticks == completions);
 }
 
 // MARK: Tooltips
@@ -1420,6 +1431,7 @@ function checkForZoneAndReset() {
     }
 
     RENDERING.current_zone = GAMESTATE.current_zone;
+    RENDERING.energy_reset_count = GAMESTATE.energy_reset_count;
     recreateTasks();
     setupControls();
     setupZone();

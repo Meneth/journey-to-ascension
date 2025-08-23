@@ -225,7 +225,7 @@ export function calcTaskCost(task: Task): number {
     return base_cost * task.task_definition.cost_multiplier * zone_mult;
 }
 
-export function calcTaskProgressMultiplier(task: Task): number {
+export function calcTaskProgressMultiplier(task: Task, ignore_haste = false): number {
     let mult = 1;
 
     let skill_level_mult = 1;
@@ -240,7 +240,7 @@ export function calcTaskProgressMultiplier(task: Task): number {
         mult *= calcSkillTaskProgressWithoutLevel(skill_type);
     }
 
-    if (task.hasted) {
+    if (!ignore_haste && task.hasted) {
         mult *= HASTE_MULT;
     }
 

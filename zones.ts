@@ -201,7 +201,7 @@ export const ZONES: Zone[] = [
         name: "The Island",
         tasks: [
             new TaskDefinition({ id: 120, name: "Hunt for the Second Reagent", type: TaskType.Travel, cost_multiplier: 8, skills: [SkillType.Travel] }),
-            new TaskDefinition({ id: 121, name: "Gather Reagent", type: TaskType.Mandatory, cost_multiplier: 1, max_reps: 3, skills: [SkillType.Search] }),
+            new TaskDefinition({ id: 121, name: "Gather Reagent", type: TaskType.Mandatory, cost_multiplier: 4, max_reps: 3, skills: [SkillType.Search, SkillType.Druid] }),
             new TaskDefinition({ id: 122, name: "Repair Ship", type: TaskType.Mandatory, cost_multiplier: 1.4, max_reps: 1, skills: [SkillType.Crafting] }),
             new TaskDefinition({ id: 123, name: "Catch More Fish", max_reps: 4, cost_multiplier: 1, skills: [SkillType.Survival], item: ItemType.Fish }),
             new TaskDefinition({ id: 124, name: "Explore the Jungle", cost_multiplier: 6, max_reps: 6, skills: [SkillType.Survival, SkillType.Search, SkillType.Travel], perk: PerkType.LostTemple }),
@@ -252,15 +252,15 @@ export const ZONES: Zone[] = [
 ]
 
 ZONES.forEach((zone, index) => {
-    for (var task of zone.tasks) {
+    for (const task of zone.tasks) {
         task.zone_id = index;
     }
 });
 
-export var TASK_LOOKUP: Map<number, TaskDefinition> = new Map();
+export const TASK_LOOKUP: Map<number, TaskDefinition> = new Map();
 
 ZONES.forEach((zone) => {
-    for (var task of zone.tasks) {
+    for (const task of zone.tasks) {
         TASK_LOOKUP.set(task.id, task);
     }
 });
