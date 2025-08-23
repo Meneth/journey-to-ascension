@@ -23,6 +23,7 @@ export enum PerkType {
     PurgedBureaucracy,
     DeepSeaDiving,
     EnergeticMemory,
+    TheWorm,
 
     Count
 }
@@ -98,5 +99,8 @@ export const PERKS: PerkDefinition[] = [
     },
     {
         enum: PerkType.EnergeticMemory, name: `Energetic Memory`, tooltip: `On each Energy Reset, increase max ${ENERGY_TEXT} by the current zone / 10<br>So zone 11 gives 1.1 max ${ENERGY_TEXT}`, icon: `💭`,
+    },
+    {
+        enum: PerkType.TheWorm, name: `The Worm`, tooltip: `Improves ${getSkillString(SkillType.Charisma)} Task speed by 50%`, icon: `💃`,
     },
 ]

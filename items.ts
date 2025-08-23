@@ -26,6 +26,8 @@ export enum ItemType {
     OasisWater,
     Calamari,
     MagicalIncense,
+    OracleBones,
+    WormHideCoat,
 
     Count
 }
@@ -234,6 +236,25 @@ export const ITEMS: ItemDefinition[] = [
         get_effect_text: (amount) => { return `${getSkillString(SkillType.Ascension)} Task speed increased ${amount * 10}%`; },
         on_consume: (amount) => {
             getSkill(SkillType.Ascension).speed_modifier += 0.1 * amount;
+        },
+    },
+    {
+        enum: ItemType.OracleBones, name: `Oracle Bones`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Search)} and ${getSkillString(SkillType.Druid)} Task speed by 20% each`; },
+        icon: `🦴`,
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Search)} and ${getSkillString(SkillType.Druid)} Task speed increased ${amount * 20}%`; },
+        on_consume: (amount) => {
+            getSkill(SkillType.Search).speed_modifier += 0.2 * amount;
+            getSkill(SkillType.Druid).speed_modifier += 0.2 * amount;
+        },
+    },
+    {
+        enum: ItemType.WormHideCoat, name: `Worm Hide Coat`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Fortitude)} Task speed by 50% each`; },
+        icon: `🧥`,
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 50}%`; },
+        on_consume: (amount) => {
+            getSkill(SkillType.Fortitude).speed_modifier += 0.5 * amount;
         },
     },
 ]
