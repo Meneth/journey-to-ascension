@@ -1,10 +1,11 @@
 import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } from "./items.js";
-import { ENERGETIC_MEMORY_MULT, PerkType, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_EXPONENT, REFLECTIONS_ON_THE_JOURNEY_EXPONENT } from "./perks.js";
+import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT } from "./prestige_upgrades.js";
+import { ENERGETIC_MEMORY_MULT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
 // MARK: Skills
 
@@ -107,6 +108,9 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             }
             if (hasPerk(PerkType.PurgedBureaucracy)) {
                 mult *= 1.3;
+            }
+            if (hasPerk(PerkType.TheWorm)) {
+                mult *= 1.5;
             }
             break;
         case SkillType.Magic:
@@ -333,6 +337,9 @@ function finishTaskRep(task: Task) {
 
     if (!GAMESTATE.repeat_tasks || fully_finished) {
         GAMESTATE.active_task = null;
+    } else if (!fully_finished && GAMESTATE.queued_scrolls_of_haste > 0) {
+        task.hasted = true;
+        GAMESTATE.queued_scrolls_of_haste--;
     }
 
     updateEnabledTasks();
@@ -436,7 +443,7 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
 
     if (hasPerk(PerkType.ReflectionsOnTheJourney)) {
         const zone_diff = GAMESTATE.highest_zone - task.task_definition.zone_id;
-        const base = hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror) ? REFLECTIONS_ON_THE_JOURNEY_BOOSTED_EXPONENT : REFLECTIONS_ON_THE_JOURNEY_EXPONENT;
+        const base = hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror) ? REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE : REFLECTIONS_ON_THE_JOURNEY_BASE;
         drain *= Math.pow(base, zone_diff);
     }
 

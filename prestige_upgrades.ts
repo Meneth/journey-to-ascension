@@ -1,5 +1,5 @@
-import { PERKS, PerkType, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_EXPONENT as REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_EXPONENT as REFLECTIONS_ON_THE_JOURNEY_BASE } from "./perks.js";
-import { ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
+import { DEEP_TRANCE_EMOJI, ENERGY_TEXT, REFLECTIONS_ON_THE_JOURNEY_EMOJI, XP_TEXT } from "./rendering_constants.js";
+import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
 export enum PrestigeUnlockType {
     PermanentAutomation,
@@ -38,7 +38,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
         type: PrestigeUnlockType.PermanentAutomation,
         name: "Permanent Automation",
-        description: `Permanently unlocks the ${PERKS[PerkType.DeepTrance]?.icon}Deep Trance Perk`,
+        description: `Permanently unlocks the ${DEEP_TRANCE_EMOJI}Deep Trance Perk`,
         cost: 1
     },
     {
@@ -50,8 +50,8 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
         type: PrestigeUnlockType.LookInTheMirror,
         name: "Look in the Mirror",
-        description: `Permanently unlocks the ${PERKS[PerkType.ReflectionsOnTheJourney]?.icon}Reflections on the Journey Perk<br>Boosts its base from ${REFLECTIONS_ON_THE_JOURNEY_BASE} to ${REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE}`,
-        cost: 100
+        description: `Permanently unlocks the ${REFLECTIONS_ON_THE_JOURNEY_EMOJI}Reflections on the Journey Perk<br>Boosts its base from ${REFLECTIONS_ON_THE_JOURNEY_BASE} to ${REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE}`,
+        cost: 80
     },
     {
         type: PrestigeUnlockType.DummyUnlock4,

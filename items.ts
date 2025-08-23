@@ -250,11 +250,11 @@ export const ITEMS: ItemDefinition[] = [
     },
     {
         enum: ItemType.WormHideCoat, name: `Worm Hide Coat`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Fortitude)} Task speed by 50% each`; },
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Fortitude)} Task speed by 100% each`; },
         icon: `🧥`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 50}%`; },
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 100}%`; },
         on_consume: (amount) => {
-            getSkill(SkillType.Fortitude).speed_modifier += 0.5 * amount;
+            getSkill(SkillType.Fortitude).speed_modifier += 1 * amount;
         },
     },
 ]

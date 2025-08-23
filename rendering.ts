@@ -607,7 +607,7 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement) {
 
     perk_text.textContent = perk_definition.icon;
 
-    setupTooltipStatic(perk_div, `${perk_definition.name}`, `${perk_definition.tooltip}`);
+    setupTooltipStatic(perk_div, `${perk_definition.name}`, `${perk_definition.get_tooltip()}`);
 
     perk_div.appendChild(perk_text);
     perks_div.appendChild(perk_div);
@@ -1142,7 +1142,7 @@ function handleEvents() {
                     const perk_context = context as GainedPerkContext;
                     const perk = PERKS[perk_context.perk] as PerkDefinition;
                     message_div.innerHTML = `Unlocked ${perk.icon}${perk.name}`;
-                    message_div.innerHTML += `<br>${perk.tooltip}`;
+                    message_div.innerHTML += `<br>${perk.get_tooltip()}`;
                     setupControls(); // Show the automation controls
                     recreateTasks(); // Get rid of Perk indicator
                     break;
