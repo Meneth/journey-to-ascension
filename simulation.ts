@@ -293,12 +293,6 @@ export function clickTask(task: Task) {
             GAMESTATE.queued_scrolls_of_haste--;
         }
     }
-
-    if (task.task_definition.type == TaskType.Prestige) {
-        GAMESTATE.prestige_available = true;
-        const event = new RenderEvent(EventType.PrestigeAvailable, {});
-        GAMESTATE.queueRenderEvent(event);
-    }
 }
 
 function fullyFinishTask(task: Task) {
@@ -312,6 +306,12 @@ function fullyFinishTask(task: Task) {
 
     if (task.task_definition.type == TaskType.Travel) {
         advanceZone();
+    }
+
+    if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_available) {
+        GAMESTATE.prestige_available = true;
+        const event = new RenderEvent(EventType.PrestigeAvailable, {});
+        GAMESTATE.queueRenderEvent(event);
     }
 }
 
@@ -1032,3 +1032,5 @@ export function updateGamestate() {
 (window as any).saveGame = () => saveGame();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).doEnergyReset = () => doEnergyReset();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(window as any).advanceZone = () => advanceZone();
