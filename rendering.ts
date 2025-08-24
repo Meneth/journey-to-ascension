@@ -1190,6 +1190,8 @@ function handleEvents() {
                 }
             case EventType.PrestigeAvailable:
                 {
+                    message_div.innerHTML = `Prestige now availble`;
+                    message_div.innerHTML += `<br>Lets you reset most everything to gain the ${DIVINE_SPARK_TEXT} currency`;
                     recreateTasks();
                     break;
                 }
