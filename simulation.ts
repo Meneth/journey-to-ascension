@@ -826,7 +826,10 @@ export function doPrestige() {
     GAMESTATE.highest_zone_fully_completed = 0;
     initializeSkills();
     GAMESTATE.perks = new Map();
-    GAMESTATE.items = new Map();
+    // We set these to zero rather than clearing it, so the player can still see all the items
+    for (const item of GAMESTATE.items.keys()) {
+        GAMESTATE.items.set(item, 0);
+    }
     GAMESTATE.energy_reset_info = new EnergyResetInfo();
     GAMESTATE.energy_reset_count = 0;
     GAMESTATE.max_energy = STARTING_ENERGY;
