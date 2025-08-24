@@ -12,15 +12,15 @@
     <div id="background"></div>
     <!-- Hidden until game's ready to render -->
     <main>
-        <div id="game-area" style="display:none">
+        <div id="game-area" class="hidden">
             <div id="left-sidebar" class="sidebar">
                 <div id="settings-area">
                     <button id="open-settings">⚙</button>
                     <button id="open-energy-reset">♻</button>
                 </div>
-                <button id="open-prestige" style="display:none"><h2>Prestige: 1337<br />(+42)</h2></button>
-                <div id="attunement" class="sidebar-section sidebar-item-text" style="display:none">🌀Attunement: 1337</div>
-                <div id="power" class="sidebar-section sidebar-item-text" style="display:none">💪Power: 1337</div>
+                <button id="open-prestige" class="hidden"><h2>Prestige: 1337<br />(+42)</h2></button>
+                <div id="attunement" class="sidebar-section sidebar-item-text hidden">🌀Attunement: 1337</div>
+                <div id="power" class="sidebar-section sidebar-item-text hidden">💪Power: 1337</div>
                 <div id="skills"></div>
             </div>
             <div id="main-area">
@@ -62,9 +62,9 @@
             </div>
         </div>
 
-        <div id="game-over-overlay" style="display:none" class="full-screen-overlay"></div>
+        <div id="game-over-overlay" class="full-screen-overlay hidden"></div>
 
-        <div id="end-of-content-overlay" style="display:none" class="full-screen-overlay">
+        <div id="end-of-content-overlay" class="full-screen-overlay hidden">
             <div id="end-of-content-box">
                 <h2 id=>End of Content</h2>
                 <p>You've reached the end of all content that exists!</p>
@@ -73,11 +73,11 @@
             </div>
         </div>
 
-        <div id="prestige-overlay" style="display:none" class="full-screen-overlay">
+        <div id="prestige-overlay" class="full-screen-overlay hidden">
             <div id="prestige-box"></div>
         </div>
 
-        <div id="settings-overlay" style="display:none" class="full-screen-overlay">
+        <div id="settings-overlay" class="full-screen-overlay hidden">
             <div id="settings">
                 <button class="close">X</button>
                 <button id="save">Save</button>
@@ -90,7 +90,7 @@
         <div id="messages"></div>
     </footer>
 
-    <div id="tooltip" class="tooltip" style="display:none"></div>
+    <div id="tooltip" class="tooltip hidden"></div>
 
     <script type="module" src="./build/game.js"></script>
     <script type="module" src="./build/simulation.js"></script>

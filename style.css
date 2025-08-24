@@ -150,6 +150,10 @@ button:hover:enabled {
     filter: grayscale(1);
 }
 
+.hidden {
+    display: none !important;
+}
+
 /* MARK: Tasks
 */
 

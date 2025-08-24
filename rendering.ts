@@ -659,7 +659,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
 
     open_button.disabled = false;
 
-    energy_reset_div.style.display = "flex";
+    energy_reset_div.classList.remove("hidden");
     energy_reset_div.innerHTML = "";
 
     if (GAMESTATE.is_in_energy_reset) {
@@ -677,7 +677,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
     button.textContent = GAMESTATE.is_in_energy_reset ? "Restart" : "Dismiss";
 
     button.addEventListener("click", () => {
-        energy_reset_div.style.display = "none";
+        energy_reset_div.classList.add("hidden");
         if (GAMESTATE.is_in_energy_reset) {
             doEnergyReset();
         }
@@ -743,7 +743,7 @@ function setupEnergyReset(energy_reset_div: HTMLElement) {
 
     open_button.addEventListener("click", () => {
         populateEnergyReset(RENDERING.energy_reset_element);
-        energy_reset_div.style.display = "flex";
+        energy_reset_div.classList.remove("hidden");
     });
 
     open_button.disabled = GAMESTATE.energy_reset_count == 0;
@@ -758,7 +758,7 @@ function setupEnergyReset(energy_reset_div: HTMLElement) {
 }
 
 function populateEndOfContent(end_of_content_div: HTMLElement) {
-    end_of_content_div.style.display = "flex";
+    end_of_content_div.classList.remove("hidden");
 
     const reset_count = end_of_content_div.querySelector("#end-of-content-reset-count");
     if (!reset_count) {
@@ -770,12 +770,12 @@ function populateEndOfContent(end_of_content_div: HTMLElement) {
 }
 
 function updateGameOver() {
-    const showing_energy_reset = RENDERING.energy_reset_element.style.display != "none";
+    const showing_energy_reset = !RENDERING.energy_reset_element.classList.contains("hidden");
     if (!showing_energy_reset && GAMESTATE.is_in_energy_reset) {
         populateEnergyReset(RENDERING.energy_reset_element);
     }
 
-    const showing_end_of_content = RENDERING.end_of_content_element.style.display != "none";
+    const showing_end_of_content = !RENDERING.end_of_content_element.classList.contains("hidden");
     if (!showing_end_of_content && GAMESTATE.is_at_end_of_content) {
         populateEndOfContent(RENDERING.end_of_content_element);
     }
@@ -802,7 +802,7 @@ function populatePrestigeView() {
         close_button.textContent = "X";
 
         close_button.addEventListener("click", () => {
-            prestige_overlay.style.display = "none";
+            prestige_overlay.classList.add("hidden");
         });
 
         setupTooltipStatic(close_button, `Close Prestige Menu`, ``);
@@ -949,7 +949,7 @@ function setupOpenPrestige() {
 
     open_button.addEventListener("click", () => {
         populatePrestigeView();
-        prestige_overlay.style.display = "flex";
+        prestige_overlay.classList.remove("hidden");
     });
 
     setupTooltip(open_button, function () { return `${DIVINE_SPARK_TEXT} - ${formatNumber(GAMESTATE.divine_spark, false)}`; }, function () {
@@ -1014,7 +1014,7 @@ function setupSettings() {
     }
 
     open_button.addEventListener("click", () => {
-        settings_div.style.display = "flex";
+        settings_div.classList.remove("hidden");
     });
 
     setupTooltipStatic(open_button, `Open Settings Menu`, `Lets you Save and Load from disk`);
@@ -1028,7 +1028,7 @@ function setupSettings() {
 
 
     close_button.addEventListener("click", () => {
-        settings_div.style.display = "none";
+        settings_div.classList.add("hidden");
     });
 
     setupTooltipStatic(close_button, `Close Settings Menu`, ``);
@@ -1321,8 +1321,8 @@ function setupAutomationControls() {
 // MARK: Extra stats
 
 function updateExtraStats() {
-    if (GAMESTATE.has_unlocked_power && RENDERING.power_element.style.display == "none") {
-        RENDERING.power_element.style.display = "flex";
+    if (GAMESTATE.has_unlocked_power && RENDERING.power_element.classList.contains("hidden")) {
+        RENDERING.power_element.classList.remove("hidden");
         setupTooltip(RENDERING.power_element, function () { return `💪Power - ${formatNumber(GAMESTATE.power, false)}`; }, function () {
             let tooltip = `Increases ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} speed by ${formatNumber(GAMESTATE.power, false)}%`;
             tooltip += `<br><br>Increased by fighting Bosses`;
@@ -1336,8 +1336,8 @@ function updateExtraStats() {
         RENDERING.power_element.innerHTML = power_text;
     }
 
-    if (hasPerk(PerkType.Attunement) && RENDERING.attunement_element.style.display == "none") {
-        RENDERING.attunement_element.style.display = "flex";
+    if (hasPerk(PerkType.Attunement) && RENDERING.attunement_element.classList.contains("hidden")) {
+        RENDERING.attunement_element.classList.remove("hidden");
         setupTooltip(RENDERING.attunement_element, function () { return `🌀Attunement - ${formatNumber(GAMESTATE.attunement, false)}`; }, function () {
             let tooltip = `Increases ${getSkillString(SkillType.Study)}, ${getSkillString(SkillType.Magic)}, and ${getSkillString(SkillType.Druid)} speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
             tooltip += `<br><br>Increased by all Tasks it boosts`;
@@ -1351,8 +1351,8 @@ function updateExtraStats() {
         RENDERING.attunement_element.innerHTML = attunement_text;
     }
 
-    if (hasUnlockedPrestige() && RENDERING.open_prestige_element.style.display == "none") {
-        RENDERING.open_prestige_element.style.display = "block";
+    if (hasUnlockedPrestige() && RENDERING.open_prestige_element.classList.contains("hidden")) {
+        RENDERING.open_prestige_element.classList.remove("hidden");
     }
 
     const prestige_text = `<h2>${DIVINE_SPARK_TEXT}<br>${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})</h2>`;
@@ -1451,7 +1451,7 @@ export class Rendering {
         updateRendering();
 
         // Unhide the game now that it's ready
-        (document.getElementById("game-area") as HTMLElement).style.display = "flex";
+        (document.getElementById("game-area") as HTMLElement).classList.remove("hidden");
     }
 }
 
@@ -1483,7 +1483,7 @@ function setupZone() {
 }
 
 function hideTooltip() {
-    RENDERING.tooltip_element.style.display = "none";
+    RENDERING.tooltip_element.classList.add("hidden");
     RENDERING.tooltipped_element = null;
 }
 
@@ -1540,7 +1540,7 @@ function showTooltip(element: ElementWithTooltip) {
         }
     }
 
-    tooltip_element.style.display = "block";
+    tooltip_element.classList.remove("hidden");
 }
 
 export function updateRendering() {
