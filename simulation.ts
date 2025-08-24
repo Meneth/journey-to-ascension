@@ -529,7 +529,7 @@ function autoUseItems() {
 }
 
 // MARK: Perks
-function tryAddPerk(perk: PerkType) {
+function tryAddPerk(perk: PerkType, show_notification = true) {
     if (hasPerk(perk)) {
         return;
     }
@@ -539,10 +539,13 @@ function tryAddPerk(perk: PerkType) {
     }
 
     GAMESTATE.perks.set(perk, true);
+    console.log(show_notification);
 
-    const context: GainedPerkContext = { perk: perk };
-    const event = new RenderEvent(EventType.GainedPerk, context);
-    GAMESTATE.queueRenderEvent(event);
+    if (show_notification) {
+        const context: GainedPerkContext = { perk: perk };
+        const event = new RenderEvent(EventType.GainedPerk, context);
+        GAMESTATE.queueRenderEvent(event);
+    }
 }
 
 export function hasPerk(perk: PerkType): boolean {
@@ -811,11 +814,13 @@ export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableTy
 }
 
 function applyGameStartPrestigeEffects() {
+    const show_notification = false;
+
     if (hasPrestigeUnlock(PrestigeUnlockType.PermanentAutomation)) {
-        tryAddPerk(PerkType.DeepTrance);
+        tryAddPerk(PerkType.DeepTrance, show_notification);
     }
     if (hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror)) {
-        tryAddPerk(PerkType.ReflectionsOnTheJourney);
+        tryAddPerk(PerkType.ReflectionsOnTheJourney, show_notification);
     }
 }
 
