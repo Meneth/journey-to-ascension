@@ -364,6 +364,7 @@ function updateTaskRendering() {
         const button = task_element.querySelector<HTMLInputElement>(".task-button");
         if (button) {
             button.disabled = !task.enabled;
+            button.classList.toggle("disabled", button.disabled);
         }
         else {
             console.error("No task-button");
@@ -433,11 +434,7 @@ function updateEnergyRendering() {
     }
 
     const energy_percentage = GAMESTATE.current_energy / GAMESTATE.max_energy;
-    if (energy_percentage < 0.15) {
-        RENDERING.energy_element.classList.add("low-energy");
-    } else {
-        RENDERING.energy_element.classList.remove("low-energy");
-    }
+    RENDERING.energy_element.classList.toggle("low-energy", energy_percentage < 0.15);
 }
 
 function estimateTotalTaskEnergyConsumption(task: Task, completions: number): number {
@@ -518,8 +515,9 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
 
     const item_definition = ITEMS[item] as ItemDefinition;
     const item_count = GAMESTATE.items.get(item);
-    button.textContent = `${item_definition.icon} (${item_count})`;
+    button.innerHTML = `<span class="text">${item_definition.icon} (${item_count})</span>`;
     button.disabled = item_count == 0;
+    button.classList.toggle("disabled", button.disabled);
 
     button.addEventListener("click", () => { clickItem(item, false); });
     button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
@@ -599,13 +597,14 @@ function setupAutoUseItemsControl() {
 
 // MARK: Perks
 
-function createPerkDiv(perk: PerkType, perks_div: HTMLElement) {
+function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean) {
     const perk_div = document.createElement("div");
     perk_div.className = "perk";
     perk_div.classList.add("element");
+    perk_div.classList.toggle("disabled", !enabled);
 
     const perk_text = document.createElement("span");
-    perk_text.className = "perk-text";
+    perk_text.className = "text";
 
     const perk_definition = PERKS[perk] as PerkDefinition;
 
@@ -627,14 +626,19 @@ function createPerks() {
 
     perks_div.innerHTML = "";
 
-    for (const perk of GAMESTATE.perks.keys()) {
-        createPerkDiv(perk, perks_div);
+    // Show enabled perks first
+    for (const [perk, enabled] of GAMESTATE.perks) {
+        if (enabled)
+        {
+            createPerkDiv(perk, perks_div, enabled);
+        }
     }
-}
 
-function updatePerks() {
-    if (GAMESTATE.perks.size != RENDERING.perk_elements.size) {
-        createPerks();
+    for (const [perk, enabled] of GAMESTATE.perks) {
+        if (!enabled)
+        {
+            createPerkDiv(perk, perks_div, enabled);
+        }
     }
 }
 
@@ -838,11 +842,7 @@ function populatePrestigeView() {
             populatePrestigeView();
         });
 
-        if (GAMESTATE.prestige_count == 0) {
-            prestige_button.classList.add("prestige-glow");
-        } else {
-            prestige_button.classList.remove("prestige-glow");
-        }
+        prestige_button.classList.toggle("prestige-glow", GAMESTATE.prestige_count == 0);
     }
 
     {
@@ -1155,6 +1155,7 @@ function handleEvents() {
                     message_div.innerHTML += `<br>${perk.get_tooltip()}`;
                     setupControls(); // Show the automation controls
                     recreateTasks(); // Get rid of Perk indicator
+                    createPerks();
                     break;
                 }
             case EventType.UsedItem:
@@ -1349,11 +1350,7 @@ function updateExtraStats() {
         RENDERING.open_prestige_element.innerHTML = prestige_text;
     }
 
-    if (GAMESTATE.prestige_count == 0) {
-        RENDERING.open_prestige_element.classList.add("prestige-glow");
-    } else {
-        RENDERING.open_prestige_element.classList.remove("prestige-glow");
-    }
+    RENDERING.open_prestige_element.classList.toggle("prestige-glow", GAMESTATE.prestige_count == 0);
 }
 
 // MARK: Rendering
@@ -1542,7 +1539,6 @@ export function updateRendering() {
     updateTaskRendering();
     updateSkillRendering();
     updateEnergyRendering();
-    updatePerks();
     updateExtraStats();
     updateGameOver();
 }

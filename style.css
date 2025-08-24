@@ -12,6 +12,8 @@
     --progress-bar-fill-warning-color: #018101;
     --prestige-unlock-bought-color: rgb(22, 196, 88);
     --default-text-color: #000;
+    --disabled-background-color: #777;
+    --disabled-background-color-lighter: #999;
 
     --palette-dark-gray-darker: #616161;
     --tooltip-line-height: 1.6;
@@ -132,8 +134,20 @@ button {
     flex: 1;
 }
 
+/* MARK: Common
+*/
+
 button:hover:enabled {
     filter: brightness(1.1);
+}
+
+.disabled {
+    color: #44444488;
+    opacity: 0.6;
+}
+
+.disabled .text {
+    filter: grayscale(1);
 }
 
 /* MARK: Tasks
@@ -158,9 +172,9 @@ button:hover:enabled {
     margin-bottom: 5px;
 }
 
-.task button:disabled {
-    background: linear-gradient(5deg, #777, #999);
-    color: #444;
+.task .disabled {
+    background: linear-gradient(5deg, var(--disabled-background-color), var(--disabled-background-color-lighter));
+    opacity: 1.0;
 }
 
 .task.Normal button:enabled {
@@ -331,18 +345,18 @@ button:hover:enabled {
     padding: 5px;
 }
 
-.sidebar-section .section-name {
+.section-name {
     margin: 5px;
 }
 
-.sidebar-section .elements-list {
+.elements-list {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 5px;
 }
 
-.sidebar-section .element {
+.element {
     width: 48px;
     height: 48px;
     text-align: center;
@@ -350,7 +364,7 @@ button:hover:enabled {
     background: var(--element-foreground-color);
 }
 
-.sidebar-section .section-info {
+.section-info {
     position: absolute;
     top: 0;
     right: 0;
