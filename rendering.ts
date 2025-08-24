@@ -613,7 +613,12 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean)
 
     perk_text.textContent = perk_definition.icon;
 
-    setupTooltipStatic(perk_div, `${perk_definition.name}`, `${perk_definition.get_tooltip()}`);
+    const zone = ZONES.findIndex(
+        (zone) => {
+            return zone.tasks.find((task) => { return task.perk == perk; }) !== undefined;
+        });
+
+    setupTooltipStatic(perk_div, `${perk_definition.name}`, `${perk_definition.get_tooltip()}<br><br>Unlocked in Zone ${zone + 1}`);
 
     perk_div.appendChild(perk_text);
     perks_div.appendChild(perk_div);
