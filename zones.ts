@@ -171,7 +171,7 @@ export const ZONES: Zone[] = [
         ],
     },
     {
-        name: "The Magician's Mountain",
+        name: "The Magician",
         tasks: [
             new TaskDefinition({ id: 100, name: "Hunt for the First Reagent", type: TaskType.Travel, cost_multiplier: 5, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 101, name: "Convince the Magician", type: TaskType.Mandatory, cost_multiplier: 6, skills: [SkillType.Charisma] }),
