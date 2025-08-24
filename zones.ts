@@ -235,7 +235,8 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 144, name: "Reflect on the Journey", cost_multiplier: 30, max_reps: 5, skills: [SkillType.Study], perk: PerkType.ReflectionsOnTheJourney }),
             new TaskDefinition({ id: 145, name: "Prepare for the Journey Ahead", cost_multiplier: 2.5, max_reps: 3, xp_mult: 5, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 146, name: "Frolic in the Water", cost_multiplier: 30, max_reps: 1, xp_mult: 10, skills: [SkillType.Druid] }),
-            new TaskDefinition({ id: 147, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 2000000, xp_mult: 0.05, skills: [SkillType.Combat] }),
+            new TaskDefinition({ id: 147, name: "Sleepy Djinn", type: TaskType.Boss, cost_multiplier: 2000000, xp_mult: 0.05, skills: [SkillType.Combat], item: ItemType.DjinnLamp, unlocks_task: 148 }),
+            new TaskDefinition({ id: 148, name: "Find More Lamps", cost_multiplier: 30, max_reps: 3, skills: [SkillType.Search, SkillType.Subterfuge], item: ItemType.DjinnLamp, hidden_by_default: true }),
         ],
     },
     {

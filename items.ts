@@ -28,6 +28,7 @@ export enum ItemType {
     MagicalIncense,
     OracleBones,
     WormHideCoat,
+    DjinnLamp,
 
     Count
 }
@@ -255,6 +256,16 @@ export const ITEMS: ItemDefinition[] = [
         get_effect_text: (amount) => { return `${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 100}%`; },
         on_consume: (amount) => {
             getSkill(SkillType.Fortitude).speed_modifier += 1 * amount;
+        },
+    },
+    {
+        enum: ItemType.DjinnLamp, name: `Djinn's Lamp`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Ascension)} and ${getSkillString(SkillType.Magic)} Task speed by 20% each`; },
+        icon: `🧞`,
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Ascension)} and ${getSkillString(SkillType.Magic)} Task speed increased ${amount * 30}%`; },
+        on_consume: (amount) => {
+            getSkill(SkillType.Ascension).speed_modifier += 0.3 * amount;
+            getSkill(SkillType.Magic).speed_modifier += 0.3 * amount;
         },
     },
 ]
