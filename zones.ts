@@ -260,7 +260,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 162, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 5, skills: [SkillType.Fortitude] }),
             new TaskDefinition({ id: 163, name: "PLACEHOLDER", type: TaskType.Prestige, max_reps: 1, cost_multiplier: 0.03, skills: [SkillType.Ascension] }),
             new TaskDefinition({ id: 164, name: "PLACEHOLDER", max_reps: 9, cost_multiplier: 100, skills: [SkillType.Magic], item: ItemType.MagicalIncense }),
-            new TaskDefinition({ id: 165, name: "PLACEHOLDER", cost_multiplier: 50000, max_reps: 5, skills: [SkillType.Study, SkillType.Magic], perk: PerkType.EnergeticMemory, xp_mult: 0.05 }),
+            new TaskDefinition({ id: 165, name: "PLACEHOLDER", cost_multiplier: 50000, max_reps: 5, skills: [SkillType.Study, SkillType.Magic], xp_mult: 0.05 }),
             new TaskDefinition({ id: 166, name: "PLACEHOLDER", cost_multiplier: 100, max_reps: 3, xp_mult: 10, skills: [SkillType.Magic] }),
             new TaskDefinition({ id: 167, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 2000000, xp_mult: 0.05, skills: [SkillType.Combat] }),
         ],
@@ -274,9 +274,13 @@ ZONES.forEach((zone, index) => {
 });
 
 export const TASK_LOOKUP: Map<number, TaskDefinition> = new Map();
+export const PERKS_BY_ZONE: PerkType[] = [];
 
 ZONES.forEach((zone) => {
     for (const task of zone.tasks) {
         TASK_LOOKUP.set(task.id, task);
+        if (task.perk != PerkType.Count) {
+            PERKS_BY_ZONE.push(task.perk);
+        }
     }
 });

@@ -1,5 +1,5 @@
-import { Task, TaskDefinition, ZONES, TaskType } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige } from "./simulation.js";
+import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE } from "./zones.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
@@ -626,19 +626,21 @@ function createPerks() {
 
     perks_div.innerHTML = "";
 
-    // Show enabled perks first
-    for (const [perk, enabled] of GAMESTATE.perks) {
-        if (enabled)
-        {
-            createPerkDiv(perk, perks_div, enabled);
+    const perks: PerkType[] = [];
+
+    for (const perk of PERKS_BY_ZONE) {
+        if (knowsPerk(perk)) {
+            perks.push(perk);
         }
     }
 
-    for (const [perk, enabled] of GAMESTATE.perks) {
-        if (!enabled)
-        {
-            createPerkDiv(perk, perks_div, enabled);
-        }
+    // Show enabled perks first
+    perks.sort((a, b) => {
+        return Number(hasPerk(b)) - Number(hasPerk(a));
+    });
+
+    for (const perk of perks) {
+        createPerkDiv(perk, perks_div, hasPerk(perk));
     }
 }
 

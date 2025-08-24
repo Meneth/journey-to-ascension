@@ -549,6 +549,10 @@ export function hasPerk(perk: PerkType): boolean {
     return GAMESTATE.perks.get(perk) == true;
 }
 
+export function knowsPerk(perk: PerkType): boolean {
+    return GAMESTATE.perks.get(perk) != null;
+}
+
 // MARK: Extra stats
 
 function addPower(amount: number) {
@@ -825,7 +829,7 @@ export function doPrestige() {
     GAMESTATE.highest_zone = 0;
     GAMESTATE.highest_zone_fully_completed = 0;
     initializeSkills();
-    
+
     // We set these to false/zero rather than clearing it, so the player can still see everything they've unlocked in the past
     for (const perk of GAMESTATE.perks.keys()) {
         GAMESTATE.perks.set(perk, false);
