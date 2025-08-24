@@ -29,6 +29,8 @@ export enum ItemType {
     OracleBones,
     WormHideCoat,
     DjinnLamp,
+    Dreamcatcher,
+    MagicEssence,
 
     Count
 }
@@ -266,6 +268,24 @@ export const ITEMS: ItemDefinition[] = [
         on_consume: (amount) => {
             getSkill(SkillType.Ascension).speed_modifier += 0.3 * amount;
             getSkill(SkillType.Magic).speed_modifier += 0.3 * amount;
+        },
+    },
+    {
+        enum: ItemType.DjinnLamp, name: `Dreamcatcher`,
+        get_tooltip: () => { return `???`; },
+        icon: `🕸️`,
+        get_effect_text: (amount) => { return `???? ${amount * 30}%`; },
+        on_consume: () => {
+            
+        },
+    },
+    {
+        enum: ItemType.MagicEssence, name: `Magical Essence`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} speed by 100% each`; },
+        icon: `🌠`,
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Magic)} Task speed increased ${amount * 300}%`; },
+        on_consume: (amount) => {
+            getSkill(SkillType.Magic).speed_modifier += 3 * amount;
         },
     },
 ]

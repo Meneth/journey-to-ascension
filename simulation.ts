@@ -5,7 +5,7 @@ import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_MULT } from "./prestige_upgrades.js";
-import { ENERGETIC_MEMORY_MULT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
+import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
 // MARK: Skills
 
@@ -357,7 +357,9 @@ function updateEnabledTasks() {
     for (const task of GAMESTATE.tasks) {
         const finished = task.reps >= task.task_definition.max_reps;
         task.enabled = !finished;
-        has_unfinished_mandatory_task = has_unfinished_mandatory_task || (task.task_definition.type == TaskType.Mandatory && !finished);
+        has_unfinished_mandatory_task = has_unfinished_mandatory_task
+            || (task.task_definition.type == TaskType.Mandatory && !finished)
+            || (task.task_definition.type == TaskType.Prestige && !finished);
     }
 
     if (has_unfinished_mandatory_task) {
@@ -745,12 +747,21 @@ export const PRESTIGE_GAIN_EXPONENT = 3;
 export const PRESTIGE_FULLY_COMPLETED_MULT = 3;
 export const PRESTIGE_GAIN_DIVISOR = 100;
 
+export function calcDivineSparkDivisor() {
+    let divisor = PRESTIGE_GAIN_DIVISOR;
+    if (hasPerk(PerkType.Awakening)) {
+        divisor /= 1 + AWAKENING_DIVINE_SPARK_MULT;
+    }
+
+    return divisor;
+}
+
 export function calcDivineSparkGainFromHighestZone(zone: number) {
-    return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT) / PRESTIGE_GAIN_DIVISOR;
+    return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT) / calcDivineSparkDivisor();
 }
 
 export function calcDivineSparkGainFromHighestZoneFullyCompleted(zone: number) {
-    return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT)  * PRESTIGE_FULLY_COMPLETED_MULT / PRESTIGE_GAIN_DIVISOR;
+    return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT)  * PRESTIGE_FULLY_COMPLETED_MULT / calcDivineSparkDivisor();
 }
 
 export function calcDivineSparkGain() {

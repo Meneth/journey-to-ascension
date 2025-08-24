@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
@@ -186,7 +186,9 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
         if (!task.enabled) {
             if (task.task_definition.type == TaskType.Travel) {
-                tooltip += `<p class="disable-reason">Disabled until you complete the <span class="Mandatory">Mandatory</span> tasks</p>`;
+                const has_prestige_task = GAMESTATE.tasks.find((task) => { return task.task_definition.type == TaskType.Prestige; });
+
+                tooltip += `<p class="disable-reason">Disabled until you complete the <span class="Mandatory">Mandatory</span>${has_prestige_task ? ` and <span class="Prestige">Prestige</span>` : ``} tasks</p>`;
             }
             else if (task.reps >= task.task_definition.max_reps) {
                 tooltip += `<p class="disable-reason">Disabled due to being fully completed</p>`;
@@ -819,7 +821,7 @@ function populatePrestigeView() {
 
         const divine_spark_gain = createChildElement(summary_div, "p");
         divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} gain:<br>Highest Zone ^ ${PRESTIGE_GAIN_EXPONENT} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${PRESTIGE_GAIN_EXPONENT})`;
-        divine_spark_gain.innerHTML += `<br>Gain divisor: ${PRESTIGE_GAIN_DIVISOR}`;
+        divine_spark_gain.innerHTML += `<br>Gain divisor: ${formatNumber( calcDivineSparkDivisor(), false)}`;
 
         const divine_spark_gain_stats = createChildElement(summary_div, "p");
         divine_spark_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
@@ -967,7 +969,7 @@ function formatOrdinal(n: number): string {
     return n + ((suffix[(remainder - 20) % 10] || suffix[remainder] || suffix[0]) as string);
 }
 
-function formatNumber(n: number, allow_decimals: boolean = true): string {
+export function formatNumber(n: number, allow_decimals: boolean = true): string {
     if (n < 0) {
         console.error("Tried to format negative number");
         return n + "";
