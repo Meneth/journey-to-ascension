@@ -29,7 +29,7 @@ export class SkillDefinition {
 export const SKILL_DEFINITIONS: SkillDefinition[] = [
     new SkillDefinition({ type: SkillType.Charisma, name: "Charisma", icon: "🎭" }),
     new SkillDefinition({ type: SkillType.Study, name: "Study", icon: "🧠" }),
-    new SkillDefinition({ type: SkillType.Combat, name: "Combat", icon: "⚔️" }),
+    new SkillDefinition({ type: SkillType.Combat, name: "Combat", icon: "⚔️", xp_needed_mult: 5 }),
     new SkillDefinition({ type: SkillType.Search, name: "Search", icon: "🔎" }),
     new SkillDefinition({ type: SkillType.Subterfuge, name: "Subterfuge", icon: "🗡️" }),
     new SkillDefinition({ type: SkillType.Crafting, name: "Crafting", icon: "🔨" }),
