@@ -1,4 +1,4 @@
-import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE } from "./zones.js";
+import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
 import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_GAIN_DIVISOR, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
@@ -539,8 +539,11 @@ function recreateItems() {
 
     const items: [type: ItemType, amount: number][] = [];
 
-    for (const [item, amount] of GAMESTATE.items) {
-        items.push([item, amount]);
+    for (const item of ITEMS_BY_ZONE) {
+        const amount = GAMESTATE.items.get(item);
+        if (amount !== undefined) {
+            items.push([item, amount]);
+        }
     }
 
     sortItems(items);
@@ -562,8 +565,8 @@ function sortItems(items: [type: ItemType, amount: number][]) {
             return ITEMS_TO_NOT_AUTO_USE.includes(a[0]) ? -1 : 1;
         }
 
-        // Then just definition order
-        return a[0] < b[0] ? -1 : 0;
+        // Then just stick with the order provided
+        return 0;
     });
 }
 

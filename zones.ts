@@ -275,12 +275,16 @@ ZONES.forEach((zone, index) => {
 
 export const TASK_LOOKUP: Map<number, TaskDefinition> = new Map();
 export const PERKS_BY_ZONE: PerkType[] = [];
+export const ITEMS_BY_ZONE: ItemType[] = [];
 
 ZONES.forEach((zone) => {
     for (const task of zone.tasks) {
         TASK_LOOKUP.set(task.id, task);
-        if (task.perk != PerkType.Count) {
+        if (task.perk != PerkType.Count && !PERKS_BY_ZONE.includes(task.perk)) {
             PERKS_BY_ZONE.push(task.perk);
+        }
+        if (task.item != ItemType.Count && !ITEMS_BY_ZONE.includes(task.item)) {
+            ITEMS_BY_ZONE.push(task.item);
         }
     }
 });
