@@ -262,7 +262,7 @@ export const ITEMS: ItemDefinition[] = [
     },
     {
         enum: ItemType.DjinnLamp, name: `Djinn's Lamp`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Ascension)} and ${getSkillString(SkillType.Magic)} Task speed by 20% each`; },
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Ascension)} and ${getSkillString(SkillType.Magic)} Task speed by 30% each`; },
         icon: `🧞`,
         get_effect_text: (amount) => { return `${getSkillString(SkillType.Ascension)} and ${getSkillString(SkillType.Magic)} Task speed increased ${amount * 30}%`; },
         on_consume: (amount) => {
@@ -281,7 +281,7 @@ export const ITEMS: ItemDefinition[] = [
     },
     {
         enum: ItemType.MagicEssence, name: `Magical Essence`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} speed by 100% each`; },
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} speed by 300% each`; },
         icon: `🌠`,
         get_effect_text: (amount) => { return `${getSkillString(SkillType.Magic)} Task speed increased ${amount * 300}%`; },
         on_consume: (amount) => {
