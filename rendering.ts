@@ -1456,6 +1456,7 @@ function checkForZoneAndReset() {
     RENDERING.current_zone = GAMESTATE.current_zone;
     RENDERING.energy_reset_count = GAMESTATE.energy_reset_count;
     recreateTasks();
+    recreateItems();
     setupControls();
     setupZone();
     RENDERING.open_energy_reset_element.disabled = GAMESTATE.energy_reset_count == 0;
