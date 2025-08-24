@@ -200,6 +200,10 @@ button:hover:enabled {
     animation: prestige-glow 1s infinite alternate;
 }
 
+.prestige-glow {
+    animation: prestige-glow 1s infinite alternate;
+}
+
 .tooltip .Prestige {
     color: var(--prestige-color);
 }

@@ -833,6 +833,12 @@ function populatePrestigeView() {
             doPrestige();
             populatePrestigeView();
         });
+
+        if (GAMESTATE.prestige_count == 0) {
+            prestige_button.classList.add("prestige-glow");
+        } else {
+            prestige_button.classList.remove("prestige-glow");
+        }
     }
 
     {
@@ -923,9 +929,9 @@ function populatePrestigeView() {
     }
 }
 
-function setupPrestige() {
+function setupOpenPrestige() {
     const prestige_overlay = RENDERING.prestige_overlay_element;
-    const open_button = RENDERING.prestige_element;
+    const open_button = RENDERING.open_prestige_element;
 
     open_button.addEventListener("click", () => {
         populatePrestigeView();
@@ -1323,13 +1329,19 @@ function updateExtraStats() {
         RENDERING.attunement_element.innerHTML = attunement_text;
     }
 
-    if (hasUnlockedPrestige() && RENDERING.prestige_element.style.display == "none") {
-        RENDERING.prestige_element.style.display = "block";
+    if (hasUnlockedPrestige() && RENDERING.open_prestige_element.style.display == "none") {
+        RENDERING.open_prestige_element.style.display = "block";
     }
 
     const prestige_text = `<h2>${DIVINE_SPARK_TEXT}<br>${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})</h2>`;
-    if (RENDERING.prestige_element.innerHTML != prestige_text) {
-        RENDERING.prestige_element.innerHTML = prestige_text;
+    if (RENDERING.open_prestige_element.innerHTML != prestige_text) {
+        RENDERING.open_prestige_element.innerHTML = prestige_text;
+    }
+
+    if (GAMESTATE.prestige_count == 0) {
+        RENDERING.open_prestige_element.classList.add("prestige-glow");
+    } else {
+        RENDERING.open_prestige_element.classList.remove("prestige-glow");
     }
 }
 
@@ -1347,7 +1359,7 @@ export class Rendering {
     message_contexts: Map<Element, RenderEvent> = new Map();
     power_element: HTMLElement;
     attunement_element: HTMLElement;
-    prestige_element: HTMLElement;
+    open_prestige_element: HTMLElement;
     prestige_overlay_element: HTMLElement;
     task_elements: Map<TaskDefinition, ElementWithTooltip> = new Map();
     skill_elements: Map<SkillType, HTMLElement> = new Map();
@@ -1398,7 +1410,7 @@ export class Rendering {
         this.controls_list_element = getElement("controls-list");
         this.power_element = getElement("power");
         this.attunement_element = getElement("attunement");
-        this.prestige_element = getElement("open-prestige");
+        this.open_prestige_element = getElement("open-prestige");
         this.prestige_overlay_element = getElement("prestige-overlay");
     }
 
@@ -1407,7 +1419,7 @@ export class Rendering {
         setupSettings();
         setupControls();
         setupInfoTooltips();
-        setupPrestige();
+        setupOpenPrestige();
     }
 
     public start() {
