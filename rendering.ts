@@ -515,7 +515,7 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
 
     const item_definition = ITEMS[item] as ItemDefinition;
     const item_count = GAMESTATE.items.get(item);
-    button.innerHTML = `<span class="text">${item_definition.icon} (${item_count})</span>`;
+    button.innerHTML = `<span class="text">${item_definition.icon}<br>(${item_count})</span>`;
     button.disabled = item_count == 0;
     button.classList.toggle("disabled", button.disabled);
 
