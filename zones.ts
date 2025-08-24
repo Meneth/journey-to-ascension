@@ -255,9 +255,9 @@ export const ZONES: Zone[] = [
     {
         name: "The Dream",
         tasks: [
-            new TaskDefinition({ id: 160, name: "Wake Up", type: TaskType.Travel, cost_multiplier: 150000, skills: [SkillType.Magic], perk: PerkType.Awakening }),
-            new TaskDefinition({ id: 161, name: "Notice Signs You're in a Dream", type: TaskType.Mandatory, cost_multiplier: 1500, max_reps: 3, skills: [SkillType.Study, SkillType.Search], xp_mult: 0.2 }),
-            new TaskDefinition({ id: 162, name: "Discover Your True Shape", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 1, skills: [SkillType.Druid] }),
+            new TaskDefinition({ id: 160, name: "Wake Up", type: TaskType.Travel, cost_multiplier: 350000, skills: [SkillType.Magic], xp_mult: 0.25, perk: PerkType.Awakening }),
+            new TaskDefinition({ id: 161, name: "Notice Signs You're in a Dream", type: TaskType.Mandatory, cost_multiplier: 2000, max_reps: 3, skills: [SkillType.Study, SkillType.Search], xp_mult: 0.2 }),
+            new TaskDefinition({ id: 162, name: "Discover Your True Shape", type: TaskType.Mandatory, cost_multiplier: 1500, max_reps: 1, skills: [SkillType.Druid] }),
             new TaskDefinition({ id: 163, name: "Gather Essence", max_reps: 2, cost_multiplier: 20000, skills: [SkillType.Magic], item: ItemType.MagicEssence }),
             new TaskDefinition({ id: 164, name: "Build Giant Tower", cost_multiplier: 60, max_reps: 2, skills: [SkillType.Crafting], xp_mult: 0.25, perk: PerkType.TowerOfBabel }),
             new TaskDefinition({ id: 165, name: "Talk to Mysterious Being", cost_multiplier: 100, max_reps: 5, xp_mult: 10, skills: [SkillType.Charisma] }),
