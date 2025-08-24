@@ -245,7 +245,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 const perk = PERKS[task.task_definition.perk] as PerkDefinition;
                 const is_last_rep = (task.reps + completions) == task.task_definition.max_reps;
                 if (!is_last_rep) { ++asterisk_count; perk_asterisk_index = asterisk_count; }
-                table.appendChild(createTwoElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, `${perk.icon}Mystery Perk`));
+                table.appendChild(createTwoElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, `${perk.icon}${knowsPerk(perk.enum) ? perk.name : "Mystery" } Perk`));
             }
 
             asterisk_count += 1; // Levels will always produce one
