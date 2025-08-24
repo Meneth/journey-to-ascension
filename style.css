@@ -197,7 +197,6 @@ button:hover:enabled {
 
 .task.Prestige button:enabled {
     background: linear-gradient(5deg, var(--prestige-color), var(--prestige-color-brighter));
-    animation: prestige-glow 1s infinite alternate;
 }
 
 .prestige-glow {

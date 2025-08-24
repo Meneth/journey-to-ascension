@@ -119,6 +119,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     task_button.addEventListener("click", () => { clickTask(task); });
     task_button.addEventListener("contextmenu", (e) => { e.preventDefault(); toggleAutomation(task); });
 
+    if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_available) {
+        task_button.classList.add("prestige-glow");
+    }
+
     const task_automation = document.createElement("div");
     task_automation.className = "task-automation";
     task_button.appendChild(task_automation);
@@ -1181,6 +1185,11 @@ function handleEvents() {
                 {
                     message_div.innerHTML = `Unlocked 💪Power mechanic`;
                     message_div.innerHTML += `<br>Boosts ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)}`;
+                    recreateTasks();
+                    break;
+                }
+            case EventType.PrestigeAvailable:
+                {
                     recreateTasks();
                     break;
                 }
