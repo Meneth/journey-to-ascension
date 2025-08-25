@@ -63,7 +63,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
 
 export const PRESTIGE_XP_BOOSTER_MULT = 0.5;
 export const GOURMET_ENERGY_ITEM_BOOST_MULT = 0.2;
-export const GOTTA_GO_FAST_MULT = 0.1;
+export const GOTTA_GO_FAST_BASE = 1.1;
 
 export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     {
@@ -71,7 +71,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         name: "XP Booster",
         description: `Increases ${XP_TEXT} gain by ${PRESTIGE_XP_BOOSTER_MULT * 100}%`,
         initial_cost: 15,
-        scaling_exponent: 1.25
+        scaling_exponent: 1.23
     },
     {
         type: PrestigeRepeatableType.UnlimitedPower,
@@ -90,7 +90,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     {
         type: PrestigeRepeatableType.GottaGoFast,
         name: "Gotta Go Fast",
-        description: `Increases Task speed by ${GOTTA_GO_FAST_MULT * 100}%`,
+        description: `Multiplies Task speed by ${GOTTA_GO_FAST_BASE}`,
         initial_cost: 50,
         scaling_exponent: 2
     },

@@ -6,7 +6,7 @@ import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_MULT } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE } from "./prestige_upgrades.js";
 
 // MARK: Helpers
 
@@ -927,7 +927,7 @@ function populatePrestigeView() {
                         desc += `+${formatNumber(GOURMET_ENERGY_ITEM_BOOST_MULT * level * 100, false)}%`
                         break;
                     case PrestigeRepeatableType.GottaGoFast:
-                        desc += `+${formatNumber(GOTTA_GO_FAST_MULT * level * 100, false)}%`
+                        desc += `x${formatNumber(Math.pow(GOTTA_GO_FAST_BASE, level))}`
                         break;
                     default:
                         console.error("Unhandled upgrade");
@@ -975,10 +975,10 @@ export function formatNumber(n: number, allow_decimals: boolean = true): string 
         return n + "";
     }
 
-    if (allow_decimals) {
-        if (n < 1) {
+    if (allow_decimals && n < 10) {
+        if (n < 10) {
             return n.toFixed(2);
-        } else if (n < 10) {
+        } else if (n < 100) {
             return n.toFixed(1);
         }
     }
