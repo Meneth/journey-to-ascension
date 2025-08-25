@@ -44,7 +44,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
         type: PrestigeUnlockType.DivineInspiration,
         name: "Divine Inspiration",
-        description: `Increases ${XP_TEXT} gain and 🌀Attunement gain by 50%<br>Note that 🌀Attunement still needs to be unlocked in Zone 8`,
+        description: `Increases ${XP_TEXT} gain by 50% and 🌀Attunement gain by 100%<br>Note that 🌀Attunement still needs to be unlocked in Zone 8`,
         cost: 1
     },
     {

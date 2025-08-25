@@ -261,7 +261,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 163, name: "Gather Essence", max_reps: 2, cost_multiplier: 20000, skills: [SkillType.Magic], item: ItemType.MagicEssence }),
             new TaskDefinition({ id: 164, name: "Build Giant Tower", cost_multiplier: 60, max_reps: 2, skills: [SkillType.Crafting], xp_mult: 0.25, perk: PerkType.TowerOfBabel }),
             new TaskDefinition({ id: 165, name: "Talk to Mysterious Being", cost_multiplier: 100, max_reps: 5, xp_mult: 10, skills: [SkillType.Charisma] }),
-            new TaskDefinition({ id: 166, name: "Travel the Plains", cost_multiplier: 100, max_reps: 3, xp_mult: 2, skills: [SkillType.Travel, SkillType.Survival] }),
+            new TaskDefinition({ id: 166, name: "Travel the Plains", cost_multiplier: 200, max_reps: 3, xp_mult: 2, skills: [SkillType.Travel, SkillType.Survival] }),
             new TaskDefinition({ id: 167, name: "The Weaver of Dreams", type: TaskType.Boss, cost_multiplier: 50000000, xp_mult: 0.2, skills: [SkillType.Combat], item: ItemType.Dreamcatcher }),
         ],
     },

@@ -7,9 +7,12 @@ import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_MULT } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
+// MARK: Constants
+let task_progress_mult = 1;
+const ZONE_SPEEDUP_BASE = 1.05;
+
 // MARK: Skills
 
-let progress_mult = 1;
 
 export class Skill {
     type: SkillType;
@@ -250,7 +253,9 @@ export function calcTaskProgressMultiplier(task: Task, ignore_haste = false): nu
         mult *= HASTE_MULT;
     }
 
-    return mult * progress_mult;
+    mult *= Math.pow(ZONE_SPEEDUP_BASE, task.task_definition.zone_id);
+
+    return mult * task_progress_mult;
 }
 
 function calcTaskProgressPerTick(task: Task): number {
@@ -451,6 +456,8 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
         drain *= Math.pow(base, zone_diff);
     }
 
+    drain *= Math.pow(ZONE_SPEEDUP_BASE, task.task_definition.zone_id);
+
     return drain;
 }
 
@@ -611,7 +618,7 @@ export function calcAttunementGain(task: Task): number {
     let value = task.task_definition.zone_id + 1;
     if (hasPrestigeUnlock(PrestigeUnlockType.DivineInspiration))
     {
-        value *= 1.5;
+        value *= 2;
     }
 
     return value;
@@ -1056,7 +1063,7 @@ export function updateGamestate() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(window as any).setProgressMult = (new_mult: number) => progress_mult = new_mult;
+(window as any).setProgressMult = (new_mult: number) => task_progress_mult = new_mult;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).saveGame = () => saveGame();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
