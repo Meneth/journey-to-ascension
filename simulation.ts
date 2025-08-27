@@ -297,8 +297,32 @@ function updateActiveTask() {
         addSkillXp(skill, calcSkillXp(active_task, progress));
     }
 
-    if (active_task.progress >= cost) {
-        finishTaskRep(active_task);
+    const finished_rep = active_task.progress >= cost;
+    if (finished_rep) {
+        applyFinishTaskRepEffects(active_task);
+    } else {
+        return;
+    }
+
+    if (is_single_tick && hasPerk(PerkType.MajorTimeCompression)) {
+        while (active_task.reps < active_task.task_definition.max_reps) {
+            applyFinishTaskRepEffects(active_task);
+        }
+    }
+
+    const fully_finished = active_task.reps == active_task.task_definition.max_reps;
+    if (fully_finished) {
+        fullyFinishTask(active_task);
+    }
+
+    updateEnabledTasks();
+    saveGame();
+
+    if (!GAMESTATE.repeat_tasks || fully_finished) {
+        GAMESTATE.active_task = null;
+    } else if (!fully_finished && GAMESTATE.queued_scrolls_of_haste > 0) {
+        active_task.hasted = true;
+        GAMESTATE.queued_scrolls_of_haste--;
     }
 }
 
@@ -335,7 +359,7 @@ function fullyFinishTask(task: Task) {
     }
 }
 
-function finishTaskRep(task: Task) {
+function applyFinishTaskRepEffects(task: Task) {
     if (task.task_definition.item != ItemType.Count) {
         addItem(task.task_definition.item, 1);
     }
@@ -349,21 +373,6 @@ function finishTaskRep(task: Task) {
 
     addPower(calcPowerGain(task));
     addAttunement(calcAttunementGain(task));
-
-    const fully_finished = task.reps == task.task_definition.max_reps;
-    if (fully_finished) {
-        fullyFinishTask(task);
-    }
-
-    if (!GAMESTATE.repeat_tasks || fully_finished) {
-        GAMESTATE.active_task = null;
-    } else if (!fully_finished && GAMESTATE.queued_scrolls_of_haste > 0) {
-        task.hasted = true;
-        GAMESTATE.queued_scrolls_of_haste--;
-    }
-
-    updateEnabledTasks();
-    saveGame();
 
     const event = new RenderEvent(EventType.TaskCompleted, {});
     GAMESTATE.queueRenderEvent(event);
