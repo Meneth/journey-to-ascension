@@ -1355,6 +1355,7 @@ function updateExtraStats() {
             calcAttunementSkills().forEach((value: SkillType) => { attunement_skill_strings.push(getSkillString(value)); });
 
             let tooltip = `Increases ${joinWithCommasAndAnd(attunement_skill_strings)} speed by ${formatNumber(GAMESTATE.attunement / 10)}%`;
+            tooltip += `<br>Note that the bonus does not stack if a Task uses more than one of these Skills`;
             tooltip += `<br><br>Increased by all Tasks it boosts`;
 
             return tooltip;

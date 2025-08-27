@@ -35,6 +35,7 @@ export enum PerkType {
     TheWorm,
     TowerOfBabel,
     Awakening,
+    MajorTimeCompression,
 
     Count
 }
@@ -100,7 +101,7 @@ export const PERKS: PerkDefinition[] = [
     {
         enum: PerkType.MinorTimeCompression,
         name: `Minor Time Compression`,
-        get_tooltip: () => { return `Tasks that are completed instantly (in a single tick) now cost 80% less ${ENERGY_TEXT}`; },
+        get_tooltip: () => { return `Tasks reps that are completed instantly (in a single ⏰Tick) now cost 80% less ${ENERGY_TEXT}`; },
         icon: `⌚`,
     },
     {
@@ -192,5 +193,11 @@ export const PERKS: PerkDefinition[] = [
         name: `Awakening`,
         get_tooltip: () => { return `Improves ${DIVINE_SPARK_TEXT} gain by ${formatNumber(AWAKENING_DIVINE_SPARK_MULT * 100)}%`; },
         icon: `💤`,
+    },
+    {
+        enum: PerkType.MajorTimeCompression,
+        name: `Major Time Compression`,
+        get_tooltip: () => { return `Tasks with instant reps now complete the whole task in a single ⏰Tick, rather than a single ⏰Tick per rep. This also means the ${ENERGY_TEXT} cost is that of a single ⏰Tick`; },
+        icon: `⏰`,
     },
 ]

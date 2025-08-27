@@ -241,8 +241,19 @@ export function calcTaskProgressMultiplier(task: Task, ignore_haste = false): nu
     // Avoid multi-skill tasks scaling much faster than all other tasks
     mult *= Math.pow(skill_level_mult, 1 / task.task_definition.skills.length);
 
+    let has_attunement_skill = false;
     for (const skill_type of task.task_definition.skills) {
         mult *= calcSkillTaskProgressWithoutLevel(skill_type);
+        const is_attunement_skill = calcAttunementSkills().includes(skill_type);
+        if (is_attunement_skill) {
+            has_attunement_skill = true;
+            mult /= calcAttunementSpeedBonusAtLevel(GAMESTATE.attunement);
+        }
+    }
+
+    // The bonus gets truly ridiculous if we let it stack, so let's not
+    if (has_attunement_skill) {
+        mult *= calcAttunementSpeedBonusAtLevel(GAMESTATE.attunement);
     }
 
     mult *= Math.pow(GOTTA_GO_FAST_BASE, getPrestigeRepeatableLevel(PrestigeRepeatableType.GottaGoFast));
