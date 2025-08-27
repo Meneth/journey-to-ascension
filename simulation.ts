@@ -175,12 +175,10 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
         case SkillType.Fortitude:
             mult *= calcPowerSpeedBonusAtLevel(GAMESTATE.power);
             break;
+    }
 
-        case SkillType.Study:
-        case SkillType.Magic:
-        case SkillType.Druid:
-            mult *= calcAttunementSpeedBonusAtLevel(GAMESTATE.attunement);
-            break;
+    if (calcAttunementSkills().includes(skill_type)) {
+        mult *= calcAttunementSpeedBonusAtLevel(GAMESTATE.attunement);
     }
 
     return mult;
@@ -609,22 +607,31 @@ export function calcAttunementGain(task: Task): number {
     if (!hasPerk(PerkType.Attunement)) {
         return 0;
     }
-
-    const attunement_skills = [SkillType.Druid, SkillType.Magic, SkillType.Study];
+    
+    const attunement_skills = calcAttunementSkills();
     if (!attunement_skills.some(skill => task.task_definition.skills.includes(skill))) {
         return 0;
     }
-
+    
     let value = task.task_definition.zone_id + 1;
     if (hasPrestigeUnlock(PrestigeUnlockType.DivineInspiration)){
         value *= 2;
     }
-
+    
     if (hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned)) {
         value *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.KnowledgeBoost) * PRESTIGE_XP_BOOSTER_MULT;
     }
 
     return value;
+}
+
+export function calcAttunementSkills() {
+    const attunement_skills = [SkillType.Druid, SkillType.Magic, SkillType.Study];
+    if (hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned)) {
+        attunement_skills.push(SkillType.Search);
+    }
+
+    return attunement_skills;
 }
 
 // MARK: Automation
@@ -809,9 +816,10 @@ export function addPrestigeUnlock(unlock: PrestigeUnlockType) {
 
     if (unlock == PrestigeUnlockType.PermanentAutomation) {
         tryAddPerk(PerkType.DeepTrance);
-    }
-    if (unlock == PrestigeUnlockType.LookInTheMirror) {
+    } else if (unlock == PrestigeUnlockType.LookInTheMirror) {
         tryAddPerk(PerkType.ReflectionsOnTheJourney);
+    } else if (unlock == PrestigeUnlockType.FullyAttuned) {
+        tryAddPerk(PerkType.Attunement);
     }
 }
 
@@ -844,6 +852,9 @@ function applyGameStartPrestigeEffects() {
     }
     if (hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror)) {
         tryAddPerk(PerkType.ReflectionsOnTheJourney, show_notification);
+    }
+    if (hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned)) {
+        tryAddPerk(PerkType.Attunement, show_notification);
     }
 }
 

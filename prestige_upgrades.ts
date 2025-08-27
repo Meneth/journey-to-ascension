@@ -1,6 +1,8 @@
+import { getSkillString } from "./rendering.js";
 import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DEEP_TRANCE_EMOJI, ENERGY_TEXT, REFLECTIONS_ON_THE_JOURNEY_EMOJI, XP_TEXT } from "./rendering_constants.js";
 import { hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
+import { SkillType } from "./skills.js";
 
 export enum PrestigeUnlockType {
     PermanentAutomation,
@@ -59,7 +61,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
         type: PrestigeUnlockType.FullyAttuned,
         name: "Fully Attuned",
-        get_description: () => { return `Permanently unlocks the ${ATTUNEMENT_EMOJI}Attunement Perk<br>Makes the Knowledge Boost Prestige upgrade apply to ${ATTUNEMENT_EMOJI}Attunement`; },
+        get_description: () => { return `Permanently unlocks the ${ATTUNEMENT_EMOJI}Attunement Perk<br>Makes the Knowledge Boost Prestige upgrade apply to ${ATTUNEMENT_TEXT}<br>Makes ${ATTUNEMENT_TEXT} apply to ${getSkillString(SkillType.Study)}`; },
         cost: 400
     },
 ];
