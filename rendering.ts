@@ -407,7 +407,6 @@ function updateTaskRendering() {
 }
 
 function estimateTotalTaskTicks(task: Task, completions: number): number {
-    
     let haste_stacks = GAMESTATE.queued_scrolls_of_haste;
     if (task.hasted) {
         haste_stacks += 1;

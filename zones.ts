@@ -268,12 +268,12 @@ export const ZONES: Zone[] = [
     {
         name: "The Metropolis",
         tasks: [
-            new TaskDefinition({ id: 170, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 100_000, skills: [SkillType.Travel], perk: PerkType.Awakening }),
-            new TaskDefinition({ id: 171, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 1500, max_reps: 3, skills: [SkillType.Study, SkillType.Search], xp_mult: 0.2 }),
-            new TaskDefinition({ id: 172, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 1, skills: [SkillType.Druid] }),
-            new TaskDefinition({ id: 173, name: "PLACEHOLDER", max_reps: 2, cost_multiplier: 20000, skills: [SkillType.Magic], item: ItemType.MagicEssence }),
-            new TaskDefinition({ id: 174, name: "Improve Your Time Compression", cost_multiplier: 500_000, max_reps: 3, skills: [SkillType.Magic, SkillType.Study], xp_mult: 0.03, perk: PerkType.MajorTimeCompression }),
-            new TaskDefinition({ id: 175, name: "PLACEHOLDER", cost_multiplier: 100, max_reps: 5, xp_mult: 10, skills: [SkillType.Charisma] }),
+            new TaskDefinition({ id: 170, name: "Begin Search for the Dragon's Hoard", type: TaskType.Travel, cost_multiplier: 100, skills: [SkillType.Travel], perk: PerkType.Awakening }),
+            new TaskDefinition({ id: 171, name: "Become Master at the Mage's Guild HQ", type: TaskType.Mandatory, cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Magic, SkillType.Charisma], xp_mult: 0.05 }),
+            new TaskDefinition({ id: 172, name: "Figure Out Where to Go Next", type: TaskType.Mandatory, cost_multiplier: 100_000, max_reps: 1, skills: [SkillType.Study], xp_mult: 0.2 }),
+            new TaskDefinition({ id: 173, name: "Write Down Crafting Recipes", max_reps: 5, cost_multiplier: 5, skills: [SkillType.Crafting], item: ItemType.CraftingRecipe, xp_mult: 1 }),
+            new TaskDefinition({ id: 174, name: "Improve Your Time Compression", cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Magic, SkillType.Study], xp_mult: 0.03, perk: PerkType.MajorTimeCompression }),
+            new TaskDefinition({ id: 175, name: "Study at the Artificer Guild", cost_multiplier: 10000, max_reps: 5, xp_mult: 1, skills: [SkillType.Study, SkillType.Crafting] }),
             new TaskDefinition({ id: 176, name: "PLACEHOLDER", cost_multiplier: 100, max_reps: 3, xp_mult: 2, skills: [SkillType.Travel, SkillType.Survival] }),
             new TaskDefinition({ id: 177, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 100_000_000, xp_mult: 0.15, skills: [SkillType.Combat], item: ItemType.Dreamcatcher }),
         ],

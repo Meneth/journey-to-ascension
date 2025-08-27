@@ -31,21 +31,22 @@ export enum ItemType {
     DjinnLamp,
     Dreamcatcher,
     MagicEssence,
+    CraftingRecipe,
 
     Count
 }
 
-type itemUseLambda = (amount: number) => void;
-type itemEffectTextLambda = (amount: number) => string;
-type itemTooltipLambda = () => string;
+type ItemUseLambda = (amount: number) => void;
+type ItemEffectTextLambda = (amount: number) => string;
+type ItemTooltipLambda = () => string;
 
 export class ItemDefinition {
     enum = ItemType.Count;
     name = "";
-    get_tooltip: itemTooltipLambda = () => { return ""; };
+    get_tooltip: ItemTooltipLambda = () => { return ""; };
     icon = "";
-    get_effect_text: itemEffectTextLambda = () => { return ""; };
-    on_consume: itemUseLambda = () => { };
+    get_effect_text: ItemEffectTextLambda = () => { return ""; };
+    on_consume: ItemUseLambda = () => { };
 }
 
 export const HASTE_MULT = 5;
@@ -286,6 +287,15 @@ export const ITEMS: ItemDefinition[] = [
         get_effect_text: (amount) => { return `${getSkillString(SkillType.Magic)} Task speed increased ${amount * 300}%`; },
         on_consume: (amount) => {
             getSkill(SkillType.Magic).speed_modifier += 3 * amount;
+        },
+    },
+    {
+        enum: ItemType.MagicEssence, name: `Crafting Recipes`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Crafting)} speed by 30% each`; },
+        icon: `🛠️`,
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Crafting)} Task speed increased ${amount * 30}%`; },
+        on_consume: (amount) => {
+            getSkill(SkillType.Crafting).speed_modifier += 0.3 * amount;
         },
     },
 ]

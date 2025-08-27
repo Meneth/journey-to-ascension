@@ -5,7 +5,7 @@ import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE } from "./prestige_upgrades.js";
-import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
+import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
 // MARK: Constants
 let task_progress_mult = 1;
@@ -264,6 +264,10 @@ export function calcTaskProgressMultiplier(task: Task, ignore_haste = false): nu
 
     mult *= Math.pow(ZONE_SPEEDUP_BASE, task.task_definition.zone_id);
 
+    if (hasPerk(PerkType.MajorTimeCompression)) {
+        mult *= MAJOR_TIME_COMPRESSION_EFFECT;
+    }
+
     return mult * task_progress_mult;
 }
 
@@ -466,6 +470,10 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
     }
 
     drain *= Math.pow(ZONE_SPEEDUP_BASE, task.task_definition.zone_id);
+
+    if (!is_single_tick && hasPerk(PerkType.MajorTimeCompression)) {
+        drain *= MAJOR_TIME_COMPRESSION_EFFECT;
+    }
 
     return drain;
 }
