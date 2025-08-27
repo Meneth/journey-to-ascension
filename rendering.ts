@@ -887,7 +887,7 @@ function populatePrestigeView() {
                 (unlock_button as HTMLInputElement).disabled = unlock.cost > GAMESTATE.divine_spark;
             }
 
-            setupTooltipStatic(unlock_button, unlock.name, unlock.description);
+            setupTooltipStatic(unlock_button, unlock.name, unlock.get_description());
 
             if (!is_unlocked) {
                 unlock_button.addEventListener("click", () => {
@@ -913,11 +913,11 @@ function populatePrestigeView() {
             (unlock_button as HTMLInputElement).disabled = cost > GAMESTATE.divine_spark;
 
             setupTooltipStaticHeader(unlock_button, upgrade.name, () => {
-                let desc = upgrade.description;
+                let desc = upgrade.get_description();
                 desc += "<br><br>Current Effect: ";
 
                 switch (upgrade.type) {
-                    case PrestigeRepeatableType.XPBooster:
+                    case PrestigeRepeatableType.KnowledgeBoost:
                         desc += `+${formatNumber(PRESTIGE_XP_BOOSTER_MULT * level * 100, false)}%`
                         break;
                     case PrestigeRepeatableType.UnlimitedPower:
