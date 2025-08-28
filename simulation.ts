@@ -128,6 +128,9 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             if (hasPerk(PerkType.WalkWithoutRhythm)) {
                 mult *= 1.4;
             }
+            if (hasPerk(PerkType.HideInPlainSight)) {
+                mult *= 1.5;
+            }
             break;
         case SkillType.Combat:
             if (hasPerk(PerkType.VillageHero)) {

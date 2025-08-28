@@ -36,6 +36,7 @@ export enum PerkType {
     TowerOfBabel,
     Awakening,
     MajorTimeCompression,
+    HideInPlainSight,
 
     Count
 }
@@ -199,5 +200,11 @@ export const PERKS: PerkDefinition[] = [
         name: `Major Time Compression`,
         get_tooltip: () => { return `Tasks with instant reps now complete the whole Task in a single ⏰Tick, rather than a single ⏰Tick per rep<br>This also means the ${ENERGY_TEXT} cost is that of a single ⏰Tick<br>Reduces the real-world time for non-instant Tasks by 50% (does not affect ${ENERGY_TEXT} use)`; },
         icon: `⏰`,
+    },
+    {
+        enum: PerkType.HideInPlainSight,
+        name: `Hide in Plain Sight`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Subterfuge)} Task speed by 50%`; },
+        icon: `👥`,
     },
 ]

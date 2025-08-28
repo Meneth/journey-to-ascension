@@ -32,6 +32,8 @@ export enum ItemType {
     Dreamcatcher,
     MagicEssence,
     CraftingRecipe,
+    KnightlyBoots,
+    DragonScale,
 
     Count
 }
@@ -282,7 +284,7 @@ export const ITEMS: ItemDefinition[] = [
     },
     {
         enum: ItemType.MagicEssence, name: `Magical Essence`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} speed by 300% each`; },
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} Task speed by 300% each`; },
         icon: `🌠`,
         get_effect_text: (amount) => { return `${getSkillString(SkillType.Magic)} Task speed increased ${amount * 300}%`; },
         on_consume: (amount) => {
@@ -291,8 +293,27 @@ export const ITEMS: ItemDefinition[] = [
     },
     {
         enum: ItemType.MagicEssence, name: `Crafting Recipes`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Crafting)} speed by 30% each`; },
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Crafting)} Task speed by 30% each`; },
         icon: `🛠️`,
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Crafting)} Task speed increased ${amount * 30}%`; },
+        on_consume: (amount) => {
+            getSkill(SkillType.Crafting).speed_modifier += 0.3 * amount;
+        },
+    },
+    {
+        enum: ItemType.KnightlyBoots, name: `Knightly Boots`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} Task speed by 20% each`; },
+        icon: `👢`,
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 20}%`; },
+        on_consume: (amount) => {
+            getSkill(SkillType.Combat).speed_modifier += 0.2 * amount;
+            getSkill(SkillType.Fortitude).speed_modifier += 0.2 * amount;
+        },
+    },
+    {
+        enum: ItemType.DragonScale, name: `Dragon Scale`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Crafting)} speed by 30% each. PLACEHOLDER`; },
+        icon: `🐲`,
         get_effect_text: (amount) => { return `${getSkillString(SkillType.Crafting)} Task speed increased ${amount * 30}%`; },
         on_consume: (amount) => {
             getSkill(SkillType.Crafting).speed_modifier += 0.3 * amount;
