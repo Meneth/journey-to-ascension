@@ -5,7 +5,7 @@ import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } fr
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
+import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, POWER_TEXT, XP_TEXT } from "./rendering_constants.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE } from "./prestige_upgrades.js";
 
 // MARK: Helpers
@@ -714,7 +714,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
     if (power_gain > 0) {
         const power_gain_text = document.createElement("p");
         const speed_bonus = calcPowerSpeedBonusAtLevel(info.power_at_end) / calcPowerSpeedBonusAtLevel(info.power_at_start);
-        power_gain_text.textContent = `Power: +${power_gain} (x${speed_bonus.toFixed(2)} speed)`;
+        power_gain_text.textContent = `${POWER_TEXT}: +${formatNumber(power_gain, false)} (x${speed_bonus.toFixed(2)} speed)`;
 
         skill_gain.appendChild(power_gain_text);
     }
@@ -723,7 +723,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
     if (attunement_gain > 0) {
         const attunement_gain_text = document.createElement("p");
         const speed_bonus = calcAttunementSpeedBonusAtLevel(info.attunement_at_end) / calcAttunementSpeedBonusAtLevel(info.attunement_at_start);
-        attunement_gain_text.textContent = `Attunement: +${attunement_gain} (x${speed_bonus.toFixed(2)} speed)`;
+        attunement_gain_text.textContent = `${ATTUNEMENT_TEXT}: +${formatNumber(attunement_gain, false)} (x${speed_bonus.toFixed(2)} speed)`;
 
         skill_gain.appendChild(attunement_gain_text);
     }

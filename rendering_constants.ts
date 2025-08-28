@@ -8,3 +8,5 @@ export const DEEP_TRANCE_EMOJI = "💫";
 export const REFLECTIONS_ON_THE_JOURNEY_EMOJI = "🕰️";
 export const ATTUNEMENT_EMOJI = "🌀";
 export const ATTUNEMENT_TEXT = `${ATTUNEMENT_EMOJI}Attunement`;
+export const POWER_EMOJI = "💪";
+export const POWER_TEXT = `${POWER_EMOJI}Power`;
