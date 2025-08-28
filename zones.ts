@@ -262,7 +262,8 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 164, name: "Build Giant Tower", cost_multiplier: 60, max_reps: 2, skills: [SkillType.Crafting], xp_mult: 0.25, perk: PerkType.TowerOfBabel }),
             new TaskDefinition({ id: 165, name: "Talk to Mysterious Being", cost_multiplier: 100, max_reps: 5, xp_mult: 10, skills: [SkillType.Charisma] }),
             new TaskDefinition({ id: 166, name: "Travel the Plains", cost_multiplier: 200, max_reps: 3, xp_mult: 2, skills: [SkillType.Travel, SkillType.Survival] }),
-            new TaskDefinition({ id: 167, name: "The Weaver of Dreams", type: TaskType.Boss, cost_multiplier: 100_000_000, xp_mult: 0.15, skills: [SkillType.Combat], item: ItemType.Dreamcatcher }),
+            new TaskDefinition({ id: 167, name: "The Weaver of Dreams", type: TaskType.Boss, cost_multiplier: 100_000_000, xp_mult: 0.15, skills: [SkillType.Combat], item: ItemType.Dreamcatcher, unlocks_task: 168 }),
+            new TaskDefinition({ id: 168, name: "Contain the Dream", cost_multiplier: 200_000_000, xp_mult: 0.05, skills: [SkillType.Magic], perk: PerkType.DreamPrism, hidden_by_default: true }),
         ],
     },
     {
@@ -275,7 +276,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 174, name: "Improve Your Time Compression", cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Magic, SkillType.Study], xp_mult: 0.03, perk: PerkType.MajorTimeCompression }),
             new TaskDefinition({ id: 175, name: "Study at the Artificer Guild", cost_multiplier: 10000, max_reps: 5, xp_mult: 1, skills: [SkillType.Study, SkillType.Crafting] }),
             new TaskDefinition({ id: 176, name: "Practice in the Fighting Pits", cost_multiplier: 100_000, max_reps: 3, xp_mult: 1, skills: [SkillType.Combat] }),
-            new TaskDefinition({ id: 177, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 100_000_000, xp_mult: 0.125, skills: [SkillType.Combat], item: ItemType.Dreamcatcher }),
+            new TaskDefinition({ id: 177, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 500_000_000, xp_mult: 0.125, skills: [SkillType.Combat], item: ItemType.Dreamcatcher }),
         ],
     },
     {
@@ -288,7 +289,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 184, name: "Hide from the Dragon", cost_multiplier: 1_000, max_reps: 3, skills: [SkillType.Subterfuge, SkillType.Survival], xp_mult: 0.1, perk: PerkType.HideInPlainSight }),
             new TaskDefinition({ id: 185, name: "Go on a Long Trek", cost_multiplier: 100, max_reps: 5, xp_mult: 5, skills: [SkillType.Travel, SkillType.Survival] }),
             new TaskDefinition({ id: 186, name: "Try to Turn into a Dragon", cost_multiplier: 10000, max_reps: 3, xp_mult: 2, skills: [SkillType.Druid] }),
-            new TaskDefinition({ id: 187, name: "Dragon Spawn", type: TaskType.Boss, cost_multiplier: 100_000_000, xp_mult: 0.1, skills: [SkillType.Combat], item: ItemType.Dreamcatcher }),
+            new TaskDefinition({ id: 187, name: "Dragon Spawn", type: TaskType.Boss, cost_multiplier: 1_000_000_000, xp_mult: 0.1, skills: [SkillType.Combat], item: ItemType.Dreamcatcher }),
         ],
     },
 ]

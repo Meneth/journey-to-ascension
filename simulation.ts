@@ -497,6 +497,7 @@ function doAnyReset() {
     GAMESTATE.is_in_energy_reset = false;
     GAMESTATE.automation_mode = AutomationMode.Off;
     GAMESTATE.queued_scrolls_of_haste = 0;
+    GAMESTATE.items_found_this_energy_reset = [];
     removeTemporarySkillBonuses();
     storeLoopStartNumbersForNextGameOver();
     
@@ -520,9 +521,13 @@ export function calcItemEnergyGain(base_energy: number) {
 
 // MARK: Items
 
-function addItem(item: ItemType, count: number) {
+export function addItem(item: ItemType, count: number) {
     const oldValue = GAMESTATE.items.get(item) ?? 0;
     GAMESTATE.items.set(item, oldValue + count);
+
+    if (!GAMESTATE.items_found_this_energy_reset.includes(item)) {
+        GAMESTATE.items_found_this_energy_reset.push(item);
+    }
 
     const event = new RenderEvent(EventType.GainedItem, {});
     GAMESTATE.queueRenderEvent(event);
@@ -1032,6 +1037,7 @@ export class Gamestate {
     unlocked_skills: SkillType[] = [];
     perks: Map<PerkType, boolean> = new Map();
     items: Map<ItemType, number> = new Map();
+    items_found_this_energy_reset: ItemType[] = [];
     queued_scrolls_of_haste = 0;
 
     is_in_energy_reset = false;

@@ -1,6 +1,6 @@
 import { GAMESTATE } from "./game.js";
 import { SkillType } from "./skills.js";
-import { calcItemEnergyGain, getSkill } from "./simulation.js"
+import { addItem, calcItemEnergyGain, getSkill } from "./simulation.js"
 import { getSkillString } from "./rendering.js";
 import { ENERGY_TEXT } from "./rendering_constants.js";
 
@@ -274,12 +274,16 @@ export const ITEMS: ItemDefinition[] = [
         },
     },
     {
-        enum: ItemType.DjinnLamp, name: `Dreamcatcher`,
-        get_tooltip: () => { return `???`; },
+        enum: ItemType.Dreamcatcher, name: `Dreamcatcher`,
+        get_tooltip: () => { return `Creates a copy of every Item type you've obtained this Energy Reset (except Dreamcatchers)`; },
         icon: `🕸️`,
-        get_effect_text: (amount) => { return `???? ${amount * 30}%`; },
-        on_consume: () => {
-            
+        get_effect_text: (amount) => { return `Copied ${amount * (GAMESTATE.items_found_this_energy_reset.length - 1)} Items`; },
+        on_consume: (amount) => {
+            for (const item of GAMESTATE.items_found_this_energy_reset) {
+                if (item != ItemType.Dreamcatcher) {
+                    addItem(item, amount);
+                }
+            }
         },
     },
     {
@@ -321,4 +325,4 @@ export const ITEMS: ItemDefinition[] = [
     },
 ]
 
-export const ITEMS_TO_NOT_AUTO_USE = [ItemType.ScrollOfHaste];
+export const ITEMS_TO_NOT_AUTO_USE = [ItemType.ScrollOfHaste, ItemType.Dreamcatcher];

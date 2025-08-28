@@ -37,6 +37,7 @@ export enum PerkType {
     Awakening,
     MajorTimeCompression,
     HideInPlainSight,
+    DreamPrism,
 
     Count
 }
@@ -206,5 +207,11 @@ export const PERKS: PerkDefinition[] = [
         name: `Hide in Plain Sight`,
         get_tooltip: () => { return `Improves ${getSkillString(SkillType.Subterfuge)} Task speed by 50%`; },
         icon: `👥`,
+    },
+    {
+        enum: PerkType.DreamPrism,
+        name: `Dream Prism`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} and ${getSkillString(SkillType.Travel)} Task speed by 50%`; },
+        icon: `🔷`,
     },
 ]
