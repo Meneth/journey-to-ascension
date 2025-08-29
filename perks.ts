@@ -38,6 +38,7 @@ export enum PerkType {
     MajorTimeCompression,
     HideInPlainSight,
     DreamPrism,
+    DragonKillingPlan,
 
     Count
 }
@@ -213,5 +214,11 @@ export const PERKS: PerkDefinition[] = [
         name: `Dream Prism`,
         get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} and ${getSkillString(SkillType.Travel)} Task speed by 50%`; },
         icon: `🔷`,
+    },
+    {
+        enum: PerkType.DragonKillingPlan,
+        name: `Dragon Killing Plan`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Combat)} Task speed by 50%`; },
+        icon: `🏔️`,
     },
 ]

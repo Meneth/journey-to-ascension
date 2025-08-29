@@ -34,6 +34,7 @@ export enum ItemType {
     CraftingRecipe,
     KnightlyBoots,
     DragonScale,
+    CaveInsects,
 
     Count
 }
@@ -322,6 +323,13 @@ export const ITEMS: ItemDefinition[] = [
         on_consume: (amount) => {
             getSkill(SkillType.Crafting).speed_modifier += 0.3 * amount;
         },
+    },
+    {
+        enum: ItemType.CaveInsects, name: `Cave Insects`,
+        get_tooltip: () => { return `Gives ${calcItemEnergyGain(5)} ${ENERGY_TEXT} each`; },
+        icon: `🦟`,
+        get_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(5)} ${ENERGY_TEXT}`; },
+        on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(5) * amount; },
     },
 ]
 
