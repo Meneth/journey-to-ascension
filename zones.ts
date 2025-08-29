@@ -305,6 +305,19 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 197, name: "Dragon", type: TaskType.Boss, cost_multiplier: 2_000_000_000, xp_mult: 0.08, skills: [SkillType.Combat], item: ItemType.DragonScale }),
         ],
     },
+    {
+        name: "The Place of Power",
+        tasks: [
+            new TaskDefinition({ id: 200, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 100, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 201, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 2_000_000, max_reps: 3, skills: [SkillType.Search, SkillType.Subterfuge], xp_mult: 0.001 }),
+            new TaskDefinition({ id: 202, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 100, max_reps: 3, skills: [SkillType.Survival], xp_mult: 0.2 }),
+            new TaskDefinition({ id: 203, name: "PLACEHOLDER", max_reps: 9, cost_multiplier: 20, skills: [SkillType.Survival], item: ItemType.CaveInsects }),
+            new TaskDefinition({ id: 204, name: "PLACEHOLDER", cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 0.1, perk: PerkType.DragonKillingPlan }),
+            new TaskDefinition({ id: 205, name: "PLACEHOLDER", cost_multiplier: 3_000, max_reps: 5, xp_mult: 5, skills: [SkillType.Subterfuge, SkillType.Survival] }),
+            new TaskDefinition({ id: 206, name: "PLACEHOLDER", cost_multiplier: 10000, max_reps: 3, xp_mult: 2, skills: [SkillType.Druid] }),
+            new TaskDefinition({ id: 207, name: "PLACEHOLDER", cost_multiplier: 2_000_000_000, xp_mult: 0.08, skills: [SkillType.Combat], item: ItemType.DragonScale }),
+        ],
+    },
 ]
 
 ZONES.forEach((zone, index) => {
