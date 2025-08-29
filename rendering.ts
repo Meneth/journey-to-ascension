@@ -6,7 +6,7 @@ import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, POWER_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer } from "./prestige_upgrades.js";
 
 // MARK: Helpers
 
@@ -866,12 +866,15 @@ function populatePrestigeView() {
         prestige_button.classList.toggle("prestige-glow", GAMESTATE.prestige_count == 0);
     }
 
+    const PRESTIGE_LAYER_NAMES = ["Touch the Divine", "Transcend Humanity", "Embrace Divinity", "Ascend to Godhood"];
+
+    for (const prestige_layer of GAMESTATE.prestige_layers_unlocked)
     {
         const touch_the_divine_div = createChildElement(scroll_area, "div");
         touch_the_divine_div.className = "prestige-section";
 
         const header = createChildElement(touch_the_divine_div, "h2");
-        header.textContent = "Touch the Divine";
+        header.textContent = PRESTIGE_LAYER_NAMES[prestige_layer] as string;
 
         const unlockables_div = createChildElement(touch_the_divine_div, "div");
         const unlockables_header = createChildElement(unlockables_div, "h3");
@@ -879,7 +882,7 @@ function populatePrestigeView() {
         const unlockables_purchases = createChildElement(unlockables_div, "div");
         unlockables_purchases.className = "prestige-purchases";
 
-        for (const unlock of PRESTIGE_UNLOCKABLES) {
+        for (const unlock of PRESTIGE_UNLOCKABLES.filter((unlock) => { return unlock.layer == prestige_layer; })) {
             const is_unlocked = hasPrestigeUnlock(unlock.type);
             const unlock_button = createChildElement(unlockables_purchases, is_unlocked ? "div" : "button");
             unlock_button.className = "prestige-purchase";
@@ -912,7 +915,7 @@ function populatePrestigeView() {
         const repeatables_purchases = createChildElement(upgrades_div, "div");
         repeatables_purchases.className = "prestige-purchases";
 
-        for (const upgrade of PRESTIGE_REPEATABLES) {
+        for (const upgrade of PRESTIGE_REPEATABLES.filter((unlock) => { return unlock.layer == prestige_layer; })) {
             const unlock_button = createChildElement(repeatables_purchases, "button");
             unlock_button.className = "prestige-purchase prestige-purchase-repeatable";
             const cost = calcPrestigeRepeatableCost(upgrade.type);

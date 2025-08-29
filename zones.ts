@@ -1,5 +1,6 @@
 import { ItemType } from "./items.js";
 import { PerkType } from "./perks.js";
+import { PrestigeLayer } from "./prestige_upgrades.js";
 import { SkillType } from "./skills.js";
 
 export enum TaskType {
@@ -19,6 +20,7 @@ export class TaskDefinition {
     xp_mult: number = 1;
     item: ItemType = ItemType.Count;
     perk: PerkType = PerkType.Count;
+    prestige_layer: PrestigeLayer = PrestigeLayer.Count;
     max_reps: number = 1;
     hidden_by_default = false;
     unlocks_task: number = -1;
@@ -245,7 +247,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 150, name: "Begin Search for the Next Ritual", type: TaskType.Travel, cost_multiplier: 60, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 151, name: "Apologize for Stealing Reagents", type: TaskType.Mandatory, cost_multiplier: 150, max_reps: 3, skills: [SkillType.Charisma], xp_mult: 0.25 }),
             new TaskDefinition({ id: 152, name: "Rest for a While", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 5, skills: [SkillType.Fortitude] }),
-            new TaskDefinition({ id: 153, name: "Touch the Divine", type: TaskType.Prestige, max_reps: 1, cost_multiplier: 0.03, skills: [SkillType.Ascension] }),
+            new TaskDefinition({ id: 153, name: "Touch the Divine", type: TaskType.Prestige, max_reps: 1, cost_multiplier: 0.03, skills: [SkillType.Ascension], prestige_layer: PrestigeLayer.TouchTheDivine }),
             new TaskDefinition({ id: 154, name: "Infuse Magical Incense", max_reps: 9, cost_multiplier: 100, skills: [SkillType.Magic], item: ItemType.MagicalIncense }),
             new TaskDefinition({ id: 155, name: "Practice Memorization", cost_multiplier: 4000, max_reps: 5, skills: [SkillType.Study, SkillType.Magic], perk: PerkType.EnergeticMemory, xp_mult: 0.5 }),
             new TaskDefinition({ id: 156, name: "Guided Spellcasting", cost_multiplier: 100, max_reps: 3, xp_mult: 10, skills: [SkillType.Magic] }),
@@ -311,7 +313,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 200, name: "Journey Beyond", type: TaskType.Travel, cost_multiplier: 5000, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 201, name: "Gather Your Thoughts", type: TaskType.Mandatory, cost_multiplier: 2_000_000, max_reps: 5, skills: [SkillType.Study], xp_mult: 0.01 }),
             new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 1, max_reps: 2, skills: [SkillType.Ascension], xp_mult: 0.1 }),
-            new TaskDefinition({ id: 203, name: "Transcend Humanity", type: TaskType.Prestige, max_reps: 3, cost_multiplier: 0.5, skills: [SkillType.Ascension], xp_mult: 0.25 }),
+            new TaskDefinition({ id: 203, name: "Transcend Humanity", type: TaskType.Prestige, max_reps: 3, cost_multiplier: 0.5, skills: [SkillType.Ascension], xp_mult: 0.25, prestige_layer: PrestigeLayer.TranscendHumanity }),
             new TaskDefinition({ id: 204, name: "Imbue Magical Vessel", max_reps: 9, cost_multiplier: 100_000, skills: [SkillType.Magic], xp_mult: 0.1, item: ItemType.MagicalVessel }),
             new TaskDefinition({ id: 205, name: "Invent a New Spell", cost_multiplier: 300_000_000, max_reps: 3, skills: [SkillType.Magic], xp_mult: 0.01, perk: PerkType.UnifiedTheoryOfMagic }),
             new TaskDefinition({ id: 206, name: "PLACEHOLDER", cost_multiplier: 3_000, max_reps: 5, xp_mult: 5, skills: [SkillType.Subterfuge, SkillType.Survival] }),

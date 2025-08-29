@@ -4,7 +4,7 @@ import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } fr
 import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
 // MARK: Constants
@@ -363,6 +363,11 @@ function fullyFinishTask(task: Task) {
         GAMESTATE.prestige_available = true;
         const event = new RenderEvent(EventType.PrestigeAvailable, {});
         GAMESTATE.queueRenderEvent(event);
+    }
+
+    if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_layers_unlocked.includes(task.task_definition.prestige_layer))
+    {
+        GAMESTATE.prestige_layers_unlocked.push(task.task_definition.prestige_layer);
     }
 }
 
@@ -1062,6 +1067,7 @@ export class Gamestate {
     divine_spark = 0;
     prestige_unlocks: PrestigeUnlockType[] = [];
     prestige_repeatables: Map<PrestigeRepeatableType, number> = new Map();
+    prestige_layers_unlocked: PrestigeLayer[] = [];
 
     pending_render_events: RenderEvent[] = [];
 
