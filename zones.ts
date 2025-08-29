@@ -308,9 +308,9 @@ export const ZONES: Zone[] = [
     {
         name: "The Place of Power",
         tasks: [
-            new TaskDefinition({ id: 200, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 2500, skills: [SkillType.Travel] }),
-            new TaskDefinition({ id: 201, name: "Gather Your Thoughts", type: TaskType.Mandatory, cost_multiplier: 2_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 0.01 }),
-            new TaskDefinition({ id: 202, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 100, max_reps: 3, skills: [SkillType.Survival], xp_mult: 0.2 }),
+            new TaskDefinition({ id: 200, name: "Journey Beyond", type: TaskType.Travel, cost_multiplier: 5000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 201, name: "Gather Your Thoughts", type: TaskType.Mandatory, cost_multiplier: 2_000_000, max_reps: 5, skills: [SkillType.Study], xp_mult: 0.01 }),
+            new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 1, max_reps: 2, skills: [SkillType.Ascension], xp_mult: 0.1 }),
             new TaskDefinition({ id: 203, name: "Transcend Humanity", type: TaskType.Prestige, max_reps: 3, cost_multiplier: 0.5, skills: [SkillType.Ascension], xp_mult: 0.25 }),
             new TaskDefinition({ id: 204, name: "Imbue Magical Vessel", max_reps: 9, cost_multiplier: 100_000, skills: [SkillType.Magic], xp_mult: 0.1, item: ItemType.MagicalVessel }),
             new TaskDefinition({ id: 205, name: "Invent a New Spell", cost_multiplier: 300_000_000, max_reps: 3, skills: [SkillType.Magic], xp_mult: 0.01, perk: PerkType.UnifiedTheoryOfMagic }),
