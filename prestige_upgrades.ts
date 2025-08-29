@@ -4,6 +4,15 @@ import { hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 import { SkillType } from "./skills.js";
 
+export enum PrestigeLayer {
+    TouchTheDivine,
+    TranscendHumanity,
+    EmbraceDivinity,
+    AscendToGodhood,
+
+    Count
+}
+
 export enum PrestigeUnlockType {
     PermanentAutomation,
     DivineInspiration,

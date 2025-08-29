@@ -271,6 +271,10 @@ export function calcTaskProgressMultiplier(task: Task, ignore_haste = false): nu
         mult *= MAJOR_TIME_COMPRESSION_EFFECT;
     }
 
+    if (hasPerk(PerkType.UnifiedTheoryOfMagic)) {
+        mult *= Math.pow(1.02, GAMESTATE.highest_zone_fully_completed + 1);
+    }
+
     return mult * task_progress_mult;
 }
 
@@ -454,7 +458,7 @@ function unlockTask(task_id: number) {
     GAMESTATE.queueRenderEvent(event);
 }
 
-function isTaskFullyCompleted(task: Task) : boolean {
+function isTaskFullyCompleted(task: Task): boolean {
     return task.reps >= task.task_definition.max_reps;
 }
 
@@ -500,7 +504,7 @@ function doAnyReset() {
     GAMESTATE.items_found_this_energy_reset = [];
     removeTemporarySkillBonuses();
     storeLoopStartNumbersForNextGameOver();
-    
+
 }
 
 export function doEnergyReset() {
@@ -511,7 +515,7 @@ export function doEnergyReset() {
     doAnyReset(); // Gotta be after the current_zone check
     GAMESTATE.energy_reset_count += 1;
     halveItemCounts();
-    
+
     saveGame();
 }
 
@@ -643,17 +647,17 @@ export function calcAttunementGain(task: Task): number {
     if (!hasPerk(PerkType.Attunement)) {
         return 0;
     }
-    
+
     const attunement_skills = calcAttunementSkills();
     if (!attunement_skills.some(skill => task.task_definition.skills.includes(skill))) {
         return 0;
     }
-    
+
     let value = task.task_definition.zone_id + 1;
-    if (hasPrestigeUnlock(PrestigeUnlockType.DivineInspiration)){
+    if (hasPrestigeUnlock(PrestigeUnlockType.DivineInspiration)) {
         value *= 2;
     }
-    
+
     if (hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned)) {
         value *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.KnowledgeBoost) * PRESTIGE_XP_BOOSTER_MULT;
     }
@@ -814,7 +818,7 @@ export function calcDivineSparkGainFromHighestZone(zone: number) {
 }
 
 export function calcDivineSparkGainFromHighestZoneFullyCompleted(zone: number) {
-    return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT)  * PRESTIGE_FULLY_COMPLETED_MULT / calcDivineSparkDivisor();
+    return Math.pow(zone + 1, PRESTIGE_GAIN_EXPONENT) * PRESTIGE_FULLY_COMPLETED_MULT / calcDivineSparkDivisor();
 }
 
 export function calcDivineSparkGain() {
@@ -1092,7 +1096,7 @@ function advanceZone() {
     if (GAMESTATE.tasks.every((task: Task) => { return isTaskFullyCompleted(task); })) {
         GAMESTATE.highest_zone_fully_completed = Math.max(GAMESTATE.highest_zone_fully_completed, GAMESTATE.current_zone);
     }
-    
+
 
     GAMESTATE.current_zone += 1;
     GAMESTATE.highest_zone = Math.max(GAMESTATE.highest_zone, GAMESTATE.current_zone);

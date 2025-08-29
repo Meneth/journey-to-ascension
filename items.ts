@@ -35,6 +35,7 @@ export enum ItemType {
     KnightlyBoots,
     DragonScale,
     CaveInsects,
+    MagicalVessel,
 
     Count
 }
@@ -330,6 +331,15 @@ export const ITEMS: ItemDefinition[] = [
         icon: `🦟`,
         get_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(5)} ${ENERGY_TEXT}`; },
         on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(5) * amount; },
+    },
+    {
+        enum: ItemType.MagicalVessel, name: `Magical Vessel`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Ascension)} Task speed by 30% each`; },
+        icon: `🏺`,
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Ascension)} Task speed increased ${amount * 30}%`; },
+        on_consume: (amount) => {
+            getSkill(SkillType.Ascension).speed_modifier += 0.3 * amount;
+        },
     },
 ]
 

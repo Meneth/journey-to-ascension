@@ -39,6 +39,7 @@ export enum PerkType {
     HideInPlainSight,
     DreamPrism,
     DragonKillingPlan,
+    UnifiedTheoryOfMagic,
 
     Count
 }
@@ -220,5 +221,11 @@ export const PERKS: PerkDefinition[] = [
         name: `Dragon Killing Plan`,
         get_tooltip: () => { return `Improves ${getSkillString(SkillType.Combat)} Task speed by 50%`; },
         icon: `🏔️`,
+    },
+    {
+        enum: PerkType.UnifiedTheoryOfMagic,
+        name: `Unified Theory of Magic`,
+        get_tooltip: () => { return `Each Zone fully completed in this Prestige increases Task Speed 2%<br>For instance, having fully completed the 15th Zone would speed up Task speed 1.02^15 = 35%<br>Note that it's based on your highest fully completed, so you can skip fully completing earlier zones if you want`; },
+        icon: `📜`,
     },
 ]
