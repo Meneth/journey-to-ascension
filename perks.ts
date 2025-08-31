@@ -160,7 +160,7 @@ export const PERKS: PerkDefinition[] = [
     {
         enum: PerkType.ReflectionsOnTheJourney,
         name: `Reflections on the Journey`,
-        get_tooltip: () => { return `Reduce ${ENERGY_TEXT} drain based on the highest zone reached<br>In each zone ${ENERGY_TEXT} consumption is reduced ${((1 - getReflectionsOnTheJourneyExponent()) * 100).toFixed(0)}% compounding for each zone you've reached past it<br>So zone 12 has ${ENERGY_TEXT} cost multiplied by ${getReflectionsOnTheJourneyExponent()}^2 if the highest zone reached is 14`; },
+        get_tooltip: () => { return `Reduce ${ENERGY_TEXT} drain based on the highest Zone reached<br>In each Zone ${ENERGY_TEXT} consumption is reduced ${((1 - getReflectionsOnTheJourneyExponent()) * 100).toFixed(0)}% compounding for each Zone you've reached past it<br>So Zone 12 has ${ENERGY_TEXT} cost multiplied by ${getReflectionsOnTheJourneyExponent()}^2 if the highest Zone reached is 14`; },
         icon: REFLECTIONS_ON_THE_JOURNEY_EMOJI,
     },
     {
@@ -178,7 +178,7 @@ export const PERKS: PerkDefinition[] = [
     {
         enum: PerkType.EnergeticMemory,
         name: `Energetic Memory`,
-        get_tooltip: () => { return `On each Energy Reset, increase max ${ENERGY_TEXT} by the current zone / 10<br>So zone 11 gives 1.1 max ${ENERGY_TEXT}`; },
+        get_tooltip: () => { return `On each Energy Reset, increase max ${ENERGY_TEXT} by the current Zone / 10<br>So Zone 9 gives 0.9 max ${ENERGY_TEXT}${hasPrestigeUnlock(PrestigeUnlockType.TranscendantMemory) ? `<br>Squared after Zone 10, so Zone 20 gives 2 * 2 = 4 max ${ENERGY_TEXT}`: ``}`; },
         icon: `${ENERGETIC_MEMORY_EMOJI}`,
     },
     {
@@ -226,7 +226,7 @@ export const PERKS: PerkDefinition[] = [
     {
         enum: PerkType.UnifiedTheoryOfMagic,
         name: `Unified Theory of Magic`,
-        get_tooltip: () => { return `Each Zone fully completed in this Prestige increases Task Speed 2%<br>For instance, having fully completed the 15th Zone would speed up Task speed 1.02^15 = 35%<br>Note that it's based on your highest fully completed, so you can skip fully completing earlier zones if you want`; },
+        get_tooltip: () => { return `Each Zone fully completed in this Prestige increases Task Speed 2%<br>For instance, having fully completed the 15th Zone would speed up Task speed 1.02^15 = 35%<br>Note that it's based on your highest fully completed, so you can skip fully completing earlier Zones if you want`; },
         icon: `📜`,
     },
 ]

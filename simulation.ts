@@ -514,7 +514,11 @@ function doAnyReset() {
 
 export function doEnergyReset() {
     if (hasPerk(PerkType.EnergeticMemory)) {
-        GAMESTATE.max_energy += (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
+        let energy_gain = (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
+        if (energy_gain > 1 && hasPrestigeUnlock(PrestigeUnlockType.TranscendantMemory)) {
+            energy_gain *= energy_gain;
+        }
+        GAMESTATE.max_energy += energy_gain;
     }
 
     doAnyReset(); // Gotta be after the current_zone check
@@ -865,6 +869,8 @@ export function addPrestigeUnlock(unlock: PrestigeUnlockType) {
         tryAddPerk(PerkType.ReflectionsOnTheJourney);
     } else if (unlock == PrestigeUnlockType.FullyAttuned) {
         tryAddPerk(PerkType.Attunement);
+    } else if (unlock == PrestigeUnlockType.TranscendantMemory) {
+        tryAddPerk(PerkType.EnergeticMemory);
     }
 }
 
