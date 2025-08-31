@@ -109,7 +109,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         layer: PrestigeLayer.TranscendHumanity,
         name: "Placheolder",
         get_description: () => { return `Placeholder`; },
-        cost: 1
+        cost: 10000
     },
     {
         type: PrestigeUnlockType.SeeBeyondTheVeil,
@@ -124,6 +124,7 @@ export const DIVINE_KNOWLEDGE_MULT = 0.5;
 export const DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT = 0.2;
 export const GOTTA_GO_FAST_BASE = 1.1;
 export const TRANSCENDANT_APTITUDE_MULT = 50;
+export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.1;
 
 export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     {
@@ -163,7 +164,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         type: PrestigeRepeatableType.DivineLightning,
         layer: PrestigeLayer.TranscendHumanity,
         name: "Divine Lightning",
-        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by 0.1`; },
+        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by ${DIVINE_LIGHTNING_EXPONENT_INCREASE}`; },
         initial_cost: 50,
         scaling_exponent: 3
     },
@@ -180,7 +181,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         layer: PrestigeLayer.TranscendHumanity,
         name: "Placeholder",
         get_description: () => { return `Placeholder`; },
-        initial_cost: 50,
+        initial_cost: 50000,
         scaling_exponent: 2
     },
     {
@@ -188,7 +189,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         layer: PrestigeLayer.TranscendHumanity,
         name: "Placeholder",
         get_description: () => { return `Placeholder`; },
-        initial_cost: 50,
+        initial_cost: 50000,
         scaling_exponent: 2
     },
 ];

@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_GAIN_EXPONENT, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
@@ -829,7 +829,7 @@ function populatePrestigeView() {
         divine_spark.textContent = `${DIVINE_SPARK_TEXT}: ${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})`;
 
         const divine_spark_gain = createChildElement(summary_div, "p");
-        divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} sources:<br>Highest Zone ^ ${PRESTIGE_GAIN_EXPONENT} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${PRESTIGE_GAIN_EXPONENT})`;
+        divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} sources:<br>Highest Zone ^ ${getPrestigeGainExponent()} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${getPrestigeGainExponent()})`;
         divine_spark_gain.innerHTML += `<br>Gain divisor: ${formatNumber(calcDivineSparkDivisor(), false)}`;
 
         const divine_spark_gain_stats = createChildElement(summary_div, "p");
