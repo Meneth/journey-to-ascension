@@ -35,7 +35,7 @@ export enum PrestigeRepeatableType {
 
     DivineLightning,
     TranscendantAptitude,
-    TranscendHumanityPlaceholder3,
+    Energized,
     TranscendHumanityPlaceholder4,
 
     Count
@@ -125,6 +125,7 @@ export const DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT = 0.2;
 export const GOTTA_GO_FAST_BASE = 1.1;
 export const TRANSCENDANT_APTITUDE_MULT = 100;
 export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.1;
+export const ENERGIZED_INCREASE = 20;
 
 export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     {
@@ -177,12 +178,12 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         scaling_exponent: 1.5
     },
     {
-        type: PrestigeRepeatableType.TranscendHumanityPlaceholder3,
+        type: PrestigeRepeatableType.Energized,
         layer: PrestigeLayer.TranscendHumanity,
-        name: "Placeholder",
-        get_description: () => { return `Placeholder`; },
-        initial_cost: 50000,
-        scaling_exponent: 2
+        name: "Energized",
+        get_description: () => { return `Increases Max ${ENERGY_TEXT} by ${ENERGIZED_INCREASE}`; },
+        initial_cost: 100,
+        scaling_exponent: 1.75
     },
     {
         type: PrestigeRepeatableType.TranscendHumanityPlaceholder4,

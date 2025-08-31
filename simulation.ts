@@ -4,7 +4,7 @@ import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } fr
 import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
 // MARK: Constants
@@ -910,6 +910,9 @@ export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableTy
             const target_level = skill.type == SkillType.Ascension ? global_target_level / 2 : global_target_level;
             skill.level = Math.max(target_level, skill.level);
         }
+    } else if (repeatable == PrestigeRepeatableType.Energized) {
+        GAMESTATE.max_energy += ENERGIZED_INCREASE;
+        GAMESTATE.current_energy += ENERGIZED_INCREASE;
     }
 }
 
@@ -928,6 +931,10 @@ function applyGameStartPrestigeEffects() {
     if (hasPrestigeUnlock(PrestigeUnlockType.TranscendantMemory)) {
         tryAddPerk(PerkType.EnergeticMemory, show_notification);
     }
+
+    const energy_boost = ENERGIZED_INCREASE * getPrestigeRepeatableLevel(PrestigeRepeatableType.Energized);
+    GAMESTATE.max_energy += energy_boost;
+    GAMESTATE.current_energy += energy_boost;
 }
 
 export function doPrestige() {

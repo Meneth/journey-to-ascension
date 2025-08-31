@@ -6,7 +6,7 @@ import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, POWER_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE } from "./prestige_upgrades.js";
 
 // MARK: Helpers
 
@@ -941,10 +941,13 @@ function populatePrestigeView() {
                         desc += `x${formatNumber(Math.pow(GOTTA_GO_FAST_BASE, level))}`;
                         break;
                     case PrestigeRepeatableType.DivineLightning:
-                        desc += `+${level * DIVINE_LIGHTNING_EXPONENT_INCREASE}`;
+                        desc += `+${(level * DIVINE_LIGHTNING_EXPONENT_INCREASE).toFixed(1)}`;
                         break;
                     case PrestigeRepeatableType.TranscendantAptitude:
                         desc += `+${level * TRANSCENDANT_APTITUDE_MULT}`;
+                        break;
+                    case PrestigeRepeatableType.Energized:
+                        desc += `+${level * ENERGIZED_INCREASE}`;
                         break;
                     default:
                         console.error("Unhandled upgrade");
