@@ -6,6 +6,7 @@ const DIVINE_SPARK_EMOJI = "✨";
 export const DIVINE_SPARK_TEXT = `${DIVINE_SPARK_EMOJI}Divine Spark`;
 export const DEEP_TRANCE_EMOJI = "💫";
 export const REFLECTIONS_ON_THE_JOURNEY_EMOJI = "🕰️";
+export const ENERGETIC_MEMORY_EMOJI = "💭";
 export const ATTUNEMENT_EMOJI = "🌀";
 export const ATTUNEMENT_TEXT = `${ATTUNEMENT_EMOJI}Attunement`;
 export const POWER_EMOJI = "💪";

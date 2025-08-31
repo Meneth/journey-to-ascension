@@ -1,5 +1,5 @@
 import { getSkillString } from "./rendering.js";
-import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DEEP_TRANCE_EMOJI, ENERGY_TEXT, REFLECTIONS_ON_THE_JOURNEY_EMOJI, XP_TEXT } from "./rendering_constants.js";
+import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DEEP_TRANCE_EMOJI, DIVINE_SPARK_TEXT, ENERGETIC_MEMORY_EMOJI, ENERGY_TEXT, REFLECTIONS_ON_THE_JOURNEY_EMOJI, XP_TEXT } from "./rendering_constants.js";
 import { hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 import { SkillType } from "./skills.js";
@@ -19,22 +19,22 @@ export enum PrestigeUnlockType {
     LookInTheMirror,
     FullyAttuned,
 
-    TranscendHumanityPlaceholder1,
-    TranscendHumanityPlaceholder2,
+    TranscendantMemory,
+    DivineSpeed,
     TranscendHumanityPlaceholder3,
-    TranscendHumanityPlaceholder4,
+    SeeBeyondTheVeil,
     
     Count
 }
 
 export enum PrestigeRepeatableType {
-    KnowledgeBoost,
+    DivineKnowledge,
     UnlimitedPower,
-    Gourmet,
+    DivineAppetite,
     GottaGoFast,
 
-    TranscendHumanityPlaceholder1,
-    TranscendHumanityPlaceholder2,
+    DivineLightning,
+    TranscendantAptitude,
     TranscendHumanityPlaceholder3,
     TranscendHumanityPlaceholder4,
 
@@ -91,18 +91,18 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     },
 
     {
-        type: PrestigeUnlockType.TranscendHumanityPlaceholder1,
+        type: PrestigeUnlockType.TranscendantMemory,
         layer: PrestigeLayer.TranscendHumanity,
-        name: "Placheolder",
-        get_description: () => { return `Placeholder`; },
-        cost: 1
+        name: "Transcendant Memory",
+        get_description: () => { return `Permanently unlocks the ${ENERGETIC_MEMORY_EMOJI} Energetic Memory Perk<br>Squares the Max ${ENERGY_TEXT} gain after Zone 10`; },
+        cost: 10
     },
     {
-        type: PrestigeUnlockType.TranscendHumanityPlaceholder2,
+        type: PrestigeUnlockType.DivineSpeed,
         layer: PrestigeLayer.TranscendHumanity,
-        name: "Placheolder",
-        get_description: () => { return `Placeholder`; },
-        cost: 1
+        name: "Divine Speed",
+        get_description: () => { return `Makes the game tick 1% faster (additively) for every Max ${ENERGY_TEXT} beyond 100<br>No effect on ${ENERGY_TEXT} use, but makes tasks take less real-world time`; },
+        cost: 500
     },
     {
         type: PrestigeUnlockType.TranscendHumanityPlaceholder3,
@@ -112,24 +112,25 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         cost: 1
     },
     {
-        type: PrestigeUnlockType.TranscendHumanityPlaceholder4,
+        type: PrestigeUnlockType.SeeBeyondTheVeil,
         layer: PrestigeLayer.TranscendHumanity,
-        name: "Placheolder",
-        get_description: () => { return `Placeholder`; },
-        cost: 1
+        name: "See Beyond the Veil",
+        get_description: () => { return `Unlocks NUMBER new tasks before Zone 20`; },
+        cost: 2500
     },
 ];
 
-export const PRESTIGE_XP_BOOSTER_MULT = 0.5;
-export const GOURMET_ENERGY_ITEM_BOOST_MULT = 0.2;
+export const DIVINE_KNOWLEDGE_MULT = 0.5;
+export const DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT = 0.2;
 export const GOTTA_GO_FAST_BASE = 1.1;
+export const TRANSCENDANT_APTITUDE_MULT = 50;
 
 export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     {
-        type: PrestigeRepeatableType.KnowledgeBoost,
+        type: PrestigeRepeatableType.DivineKnowledge,
         layer: PrestigeLayer.TouchTheDivine,
-        name: "Knowledge Boost",
-        get_description: () => { return `Increases ${XP_TEXT}${hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned) ? ` and ${ATTUNEMENT_TEXT}` : ""} gain by ${PRESTIGE_XP_BOOSTER_MULT * 100}%`; },
+        name: "Divine Knowledge",
+        get_description: () => { return `Increases ${XP_TEXT}${hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned) ? ` and ${ATTUNEMENT_TEXT}` : ""} gain by ${DIVINE_KNOWLEDGE_MULT * 100}%`; },
         initial_cost: 15,
         scaling_exponent: 1.23
     },
@@ -142,10 +143,10 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         scaling_exponent: 3
     },
     {
-        type: PrestigeRepeatableType.Gourmet,
+        type: PrestigeRepeatableType.DivineAppetite,
         layer: PrestigeLayer.TouchTheDivine,
-        name: "Gourmet",
-        get_description: () => { return `Increases ${ENERGY_TEXT} gained from Items by ${GOURMET_ENERGY_ITEM_BOOST_MULT * 100}%`; },
+        name: "Divine Appetite",
+        get_description: () => { return `Increases ${ENERGY_TEXT} gained from Items by ${DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT * 100}%`; },
         initial_cost: 40,
         scaling_exponent: 2.5
     },
@@ -159,20 +160,20 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     },
 
     {
-        type: PrestigeRepeatableType.TranscendHumanityPlaceholder1,
+        type: PrestigeRepeatableType.DivineLightning,
         layer: PrestigeLayer.TranscendHumanity,
-        name: "Placeholder",
-        get_description: () => { return `Placeholder`; },
+        name: "Divine Lightning",
+        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by 0.1`; },
         initial_cost: 50,
-        scaling_exponent: 2
+        scaling_exponent: 3
     },
     {
-        type: PrestigeRepeatableType.TranscendHumanityPlaceholder2,
+        type: PrestigeRepeatableType.TranscendantAptitude,
         layer: PrestigeLayer.TranscendHumanity,
-        name: "Placeholder",
-        get_description: () => { return `Placeholder`; },
-        initial_cost: 50,
-        scaling_exponent: 2
+        name: "Transcendant Aptitude",
+        get_description: () => { return `Increases starting skill levels by ${TRANSCENDANT_APTITUDE_MULT}`; },
+        initial_cost: 20,
+        scaling_exponent: 1.5
     },
     {
         type: PrestigeRepeatableType.TranscendHumanityPlaceholder3,

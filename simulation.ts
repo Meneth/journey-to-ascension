@@ -4,7 +4,7 @@ import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } fr
 import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
 // MARK: Constants
@@ -37,7 +37,7 @@ export function calcSkillXp(task: Task, task_progress: number): number {
         xp *= 1.5;
     }
 
-    xp *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.KnowledgeBoost) * PRESTIGE_XP_BOOSTER_MULT;
+    xp *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineKnowledge) * DIVINE_KNOWLEDGE_MULT;
 
     xp *= Math.pow(1.25, task.task_definition.zone_id);
 
@@ -525,7 +525,7 @@ export function doEnergyReset() {
 }
 
 export function calcItemEnergyGain(base_energy: number) {
-    return base_energy * (1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.Gourmet) * GOURMET_ENERGY_ITEM_BOOST_MULT);
+    return base_energy * (1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineAppetite) * DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT);
 }
 
 // MARK: Items
@@ -664,7 +664,7 @@ export function calcAttunementGain(task: Task): number {
     }
 
     if (hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned)) {
-        value *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.KnowledgeBoost) * PRESTIGE_XP_BOOSTER_MULT;
+        value *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineKnowledge) * DIVINE_KNOWLEDGE_MULT;
     }
 
     return value;

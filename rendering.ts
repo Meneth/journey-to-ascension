@@ -6,7 +6,7 @@ import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, POWER_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PRESTIGE_XP_BOOSTER_MULT, GOURMET_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE } from "./prestige_upgrades.js";
 
 // MARK: Helpers
 
@@ -829,8 +829,8 @@ function populatePrestigeView() {
         divine_spark.textContent = `${DIVINE_SPARK_TEXT}: ${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})`;
 
         const divine_spark_gain = createChildElement(summary_div, "p");
-        divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} gain:<br>Highest Zone ^ ${PRESTIGE_GAIN_EXPONENT} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${PRESTIGE_GAIN_EXPONENT})`;
-        divine_spark_gain.innerHTML += `<br>Gain divisor: ${formatNumber( calcDivineSparkDivisor(), false)}`;
+        divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} sources:<br>Highest Zone ^ ${PRESTIGE_GAIN_EXPONENT} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${PRESTIGE_GAIN_EXPONENT})`;
+        divine_spark_gain.innerHTML += `<br>Gain divisor: ${formatNumber(calcDivineSparkDivisor(), false)}`;
 
         const divine_spark_gain_stats = createChildElement(summary_div, "p");
         divine_spark_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
@@ -929,14 +929,14 @@ function populatePrestigeView() {
                 desc += "<br><br>Current Effect: ";
 
                 switch (upgrade.type) {
-                    case PrestigeRepeatableType.KnowledgeBoost:
-                        desc += `+${formatNumber(PRESTIGE_XP_BOOSTER_MULT * level * 100, false)}%`
+                    case PrestigeRepeatableType.DivineKnowledge:
+                        desc += `+${formatNumber(DIVINE_KNOWLEDGE_MULT * level * 100, false)}%`
                         break;
                     case PrestigeRepeatableType.UnlimitedPower:
                         desc += `x${formatNumber(Math.pow(2, level), false)}`
                         break;
-                    case PrestigeRepeatableType.Gourmet:
-                        desc += `+${formatNumber(GOURMET_ENERGY_ITEM_BOOST_MULT * level * 100, false)}%`
+                    case PrestigeRepeatableType.DivineAppetite:
+                        desc += `+${formatNumber(DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT * level * 100, false)}%`
                         break;
                     case PrestigeRepeatableType.GottaGoFast:
                         desc += `x${formatNumber(Math.pow(GOTTA_GO_FAST_BASE, level))}`

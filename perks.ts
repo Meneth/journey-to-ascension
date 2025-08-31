@@ -3,6 +3,7 @@ import { formatNumber, getSkillString } from "./rendering.js";
 import {
     DEEP_TRANCE_EMOJI,
     DIVINE_SPARK_TEXT,
+    ENERGETIC_MEMORY_EMOJI,
     ENERGY_TEXT,
     REFLECTIONS_ON_THE_JOURNEY_EMOJI,
     XP_TEXT
@@ -178,7 +179,7 @@ export const PERKS: PerkDefinition[] = [
         enum: PerkType.EnergeticMemory,
         name: `Energetic Memory`,
         get_tooltip: () => { return `On each Energy Reset, increase max ${ENERGY_TEXT} by the current zone / 10<br>So zone 11 gives 1.1 max ${ENERGY_TEXT}`; },
-        icon: `💭`,
+        icon: `${ENERGETIC_MEMORY_EMOJI}`,
     },
     {
         enum: PerkType.TheWorm,
