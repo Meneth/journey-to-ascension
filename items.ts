@@ -320,11 +320,12 @@ export const ITEMS: ItemDefinition[] = [
     },
     {
         enum: ItemType.DragonScale, name: `Dragon Scale`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Crafting)} speed by 30% each. PLACEHOLDER`; },
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} Task speed by 50% each`; },
         icon: `🐲`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Crafting)} Task speed increased ${amount * 30}%`; },
+        get_effect_text: (amount) => { return `${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 50}%`; },
         on_consume: (amount) => {
-            getSkill(SkillType.Crafting).speed_modifier += 0.3 * amount;
+            getSkill(SkillType.Combat).speed_modifier += 0.5 * amount;
+            getSkill(SkillType.Fortitude).speed_modifier += 0.5 * amount;
         },
     },
     {

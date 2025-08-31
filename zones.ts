@@ -293,7 +293,8 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 184, name: "Hide from the Dragon", cost_multiplier: 1_000, max_reps: 3, skills: [SkillType.Subterfuge, SkillType.Survival], xp_mult: 0.1, perk: PerkType.HideInPlainSight }),
             new TaskDefinition({ id: 185, name: "Go on a Long Trek", cost_multiplier: 100, max_reps: 5, xp_mult: 5, skills: [SkillType.Travel, SkillType.Survival] }),
             new TaskDefinition({ id: 186, name: "Try to Turn into a Dragon", cost_multiplier: 10000, max_reps: 3, xp_mult: 2, skills: [SkillType.Druid] }),
-            new TaskDefinition({ id: 187, name: "Dragon Spawn", type: TaskType.Boss, cost_multiplier: 25_000_000_000, xp_mult: 0.1, skills: [SkillType.Combat], item: ItemType.DragonScale }),
+            new TaskDefinition({ id: 187, name: "Dragon Spawn", type: TaskType.Boss, cost_multiplier: 25_000_000_000, xp_mult: 0.1, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 188 }),
+            new TaskDefinition({ id: 188, name: "Gather Dragon Scales", cost_multiplier: 1_000_000, xp_mult: 0.1, max_reps: 3, skills: [SkillType.Search], item: ItemType.DragonScale, hidden_by_default: true }),
         ],
     },
     {
@@ -306,7 +307,8 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 194, name: "Make a Plan for Killing the Dragon", cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 0.1, perk: PerkType.DragonKillingPlan }),
             new TaskDefinition({ id: 195, name: "Hide from the Dragon Some More", cost_multiplier: 3_000, max_reps: 5, xp_mult: 5, skills: [SkillType.Subterfuge, SkillType.Survival] }),
             new TaskDefinition({ id: 196, name: "Practice Spellcasting Under Pressure", cost_multiplier: 5_000_000, max_reps: 3, xp_mult: 1.5, skills: [SkillType.Magic] }),
-            new TaskDefinition({ id: 197, name: "Dragon", type: TaskType.Boss, cost_multiplier: 40_000_000_000, xp_mult: 0.08, skills: [SkillType.Combat], item: ItemType.DragonScale }),
+            new TaskDefinition({ id: 197, name: "Dragon", type: TaskType.Boss, cost_multiplier: 200_000_000_000, xp_mult: 0.02, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 198 }),
+            new TaskDefinition({ id: 198, name: "Hunt Down the Dragon's Spawn", cost_multiplier: 2_000_000_000_000, xp_mult: 0.001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
     {
@@ -314,7 +316,7 @@ export const ZONES: Zone[] = [
         tasks: [
             new TaskDefinition({ id: 200, name: "Journey Beyond", type: TaskType.Travel, cost_multiplier: 5000, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 201, name: "Gather Your Thoughts", type: TaskType.Mandatory, cost_multiplier: 2_000_000, max_reps: 5, skills: [SkillType.Study], xp_mult: 0.01 }),
-            new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 1, max_reps: 2, skills: [SkillType.Ascension], xp_mult: 0.1 }),
+            new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 1_500_000, max_reps: 2, skills: [SkillType.Ascension, SkillType.Fortitude], xp_mult: 0 }),
             new TaskDefinition({ id: 203, name: "Transcend Humanity", type: TaskType.Prestige, max_reps: 3, cost_multiplier: 0.5, skills: [SkillType.Ascension], xp_mult: 0.25, prestige_layer: PrestigeLayer.TranscendHumanity }),
             new TaskDefinition({ id: 204, name: "Imbue Magical Vessel", max_reps: 9, cost_multiplier: 100_000, skills: [SkillType.Magic], xp_mult: 0.1, item: ItemType.MagicalVessel }),
             new TaskDefinition({ id: 205, name: "Invent a New Spell", cost_multiplier: 300_000_000, max_reps: 3, skills: [SkillType.Magic], xp_mult: 0.01, perk: PerkType.UnifiedTheoryOfMagic }),

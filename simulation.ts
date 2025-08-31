@@ -123,6 +123,9 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             if (hasPerk(PerkType.TheWorm)) {
                 mult *= 1.5;
             }
+            if (hasPerk(PerkType.DragonSlayer)) {
+                mult *= 1.3;
+            }
             break;
         case SkillType.Magic:
             if (hasPerk(PerkType.Amulet)) {
@@ -155,6 +158,9 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             }
             if (hasPerk(PerkType.DragonKillingPlan)) {
                 mult *= 1.5;
+            }
+            if (hasPerk(PerkType.DragonSlayer)) {
+                mult *= 1.3;
             }
             break;
         case SkillType.Survival:

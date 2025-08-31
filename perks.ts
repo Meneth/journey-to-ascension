@@ -42,6 +42,7 @@ export enum PerkType {
     DragonKillingPlan,
     UnifiedTheoryOfMagic,
     Headmaster,
+    DragonSlayer,
 
     Count
 }
@@ -235,5 +236,11 @@ export const PERKS: PerkDefinition[] = [
         name: `Headmaster`,
         get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} and ${getSkillString(SkillType.Study)} Task speed by 30%`; },
         icon: `🧙‍♂️`,
+    },
+    {
+        enum: PerkType.DragonSlayer,
+        name: `Dragon Slayer`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Charisma)} Task speed by 30%`; },
+        icon: `🐉`,
     },
 ]
