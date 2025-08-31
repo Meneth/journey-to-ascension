@@ -1,5 +1,5 @@
 import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
-import { GAMESTATE } from "./game.js";
+import { GAMESTATE, setTickRate } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType, MAGIC_RING_MULT } from "./items.js";
 import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
@@ -509,6 +509,11 @@ function modifyEnergy(delta: number) {
     GAMESTATE.current_energy += delta;
 }
 
+function modifyMaxEnergy(delta: number) {
+    GAMESTATE.max_energy += delta;
+    setTickRate();
+}
+
 export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): number {
     let drain = 1;
 
@@ -559,7 +564,7 @@ function calcEnergeticMemoryGain() {
 }
 
 export function doEnergyReset() {
-    GAMESTATE.max_energy += calcEnergeticMemoryGain();
+    modifyMaxEnergy(calcEnergeticMemoryGain());
 
     doAnyReset(); // Gotta be after the current_zone check
     GAMESTATE.energy_reset_count += 1;
@@ -634,7 +639,7 @@ function tryAddPerk(perk: PerkType, show_notification = true) {
     }
 
     if (perk == PerkType.EnergySpell) {
-        GAMESTATE.max_energy += 50;
+        modifyMaxEnergy(50);
     }
 
     GAMESTATE.perks.set(perk, true);
@@ -944,8 +949,8 @@ export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableTy
             skill.level = Math.max(target_level, skill.level);
         }
     } else if (repeatable == PrestigeRepeatableType.Energized) {
-        GAMESTATE.max_energy += ENERGIZED_INCREASE;
-        GAMESTATE.current_energy += ENERGIZED_INCREASE;
+        modifyEnergy(ENERGIZED_INCREASE);
+        modifyMaxEnergy(ENERGIZED_INCREASE);
     }
 }
 
@@ -966,8 +971,8 @@ function applyGameStartPrestigeEffects() {
     }
 
     const energy_boost = ENERGIZED_INCREASE * getPrestigeRepeatableLevel(PrestigeRepeatableType.Energized);
-    GAMESTATE.max_energy += energy_boost;
-    GAMESTATE.current_energy += energy_boost;
+    modifyEnergy(energy_boost);
+    modifyMaxEnergy(energy_boost);
 }
 
 export function doPrestige() {
@@ -1006,6 +1011,7 @@ export function doPrestige() {
     resetTasks();
     applyGameStartPrestigeEffects();
     storeLoopStartNumbersForNextGameOver();
+    setTickRate();
     saveGame();
 }
 
@@ -1090,10 +1096,9 @@ function loadGameFromData(data: any) {
 // MARK: Gamestate
 
 const STARTING_ENERGY = 100;
+const DEFAULT_TICK_RATE = 100;
 
 export class Gamestate {
-    tick_interval_ms = 100;
-
     tasks: Task[] = [];
     active_task: Task | null = null;
     unlocked_tasks: number[] = [];
@@ -1180,6 +1185,15 @@ function advanceZone() {
     }
 
     resetTasks();
+}
+
+export function calcTickRate() {
+    let tick_rate = DEFAULT_TICK_RATE;
+    if (hasPrestigeUnlock(PrestigeUnlockType.DivineSpeed)) {
+        tick_rate /= 1 + (GAMESTATE.max_energy - 100) / 200;
+    }
+
+    return tick_rate;
 }
 
 export function updateGamestate() {

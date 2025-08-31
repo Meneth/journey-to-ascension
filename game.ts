@@ -1,20 +1,29 @@
 import { Rendering, updateRendering } from "./rendering.js";
-import { Gamestate, saveGame, updateGamestate, resetTasks } from "./simulation.js";
+import { Gamestate, saveGame, updateGamestate, resetTasks, calcTickRate } from "./simulation.js";
 
 function gameLoop() {
     updateGamestate();
     updateRendering();
 }
 
+export function setTickRate() {
+    if (GAME_LOOP_INTERVAL > 0) {
+        clearInterval(GAME_LOOP_INTERVAL);
+    }
+
+    GAME_LOOP_INTERVAL = setInterval(gameLoop, calcTickRate());
+}
+
 export let GAMESTATE = new Gamestate();
 export let RENDERING = new Rendering();
+let GAME_LOOP_INTERVAL = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
     GAMESTATE.start();
     RENDERING.initialize();
     RENDERING.start();
 
-    setInterval(gameLoop, GAMESTATE.tick_interval_ms);
+    setTickRate();
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
