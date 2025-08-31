@@ -316,7 +316,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 203, name: "Transcend Humanity", type: TaskType.Prestige, max_reps: 3, cost_multiplier: 0.5, skills: [SkillType.Ascension], xp_mult: 0.25, prestige_layer: PrestigeLayer.TranscendHumanity }),
             new TaskDefinition({ id: 204, name: "Imbue Magical Vessel", max_reps: 9, cost_multiplier: 100_000, skills: [SkillType.Magic], xp_mult: 0.1, item: ItemType.MagicalVessel }),
             new TaskDefinition({ id: 205, name: "Invent a New Spell", cost_multiplier: 300_000_000, max_reps: 3, skills: [SkillType.Magic], xp_mult: 0.01, perk: PerkType.UnifiedTheoryOfMagic }),
-            new TaskDefinition({ id: 206, name: "PLACEHOLDER", cost_multiplier: 3_000, max_reps: 5, xp_mult: 5, skills: [SkillType.Subterfuge, SkillType.Survival] }),
+            new TaskDefinition({ id: 206, name: "Reflect on Past Obstacles", cost_multiplier: 300_000, max_reps: 5, xp_mult: 1, skills: [SkillType.Subterfuge, SkillType.Study] }),
             new TaskDefinition({ id: 207, name: "Prepare for an Even Greater Journey", cost_multiplier: 1000, max_reps: 3, xp_mult: 3, skills: [SkillType.Travel, SkillType.Survival] }),
         ],
     },
