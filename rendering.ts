@@ -6,7 +6,7 @@ import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, POWER_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT } from "./prestige_upgrades.js";
 
 // MARK: Helpers
 
@@ -257,7 +257,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 const perk = PERKS[task.task_definition.perk] as PerkDefinition;
                 const is_last_rep = (task.reps + completions) == task.task_definition.max_reps;
                 if (!is_last_rep) { ++asterisk_count; perk_asterisk_index = asterisk_count; }
-                table.appendChild(createTwoElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, `${perk.icon}${knowsPerk(perk.enum) ? perk.name : "Mystery" } Perk`));
+                table.appendChild(createTwoElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, `${perk.icon}${knowsPerk(perk.enum) ? perk.name : "Mystery"} Perk`));
             }
 
             asterisk_count += 1; // Levels will always produce one
@@ -868,8 +868,7 @@ function populatePrestigeView() {
 
     const PRESTIGE_LAYER_NAMES = ["Touch the Divine", "Transcend Humanity", "Embrace Divinity", "Ascend to Godhood"];
 
-    for (const prestige_layer of GAMESTATE.prestige_layers_unlocked)
-    {
+    for (const prestige_layer of GAMESTATE.prestige_layers_unlocked) {
         const touch_the_divine_div = createChildElement(scroll_area, "div");
         touch_the_divine_div.className = "prestige-section";
 
@@ -930,16 +929,22 @@ function populatePrestigeView() {
 
                 switch (upgrade.type) {
                     case PrestigeRepeatableType.DivineKnowledge:
-                        desc += `+${formatNumber(DIVINE_KNOWLEDGE_MULT * level * 100, false)}%`
+                        desc += `+${formatNumber(DIVINE_KNOWLEDGE_MULT * level * 100, false)}%`;
                         break;
                     case PrestigeRepeatableType.UnlimitedPower:
-                        desc += `x${formatNumber(Math.pow(2, level), false)}`
+                        desc += `x${formatNumber(Math.pow(2, level), false)}`;
                         break;
                     case PrestigeRepeatableType.DivineAppetite:
-                        desc += `+${formatNumber(DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT * level * 100, false)}%`
+                        desc += `+${formatNumber(DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT * level * 100, false)}%`;
                         break;
                     case PrestigeRepeatableType.GottaGoFast:
-                        desc += `x${formatNumber(Math.pow(GOTTA_GO_FAST_BASE, level))}`
+                        desc += `x${formatNumber(Math.pow(GOTTA_GO_FAST_BASE, level))}`;
+                        break;
+                    case PrestigeRepeatableType.DivineLightning:
+                        desc += `+${level * DIVINE_LIGHTNING_EXPONENT_INCREASE}`;
+                        break;
+                    case PrestigeRepeatableType.TranscendantAptitude:
+                        desc += `+${level * TRANSCENDANT_APTITUDE_MULT}`;
                         break;
                     default:
                         console.error("Unhandled upgrade");

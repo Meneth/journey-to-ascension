@@ -123,7 +123,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
 export const DIVINE_KNOWLEDGE_MULT = 0.5;
 export const DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT = 0.2;
 export const GOTTA_GO_FAST_BASE = 1.1;
-export const TRANSCENDANT_APTITUDE_MULT = 50;
+export const TRANSCENDANT_APTITUDE_MULT = 100;
 export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.1;
 
 export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [

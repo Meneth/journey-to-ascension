@@ -4,7 +4,7 @@ import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } fr
 import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
 // MARK: Constants
@@ -206,10 +206,11 @@ export function getSkill(skill: SkillType): Skill {
 function initializeSkills() {
     GAMESTATE.skills = [];
     GAMESTATE.skills_at_start_of_reset = [];
+    const target_level = getPrestigeRepeatableLevel(PrestigeRepeatableType.TranscendantAptitude) * TRANSCENDANT_APTITUDE_MULT;
 
     for (let i = 0; i < SkillType.Count; i++) {
         GAMESTATE.skills.push(new Skill(i));
-        GAMESTATE.skills_at_start_of_reset.push(0);
+        GAMESTATE.skills_at_start_of_reset.push(target_level);
     }
 }
 
@@ -897,6 +898,13 @@ export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableTy
     const current_level = getPrestigeRepeatableLevel(repeatable);
     GAMESTATE.prestige_repeatables.set(repeatable, current_level + 1);
     GAMESTATE.divine_spark -= cost;
+
+    if (repeatable == PrestigeRepeatableType.TranscendantAptitude) {
+        const target_level = (current_level + 1) * TRANSCENDANT_APTITUDE_MULT;
+        for (const skill of GAMESTATE.skills) {
+            skill.level = Math.max(target_level, skill.level);
+        }
+    }
 }
 
 function applyGameStartPrestigeEffects() {
