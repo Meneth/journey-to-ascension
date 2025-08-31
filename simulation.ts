@@ -20,8 +20,9 @@ export class Skill {
     progress: number = 0;
     speed_modifier: number = 1;
 
-    constructor(type: SkillType) {
+    constructor(type: SkillType, level: number) {
         this.type = type;
+        this.level = level;
     }
 }
 
@@ -198,7 +199,7 @@ export function getSkill(skill: SkillType): Skill {
     const ret = GAMESTATE.skills[skill];
     if (!ret) {
         console.error("Couldn't find skill");
-        return new Skill(skill);
+        return new Skill(skill, 0);
     }
     return ret;
 }
@@ -206,10 +207,11 @@ export function getSkill(skill: SkillType): Skill {
 function initializeSkills() {
     GAMESTATE.skills = [];
     GAMESTATE.skills_at_start_of_reset = [];
-    const target_level = getPrestigeRepeatableLevel(PrestigeRepeatableType.TranscendantAptitude) * TRANSCENDANT_APTITUDE_MULT;
+    const global_target_level = getPrestigeRepeatableLevel(PrestigeRepeatableType.TranscendantAptitude) * TRANSCENDANT_APTITUDE_MULT;
 
     for (let i = 0; i < SkillType.Count; i++) {
-        GAMESTATE.skills.push(new Skill(i));
+        const target_level = i == SkillType.Ascension ? global_target_level / 2 : global_target_level;
+        GAMESTATE.skills.push(new Skill(i, target_level));
         GAMESTATE.skills_at_start_of_reset.push(target_level);
     }
 }
@@ -509,22 +511,27 @@ function doAnyReset() {
     GAMESTATE.queued_scrolls_of_haste = 0;
     GAMESTATE.items_found_this_energy_reset = [];
     removeTemporarySkillBonuses();
-    storeLoopStartNumbersForNextGameOver();
 
 }
 
-export function doEnergyReset() {
-    if (hasPerk(PerkType.EnergeticMemory)) {
-        let energy_gain = (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
-        if (energy_gain > 1 && hasPrestigeUnlock(PrestigeUnlockType.TranscendantMemory)) {
-            energy_gain *= energy_gain;
-        }
-        GAMESTATE.max_energy += energy_gain;
+function calcEnergeticMemoryGain() {
+    if (!hasPerk(PerkType.EnergeticMemory)) {
+        return 0;
     }
+    let energy_gain = (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
+    if (energy_gain > 1 && hasPrestigeUnlock(PrestigeUnlockType.TranscendantMemory)) {
+        energy_gain *= energy_gain;
+    }
+    return energy_gain;
+}
+
+export function doEnergyReset() {
+    GAMESTATE.max_energy += calcEnergeticMemoryGain();
 
     doAnyReset(); // Gotta be after the current_zone check
     GAMESTATE.energy_reset_count += 1;
     halveItemCounts();
+    storeLoopStartNumbersForNextGameOver();
 
     saveGame();
 }
@@ -797,9 +804,7 @@ function populateEnergyResetInfo() {
     info.power_at_start = GAMESTATE.power_at_start_of_reset;
     info.attunement_at_end = GAMESTATE.attunement;
     info.attunement_at_start = GAMESTATE.attunement_at_start_of_reset;
-    if (hasPerk(PerkType.EnergeticMemory)) {
-        info.energetic_memory_gain = (GAMESTATE.current_zone + 1) * ENERGETIC_MEMORY_MULT;
-    }
+    info.energetic_memory_gain = calcEnergeticMemoryGain();
 
     GAMESTATE.energy_reset_info = info;
 }
@@ -900,8 +905,9 @@ export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableTy
     GAMESTATE.divine_spark -= cost;
 
     if (repeatable == PrestigeRepeatableType.TranscendantAptitude) {
-        const target_level = (current_level + 1) * TRANSCENDANT_APTITUDE_MULT;
+        const global_target_level = (current_level + 1) * TRANSCENDANT_APTITUDE_MULT;
         for (const skill of GAMESTATE.skills) {
+            const target_level = skill.type == SkillType.Ascension ? global_target_level / 2 : global_target_level;
             skill.level = Math.max(target_level, skill.level);
         }
     }
@@ -918,6 +924,9 @@ function applyGameStartPrestigeEffects() {
     }
     if (hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned)) {
         tryAddPerk(PerkType.Attunement, show_notification);
+    }
+    if (hasPrestigeUnlock(PrestigeUnlockType.TranscendantMemory)) {
+        tryAddPerk(PerkType.EnergeticMemory, show_notification);
     }
 }
 
@@ -956,6 +965,7 @@ export function doPrestige() {
 
     resetTasks();
     applyGameStartPrestigeEffects();
+    storeLoopStartNumbersForNextGameOver();
     saveGame();
 }
 
