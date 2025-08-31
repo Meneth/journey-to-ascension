@@ -37,6 +37,7 @@ export class Task {
     reps: number = 0;
     enabled: boolean = true;
     hasted: boolean = false;
+    xp_boosted: boolean = false;
 
     constructor(definition: TaskDefinition) {
         this.task_definition = definition;
@@ -278,7 +279,8 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 174, name: "Improve Your Time Compression", cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Magic, SkillType.Study], xp_mult: 0.03, perk: PerkType.MajorTimeCompression }),
             new TaskDefinition({ id: 175, name: "Study at the Artificer Guild", cost_multiplier: 10000, max_reps: 5, xp_mult: 1, skills: [SkillType.Study, SkillType.Crafting] }),
             new TaskDefinition({ id: 176, name: "Practice in the Fighting Pits", cost_multiplier: 100_000, max_reps: 3, xp_mult: 1, skills: [SkillType.Combat] }),
-            new TaskDefinition({ id: 177, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 7_500_000_000, xp_mult: 0.125, skills: [SkillType.Combat], item: ItemType.Dreamcatcher }),
+            new TaskDefinition({ id: 177, name: "Mage's Guild Headmaster", type: TaskType.Boss, cost_multiplier: 11_000_000_000, xp_mult: 0.125, skills: [SkillType.Combat], item: ItemType.MagicRing, unlocks_task: 178 }),
+            new TaskDefinition({ id: 178, name: "Become Honorary Headmaster", cost_multiplier: 50_000_000_000, max_reps: 5, xp_mult: 0.01, skills: [SkillType.Magic, SkillType.Charisma], perk: PerkType.Headmaster, hidden_by_default: true }),
         ],
     },
     {
@@ -291,7 +293,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 184, name: "Hide from the Dragon", cost_multiplier: 1_000, max_reps: 3, skills: [SkillType.Subterfuge, SkillType.Survival], xp_mult: 0.1, perk: PerkType.HideInPlainSight }),
             new TaskDefinition({ id: 185, name: "Go on a Long Trek", cost_multiplier: 100, max_reps: 5, xp_mult: 5, skills: [SkillType.Travel, SkillType.Survival] }),
             new TaskDefinition({ id: 186, name: "Try to Turn into a Dragon", cost_multiplier: 10000, max_reps: 3, xp_mult: 2, skills: [SkillType.Druid] }),
-            new TaskDefinition({ id: 187, name: "Dragon Spawn", type: TaskType.Boss, cost_multiplier: 12_000_000_000, xp_mult: 0.1, skills: [SkillType.Combat], item: ItemType.DragonScale }),
+            new TaskDefinition({ id: 187, name: "Dragon Spawn", type: TaskType.Boss, cost_multiplier: 25_000_000_000, xp_mult: 0.1, skills: [SkillType.Combat], item: ItemType.DragonScale }),
         ],
     },
     {
@@ -304,7 +306,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 194, name: "Make a Plan for Killing the Dragon", cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 0.1, perk: PerkType.DragonKillingPlan }),
             new TaskDefinition({ id: 195, name: "Hide from the Dragon Some More", cost_multiplier: 3_000, max_reps: 5, xp_mult: 5, skills: [SkillType.Subterfuge, SkillType.Survival] }),
             new TaskDefinition({ id: 196, name: "Practice Spellcasting Under Pressure", cost_multiplier: 5_000_000, max_reps: 3, xp_mult: 1.5, skills: [SkillType.Magic] }),
-            new TaskDefinition({ id: 197, name: "Dragon", type: TaskType.Boss, cost_multiplier: 20_000_000_000, xp_mult: 0.08, skills: [SkillType.Combat], item: ItemType.DragonScale }),
+            new TaskDefinition({ id: 197, name: "Dragon", type: TaskType.Boss, cost_multiplier: 40_000_000_000, xp_mult: 0.08, skills: [SkillType.Combat], item: ItemType.DragonScale }),
         ],
     },
     {

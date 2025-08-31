@@ -41,6 +41,7 @@ export enum PerkType {
     DreamPrism,
     DragonKillingPlan,
     UnifiedTheoryOfMagic,
+    Headmaster,
 
     Count
 }
@@ -214,7 +215,7 @@ export const PERKS: PerkDefinition[] = [
     {
         enum: PerkType.DreamPrism,
         name: `Dream Prism`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} and ${getSkillString(SkillType.Travel)} Task speed by 50%`; },
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} and ${getSkillString(SkillType.Travel)} Task speed by 30%`; },
         icon: `🔷`,
     },
     {
@@ -228,5 +229,11 @@ export const PERKS: PerkDefinition[] = [
         name: `Unified Theory of Magic`,
         get_tooltip: () => { return `Each Zone fully completed in this Prestige increases Task Speed 2%<br>For instance, having fully completed the 15th Zone would speed up Task speed 1.02^15 = 35%<br>Note that it's based on your highest fully completed, so you can skip fully completing earlier Zones if you want`; },
         icon: `📜`,
+    },
+    {
+        enum: PerkType.Headmaster,
+        name: `Headmaster`,
+        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} and ${getSkillString(SkillType.Study)} Task speed by 30%`; },
+        icon: `🧙‍♂️`,
     },
 ]

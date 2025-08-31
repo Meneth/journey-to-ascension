@@ -1,7 +1,7 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
 import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
-import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE } from "./items.js";
+import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
@@ -109,6 +109,25 @@ function updateSkillRendering() {
 export function getSkillString(type: SkillType) {
     const skill = SKILL_DEFINITIONS[type] as SkillDefinition;
     return `${skill.icon}${skill.name}`;
+}
+
+function calcTotalSkillXp(task: Task, completions: number) {
+    let xp_boost_stacks = GAMESTATE.queued_magic_rings;
+    if (task.xp_boosted) {
+        xp_boost_stacks += 1;
+    }
+
+    const boost_completions = Math.min(completions, xp_boost_stacks);
+    const non_boost_completion = completions - boost_completions;
+
+    let xp = 0;
+    let xp_per_completion = calcSkillXp(task, calcTaskCost(task), true);
+
+    xp += xp_per_completion * non_boost_completion;
+    xp_per_completion *= MAGIC_RING_MULT;
+    xp += xp_per_completion * boost_completions;
+
+    return xp;
 }
 
 // MARK: Tasks
@@ -266,7 +285,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 const skill_progress = getSkill(skill);
                 const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
 
-                let xp_gained = completions * calcSkillXp(task, calcTaskCost(task));
+                let xp_gained = calcTotalSkillXp(task, completions);
                 let resulting_level = skill_progress.level;
                 let xp_needed = calcSkillXpNeeded(skill_progress) - skill_progress.progress;
 

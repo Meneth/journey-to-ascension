@@ -1,6 +1,6 @@
 import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE } from "./game.js";
-import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType } from "./items.js";
+import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType, MAGIC_RING_MULT } from "./items.js";
 import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
@@ -26,7 +26,7 @@ export class Skill {
     }
 }
 
-export function calcSkillXp(task: Task, task_progress: number): number {
+export function calcSkillXp(task: Task, task_progress: number, ignore_boost = false): number {
     const xp_mult = 8;
     let xp = task_progress * xp_mult * task.task_definition.xp_mult;
 
@@ -41,6 +41,10 @@ export function calcSkillXp(task: Task, task_progress: number): number {
     xp *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineKnowledge) * DIVINE_KNOWLEDGE_MULT;
 
     xp *= Math.pow(1.25, task.task_definition.zone_id);
+
+    if (!ignore_boost && task.xp_boosted) {
+        xp *= MAGIC_RING_MULT;
+    }
 
     return xp;
 }
@@ -99,6 +103,9 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             if (hasPerk(PerkType.Reading)) {
                 mult *= 1.5;
             }
+            if (hasPerk(PerkType.Headmaster)) {
+                mult *= 1.3;
+            }
             break;
         case SkillType.Charisma:
             if (hasPerk(PerkType.VillagerGratitude)) {
@@ -121,6 +128,12 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             if (hasPerk(PerkType.Amulet)) {
                 mult *= 1.5;
             }
+            if (hasPerk(PerkType.DreamPrism)) {
+                mult *= 1.3;
+            }
+            if (hasPerk(PerkType.Headmaster)) {
+                mult *= 1.3;
+            }
             break;
         case SkillType.Subterfuge:
             if (hasPerk(PerkType.UndergroundConnection)) {
@@ -139,6 +152,9 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             }
             if (hasPerk(PerkType.GoblinScourge)) {
                 mult *= 1.3;
+            }
+            if (hasPerk(PerkType.DragonKillingPlan)) {
+                mult *= 1.5;
             }
             break;
         case SkillType.Survival:
@@ -165,6 +181,9 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             }
             if (hasPerk(PerkType.WalkWithoutRhythm)) {
                 mult *= 1.2;
+            }
+            if (hasPerk(PerkType.DreamPrism)) {
+                mult *= 1.3;
             }
             break;
         case SkillType.Crafting:
@@ -330,9 +349,19 @@ function updateActiveTask() {
 
     if (!GAMESTATE.repeat_tasks || fully_finished) {
         GAMESTATE.active_task = null;
-    } else if (!fully_finished && GAMESTATE.queued_scrolls_of_haste > 0) {
-        active_task.hasted = true;
+    } else if (!fully_finished) {
+        tryApplySingleRepEffects(active_task);
+    }
+}
+
+export function tryApplySingleRepEffects(task: Task) {
+    if (GAMESTATE.queued_scrolls_of_haste > 0) {
+        task.hasted = true;
         GAMESTATE.queued_scrolls_of_haste--;
+    }
+    if (GAMESTATE.queued_magic_rings > 0) {
+        task.xp_boosted = true;
+        GAMESTATE.queued_magic_rings--;
     }
 }
 
@@ -342,10 +371,7 @@ export function clickTask(task: Task) {
     }
     else {
         GAMESTATE.active_task = task;
-        if (!task.hasted && GAMESTATE.queued_scrolls_of_haste > 0) {
-            task.hasted = true;
-            GAMESTATE.queued_scrolls_of_haste--;
-        }
+        tryApplySingleRepEffects(task);
     }
 }
 
@@ -385,6 +411,7 @@ function applyFinishTaskRepEffects(task: Task) {
     }
 
     task.hasted = false;
+    task.xp_boosted = false;
 
     addPower(calcPowerGain(task));
     addAttunement(calcAttunementGain(task));
@@ -1083,6 +1110,7 @@ export class Gamestate {
     items: Map<ItemType, number> = new Map();
     items_found_this_energy_reset: ItemType[] = [];
     queued_scrolls_of_haste = 0;
+    queued_magic_rings = 0;
 
     is_in_energy_reset = false;
     is_at_end_of_content = false;

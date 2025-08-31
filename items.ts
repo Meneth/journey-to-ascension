@@ -36,6 +36,7 @@ export enum ItemType {
     DragonScale,
     CaveInsects,
     MagicalVessel,
+    MagicRing,
 
     Count
 }
@@ -54,6 +55,7 @@ export class ItemDefinition {
 }
 
 export const HASTE_MULT = 5;
+export const MAGIC_RING_MULT = 3;
 
 export const ITEMS: ItemDefinition[] = [
     {
@@ -341,6 +343,13 @@ export const ITEMS: ItemDefinition[] = [
             getSkill(SkillType.Ascension).speed_modifier += 0.3 * amount;
         },
     },
+    {
+        enum: ItemType.MagicRing, name: `Magic Ring`,
+        get_tooltip: () => { return `The next Task you start gives ${MAGIC_RING_MULT}x as much XP`; },
+        icon: `💍`,
+        get_effect_text: (amount) => { return `Next ${amount} Tasks give ${MAGIC_RING_MULT}x as much XP`; },
+        on_consume: (amount) => { GAMESTATE.queued_magic_rings += amount; },
+    },
 ]
 
-export const ITEMS_TO_NOT_AUTO_USE = [ItemType.ScrollOfHaste, ItemType.Dreamcatcher];
+export const ITEMS_TO_NOT_AUTO_USE = [ItemType.ScrollOfHaste, ItemType.Dreamcatcher, ItemType.MagicRing];
