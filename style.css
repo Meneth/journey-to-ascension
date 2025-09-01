@@ -2,8 +2,10 @@
 */
 
 :root {
+    --element-background-color-darker: rgb(29, 87, 134);
     --element-background-color: rgb(35, 108, 168);
     --element-foreground-color: rgb(49, 144, 221);
+    --element-foreground-color-brighter: rgb(85, 177, 252);
     --game-width: 1100px;
     --font-family: "Merriweather", Arial, sans-serif;
     --font-weight: 500;
@@ -728,4 +730,30 @@ footer {
     margin: 3px 0;
     padding: 5px 10px;
     border-radius: var(--default-border-radius);
+}
+
+/* MARK: Messages
+*/
+
+/* Target the scrollbar itself */
+#prestige-box ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+/* Track (background) of the scrollbar */
+#prestige-box ::-webkit-scrollbar-track {
+    background: var(--element-foreground-color-brighter); /* Color of the scrollbar track */
+    border-radius: var(--default-border-radius); /* Rounded corners for the track */
+}
+
+/* Handle (thumb) of the scrollbar */
+#prestige-box ::-webkit-scrollbar-thumb {
+    background: var(--element-foreground-color); /* Color of the scrollbar thumb */
+    border-radius: var(--default-border-radius); /* Rounded corners for the thumb */
+}
+
+/* Handle on hover */
+#prestige-box ::-webkit-scrollbar-thumb:hover {
+    background: var(--element-background-color-darker);
 }
