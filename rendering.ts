@@ -1264,6 +1264,11 @@ function handleEvents() {
                     recreateTasks();
                     break;
                 }
+            case EventType.NewPrestigeLayer:
+                {
+                    message_div.innerHTML = `Unlocked more Prestige upgrades`;
+                    break;
+                }
             case EventType.NewHighestZone:
             case EventType.NewHighestZoneFullyCompleted:
                 {
