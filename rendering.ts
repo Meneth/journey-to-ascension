@@ -269,7 +269,8 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
             if (task.task_definition.item != ItemType.Count) {
                 const item = ITEMS[task.task_definition.item] as ItemDefinition;
-                table.appendChild(createTwoElementRow(`${completions}`, `${item.icon}${item.name} Item`));
+                const plural = completions > 1;
+                table.appendChild(createTwoElementRow(`${completions}`, `${item.icon}${item.name} ${plural ? "Items" : "Items"}`));
             }
 
             if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
@@ -516,7 +517,7 @@ function setupInfoTooltips() {
         let tooltip = `Items can be used to get bonuses that last until the next Energy Reset`;
         tooltip += `<br>The bonuses stack additively; 2 +100% results in 3x speed, not 4x`;
         tooltip += `<br>Bonuses to different Task types stack multiplicatively with one another`;
-        tooltip += `<br>Right-click to use all rather than just one`;
+        tooltip += `<br><br>Right-click to use all rather than just one`;
         return tooltip;
     });
 
@@ -1240,7 +1241,8 @@ function handleEvents() {
                 {
                     const item_context = context as UsedItemContext;
                     const item = ITEMS[item_context.item] as ItemDefinition;
-                    message_div.innerHTML = `Used ${item_context.count} ${item.icon}${item.name}`;
+                    const plural = item_context.count > 1;
+                    message_div.innerHTML = `Used ${item_context.count} ${item.icon}${plural ? item.name_plural : item.name}`;
                     message_div.innerHTML += `<br>${item.get_effect_text(item_context.count)}`;
                     recreateItems();
                     break;
@@ -1378,7 +1380,7 @@ function setupAutomationControls() {
 
     setupTooltip(all_control, function () { return `Automate ${all_control.textContent}`; }, function () {
         let tooltip = "Toggle between automating Ttasks in all zones, and not automating";
-        tooltip += "<br>Right-click Ttasks to designate them as automated";
+        tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
 
         return tooltip;
