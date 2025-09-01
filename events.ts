@@ -13,6 +13,8 @@ export enum EventType {
     UnlockedPower,
     TaskCompleted,
     PrestigeAvailable,
+    NewHighestZone,
+    NewHighestZoneFullyCompleted,
 
     Count
 }
@@ -50,4 +52,8 @@ export class UnlockedTaskContext extends EventContext {
 
 export class UnlockedSkillContext extends EventContext {
     skill: SkillType = SkillType.Count;
+}
+
+export class HighestZoneContext extends EventContext {
+    zone: number = 0;
 }

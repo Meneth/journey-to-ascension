@@ -2,7 +2,7 @@ import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE, setTickRate } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType, MAGIC_RING_MULT } from "./items.js";
 import { PerkType } from "./perks.js";
-import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext } from "./events.js";
+import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
@@ -1172,13 +1172,22 @@ function advanceZone() {
         return;
     }
 
-    if (GAMESTATE.tasks.every((task: Task) => { return isTaskFullyCompleted(task); })) {
-        GAMESTATE.highest_zone_fully_completed = Math.max(GAMESTATE.highest_zone_fully_completed, GAMESTATE.current_zone);
+    if (GAMESTATE.current_zone > GAMESTATE.highest_zone_fully_completed 
+        && GAMESTATE.tasks.every((task: Task) => { return isTaskFullyCompleted(task); })) {
+        GAMESTATE.highest_zone_fully_completed = GAMESTATE.current_zone;
+        const context: HighestZoneContext = { zone: GAMESTATE.current_zone };
+        const event = new RenderEvent(EventType.NewHighestZoneFullyCompleted, context);
+        GAMESTATE.queueRenderEvent(event);
     }
 
 
     GAMESTATE.current_zone += 1;
-    GAMESTATE.highest_zone = Math.max(GAMESTATE.highest_zone, GAMESTATE.current_zone);
+    if (GAMESTATE.current_zone > GAMESTATE.highest_zone) {
+        GAMESTATE.highest_zone = GAMESTATE.current_zone;
+        const context: HighestZoneContext = { zone: GAMESTATE.current_zone };
+        const event = new RenderEvent(EventType.NewHighestZone, context);
+        GAMESTATE.queueRenderEvent(event);
+    }
     if (GAMESTATE.automation_mode == AutomationMode.Zone) {
         GAMESTATE.automation_mode = AutomationMode.Off;
     }
