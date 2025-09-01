@@ -896,7 +896,7 @@ function populatePrestigeView() {
             populatePrestigeView();
         });
 
-        prestige_button.classList.toggle("prestige-glow", GAMESTATE.prestige_count == 0);
+        prestige_button.classList.toggle("prestige-glow", GAMESTATE.unlocked_new_prestige_this_prestige);
     }
 
     const PRESTIGE_LAYER_NAMES = ["Touch the Divine", "Transcend Humanity", "Embrace Divinity", "Ascend to Godhood"];
@@ -1429,7 +1429,7 @@ function updateExtraStats() {
         RENDERING.open_prestige_element.innerHTML = prestige_text;
     }
 
-    RENDERING.open_prestige_element.classList.toggle("prestige-glow", GAMESTATE.prestige_count == 0);
+    RENDERING.open_prestige_element.classList.toggle("prestige-glow", GAMESTATE.unlocked_new_prestige_this_prestige);
 }
 
 // MARK: Rendering

@@ -333,13 +333,6 @@ export function willCompleteAllRepsInOneTick(task: Task) {
     return isSingleTickTaskImpl(progress, cost);
 }
 
-export function isSingleTickTask(task: Task) {
-    const progress = calcTaskProgressPerTick(task);
-    const cost = calcTaskCost(task);
-
-    return isSingleTickTaskImpl(progress, cost);
-}
-
 function updateActiveTask() {
     let active_task = GAMESTATE.active_task;
     if (!active_task) {
@@ -432,6 +425,7 @@ function fullyFinishTask(task: Task) {
 
     if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_layers_unlocked.includes(task.task_definition.prestige_layer)) {
         GAMESTATE.prestige_layers_unlocked.push(task.task_definition.prestige_layer);
+        GAMESTATE.unlocked_new_prestige_this_prestige = true;
     }
 }
 
@@ -1031,6 +1025,7 @@ export function doPrestige() {
     GAMESTATE.attunement = 0;
     GAMESTATE.prestige_available = false;
     GAMESTATE.auto_use_items = false;
+    GAMESTATE.unlocked_new_prestige_this_prestige = false;
 
     // Things not reset:
     // has_unlocked_power - No reason to hide that from the UI
@@ -1167,6 +1162,7 @@ export class Gamestate {
 
     prestige_available = false;
     prestige_count = 0;
+    unlocked_new_prestige_this_prestige = false;
     divine_spark = 0;
     prestige_unlocks: PrestigeUnlockType[] = [];
     prestige_repeatables: Map<PrestigeRepeatableType, number> = new Map();
