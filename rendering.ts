@@ -859,6 +859,29 @@ function populatePrestigeView() {
         const header = createChildElement(summary_div, "h1");
         header.textContent = "Divinity";
 
+        const prestige_button = createChildElement(summary_div, "button");
+        prestige_button.textContent = "Prestige";
+        prestige_button.className = "do-prestige";
+        (prestige_button as HTMLInputElement).disabled = !GAMESTATE.prestige_available;
+
+        setupTooltipStaticHeader(prestige_button, "Do Prestige Reset", () => {
+            let desc = "";
+            if (!GAMESTATE.prestige_available) {
+                desc += `<p class="disable-reason">Disabled until you complete the <span class="Prestige">Prestige</span> task in Zone 15</p>`;
+            }
+
+            desc += `Will reset <b><i>everything</i></b> except that which is granted by Prestige itself, but gives ${DIVINE_SPARK_TEXT} in return`;
+
+            return desc;
+        });
+
+        prestige_button.addEventListener("click", () => {
+            doPrestige();
+            populatePrestigeView();
+        });
+
+        prestige_button.classList.toggle("prestige-glow", GAMESTATE.unlocked_new_prestige_this_prestige);
+
         const divine_spark = createChildElement(summary_div, "p");
         divine_spark.innerHTML = `${DIVINE_SPARK_TEXT}: ${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})<span class="divine-spark-info">ℹ</span>`;
         divine_spark.className = "divine-spark-text";
@@ -886,28 +909,8 @@ function populatePrestigeView() {
             return dummy_div.innerHTML;
         });
 
-        const prestige_button = createChildElement(summary_div, "button");
-        prestige_button.textContent = "Prestige";
-        prestige_button.className = "do-prestige";
-        (prestige_button as HTMLInputElement).disabled = !GAMESTATE.prestige_available;
-
-        setupTooltipStaticHeader(prestige_button, "Do Prestige Reset", () => {
-            let desc = "";
-            if (!GAMESTATE.prestige_available) {
-                desc += `<p class="disable-reason">Disabled until you complete the <span class="Prestige">Prestige</span> task in Zone 15</p>`;
-            }
-
-            desc += `Will reset <b><i>everything</i></b> except that which is granted by Prestige itself, but gives ${DIVINE_SPARK_TEXT} in return`;
-
-            return desc;
-        });
-
-        prestige_button.addEventListener("click", () => {
-            doPrestige();
-            populatePrestigeView();
-        });
-
-        prestige_button.classList.toggle("prestige-glow", GAMESTATE.unlocked_new_prestige_this_prestige);
+        const prestiges_done_text = createChildElement(summary_div, "p");
+        prestiges_done_text.textContent = `Prestiges done: ${GAMESTATE.prestige_count}`;
     }
 
     const PRESTIGE_LAYER_NAMES = ["Touch the Divine", "Transcend Humanity", "Embrace Divinity", "Ascend to Godhood"];
