@@ -126,6 +126,9 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             if (hasPerk(PerkType.DragonSlayer)) {
                 mult *= 1.3;
             }
+            if (hasPerk(PerkType.TowerOfBabel)) {
+                mult *= 1.3;
+            }
             break;
         case SkillType.Magic:
             if (hasPerk(PerkType.Amulet)) {
@@ -194,6 +197,11 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
             break;
         case SkillType.Crafting:
             if (hasPerk(PerkType.PurgedBureaucracy)) {
+                mult *= 1.3;
+            }
+            break;
+        case SkillType.Ascension:
+            if (hasPerk(PerkType.TowerOfBabel)) {
                 mult *= 1.3;
             }
             break;

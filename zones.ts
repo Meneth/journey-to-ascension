@@ -280,7 +280,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 175, name: "Study at the Artificer Guild", cost_multiplier: 10000, max_reps: 5, xp_mult: 1, skills: [SkillType.Study, SkillType.Crafting] }),
             new TaskDefinition({ id: 176, name: "Practice in the Fighting Pits", cost_multiplier: 100_000, max_reps: 3, xp_mult: 1, skills: [SkillType.Combat] }),
             new TaskDefinition({ id: 177, name: "Mage's Guild Headmaster", type: TaskType.Boss, cost_multiplier: 11_000_000_000, xp_mult: 0.125, skills: [SkillType.Combat], item: ItemType.MagicRing, unlocks_task: 178 }),
-            new TaskDefinition({ id: 178, name: "Become Honorary Headmaster", cost_multiplier: 50_000_000_000, max_reps: 5, xp_mult: 0.01, skills: [SkillType.Magic, SkillType.Charisma], perk: PerkType.Headmaster, hidden_by_default: true }),
+            new TaskDefinition({ id: 178, name: "Become Honorary Headmaster", cost_multiplier: 65_000_000_000, max_reps: 5, xp_mult: 0.01, skills: [SkillType.Magic, SkillType.Charisma], perk: PerkType.Headmaster, hidden_by_default: true }),
         ],
     },
     {
@@ -316,7 +316,7 @@ export const ZONES: Zone[] = [
         tasks: [
             new TaskDefinition({ id: 200, name: "Journey Beyond", type: TaskType.Travel, cost_multiplier: 5000, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 201, name: "Gather Your Thoughts", type: TaskType.Mandatory, cost_multiplier: 2_000_000, max_reps: 5, skills: [SkillType.Study], xp_mult: 0.01 }),
-            new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 1_500_000, max_reps: 2, skills: [SkillType.Ascension, SkillType.Fortitude], xp_mult: 0 }),
+            new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 2_000_000, max_reps: 2, skills: [SkillType.Ascension, SkillType.Fortitude], xp_mult: 0 }),
             new TaskDefinition({ id: 203, name: "Transcend Humanity", type: TaskType.Prestige, max_reps: 3, cost_multiplier: 0.5, skills: [SkillType.Ascension], xp_mult: 0.25, prestige_layer: PrestigeLayer.TranscendHumanity }),
             new TaskDefinition({ id: 204, name: "Imbue Magical Vessel", max_reps: 9, cost_multiplier: 100_000, skills: [SkillType.Magic], xp_mult: 0.1, item: ItemType.MagicalVessel }),
             new TaskDefinition({ id: 205, name: "Invent a New Spell", cost_multiplier: 300_000_000, max_reps: 3, skills: [SkillType.Magic], xp_mult: 0.01, perk: PerkType.UnifiedTheoryOfMagic }),
