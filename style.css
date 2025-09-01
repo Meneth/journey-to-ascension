@@ -399,6 +399,32 @@ button:hover:enabled {
     background-color: rgb(49, 221, 72);
 }
 
+/* MARK: Items
+*/
+
+.item-button {
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.item-button .text {
+    font-size: 1.5em;
+}
+
+.item-button .item-count {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: #FFF;
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
 /* MARK: Perks
 */
 

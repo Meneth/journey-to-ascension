@@ -545,9 +545,13 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
 
     const item_definition = ITEMS[item] as ItemDefinition;
     const item_count = GAMESTATE.items.get(item);
-    button.innerHTML = `<span class="text">${item_definition.icon}<br>(${item_count})</span>`;
+    button.innerHTML = `<span class="text">${item_definition.icon}</span>`;
     button.disabled = item_count == 0;
     button.classList.toggle("disabled", button.disabled);
+
+    const count_text = createChildElement(button, "p");
+    count_text.textContent = `${item_count}`;
+    count_text.className = "item-count";
 
     button.addEventListener("click", () => { clickItem(item, false); });
     button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
