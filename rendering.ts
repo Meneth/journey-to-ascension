@@ -535,9 +535,9 @@ function setupInfoTooltips() {
     });
 }
 
-function updateTooltip() {
+function queueUpdateTooltip() {
     if (RENDERING.tooltipped_element) {
-        showTooltip(RENDERING.tooltipped_element);
+        RENDERING.queued_update_tooltip = true;
     }
 }
 
@@ -1178,7 +1178,7 @@ function handleEvents() {
     const messages = RENDERING.messages_element;
     for (const event of events) {
         if (event.type == EventType.TaskCompleted) {
-            updateTooltip();
+            queueUpdateTooltip();
             continue; // No message, just forces tooltips to update
         }
 
@@ -1456,6 +1456,7 @@ function updateExtraStats() {
 
 export class Rendering {
     tooltipped_element: ElementWithTooltip | null = null;
+    queued_update_tooltip = false;
     tooltip_element: HTMLElement;
     energy_reset_element: HTMLElement;
     open_energy_reset_element: HTMLInputElement;
@@ -1593,6 +1594,8 @@ function showTooltip(element: ElementWithTooltip) {
     }
 
     RENDERING.tooltipped_element = element;
+    // We grab this before setting up the tooltip_element, since that can cause a scroll-bar
+    const elementRect = element.getBoundingClientRect();
 
     const tooltip_element = RENDERING.tooltip_element;
     tooltip_element.innerHTML = `<h3>${element.generateTooltipHeader()}</h3>`;
@@ -1606,8 +1609,7 @@ function showTooltip(element: ElementWithTooltip) {
     tooltip_element.style.bottom = "";
     tooltip_element.style.left = "";
     tooltip_element.style.right = "";
-
-    const elementRect = element.getBoundingClientRect();
+    
     const beyondVerticalCenter = elementRect.top > (window.innerHeight / 2);
     const beyondHorizontalCenter = elementRect.left > (window.innerWidth / 2);
     let x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
@@ -1645,4 +1647,11 @@ export function updateRendering() {
     updateEnergyRendering();
     updateExtraStats();
     updateGameOver();
+
+    if (RENDERING.queued_update_tooltip) {
+        RENDERING.queued_update_tooltip = false;
+        if (RENDERING.tooltipped_element) {
+            showTooltip(RENDERING.tooltipped_element);
+        }
+    }
 }
