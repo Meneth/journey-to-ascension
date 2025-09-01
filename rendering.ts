@@ -856,24 +856,34 @@ function populatePrestigeView() {
     {
         const summary_div = createChildElement(scroll_area, "div");
         const header = createChildElement(summary_div, "h1");
-        header.textContent = "Prestige";
+        header.textContent = "Divinity";
 
         const divine_spark = createChildElement(summary_div, "p");
-        divine_spark.textContent = `${DIVINE_SPARK_TEXT}: ${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})`;
+        divine_spark.innerHTML = `${DIVINE_SPARK_TEXT}: ${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})<span class="divine-spark-info">ℹ</span>`;
+        divine_spark.className = "divine-spark-text";
 
-        const divine_spark_gain = createChildElement(summary_div, "p");
-        divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} sources:<br>Highest Zone ^ ${getPrestigeGainExponent()} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${getPrestigeGainExponent()})`;
-        divine_spark_gain.innerHTML += `<br>Gain divisor: ${formatNumber(calcDivineSparkDivisor(), false)}`;
+        setupTooltipStaticHeader(divine_spark, `${DIVINE_SPARK_TEXT} Gain`, () => {
+            const dummy_div = document.createElement("div");
 
-        const divine_spark_gain_stats = createChildElement(summary_div, "p");
-        divine_spark_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
-        divine_spark_gain_stats.innerHTML += `<br>Highest Zone fully completed: ${GAMESTATE.highest_zone_fully_completed + 1}`;
+            const divine_spark = createChildElement(dummy_div, "p");
+            divine_spark.innerHTML = `${DIVINE_SPARK_TEXT} gain if you Prestige now: +${formatNumber(calcDivineSparkGain(), false)}`;
 
-        const potentialReachGain = calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone + 1) - calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone);
-        divine_spark_gain_stats.innerHTML += `<br>Additional ${DIVINE_SPARK_TEXT} for reaching Zone ${GAMESTATE.highest_zone + 2}: ${formatNumber(potentialReachGain, false)}`;
+            const divine_spark_gain = createChildElement(dummy_div, "p");
+            divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} gain formula:<br>Highest Zone ^ ${getPrestigeGainExponent()} + ${PRESTIGE_FULLY_COMPLETED_MULT} * (Highest Zone fully completed ^ ${getPrestigeGainExponent()})`;
+            divine_spark_gain.innerHTML += `<br>Gain divisor: ${formatNumber(calcDivineSparkDivisor(), false)}`;
 
-        const potentialFullCompletionGain = calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed + 1) - calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
-        divine_spark_gain_stats.innerHTML += `<br>Additional ${DIVINE_SPARK_TEXT} for fully completing Zone ${GAMESTATE.highest_zone_fully_completed + 2}: ${formatNumber(potentialFullCompletionGain, false)}`;
+            const divine_spark_gain_stats = createChildElement(dummy_div, "p");
+            divine_spark_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
+            divine_spark_gain_stats.innerHTML += `<br>Highest Zone fully completed: ${GAMESTATE.highest_zone_fully_completed + 1}`;
+
+            const potentialReachGain = calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone + 1) - calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone);
+            divine_spark_gain_stats.innerHTML += `<br><br>Additional ${DIVINE_SPARK_TEXT} for reaching Zone ${GAMESTATE.highest_zone + 2}: ${formatNumber(potentialReachGain, false)}`;
+
+            const potentialFullCompletionGain = calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed + 1) - calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
+            divine_spark_gain_stats.innerHTML += `<br>Additional ${DIVINE_SPARK_TEXT} for fully completing Zone ${GAMESTATE.highest_zone_fully_completed + 2}: ${formatNumber(potentialFullCompletionGain, false)}`;
+
+            return dummy_div.innerHTML;
+        });
 
         const prestige_button = createChildElement(summary_div, "button");
         prestige_button.textContent = "Prestige";
