@@ -821,6 +821,12 @@ function populatePrestigeView() {
         return;
     }
 
+    let scrollTop = 0;
+    const existing_scroll_area = prestige_overlay.querySelector(".scroll-area");
+    if (existing_scroll_area) {
+        scrollTop = existing_scroll_area.scrollTop;
+    }
+
     prestige_div.innerHTML = "";
 
     const scroll_area = createChildElement(prestige_div, "div");
@@ -982,6 +988,9 @@ function populatePrestigeView() {
             });
         }
     }
+
+    console.log(scrollTop);
+    scroll_area.scrollTop = scrollTop;
 }
 
 function setupOpenPrestige() {
