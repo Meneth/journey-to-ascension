@@ -376,6 +376,9 @@ button:hover:enabled {
     width: 24px;
     height: 24px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     border-radius: 100px;
     border: 2px solid #000;
