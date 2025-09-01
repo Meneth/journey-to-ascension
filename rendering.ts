@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
@@ -234,7 +234,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         let perk_asterisk_index = -1;
         let level_asterisks = "";
         const remaining_completions = (task.reps == task.task_definition.max_reps) ? task.task_definition.max_reps : (task.task_definition.max_reps - task.reps);
-        const completions = GAMESTATE.repeat_tasks ? remaining_completions : 1;
+        const completions = (GAMESTATE.repeat_tasks || willCompleteAllRepsInOneTick(task)) ? remaining_completions : 1;
 
         function createTwoElementRow(x: string, y: string) {
             const row = document.createElement("tr");
@@ -348,10 +348,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             table.appendChild(createTwoElementRow(`${energy_cost_text}`, ENERGY_TEXT));
 
             const task_ticks = estimateTotalTaskTicks(task, completions);
-            if (task_ticks != completions) {
+            if (task_ticks > completions) {
                 table.appendChild(createTwoElementRow(formatNumber(estimateTaskTimeInSeconds(task, completions)), `⏰Seconds`));
             } else {
-                table.appendChild(createTwoElementRow(`${completions}`, `⏰Ticks`));
+                table.appendChild(createTwoElementRow(`${task_ticks}`, `⏰Ticks`));
             }
         }
 
@@ -426,6 +426,10 @@ function updateTaskRendering() {
 }
 
 function estimateTotalTaskTicks(task: Task, completions: number): number {
+    if (willCompleteAllRepsInOneTick(task)) {
+        return 1; // Major Time Compression combines all single-tick reps
+    }
+
     let haste_stacks = GAMESTATE.queued_scrolls_of_haste;
     if (task.hasted) {
         haste_stacks += 1;
@@ -471,7 +475,7 @@ function estimateTotalTaskEnergyConsumption(task: Task, completions: number): nu
     const num_ticks = estimateTotalTaskTicks(task, completions);
     // Note that this will be an overestimate if you use haste to get stuff down to 1 tick
     // Not fixing atm because why would you ever do that? And pessimism isn't too bad
-    return num_ticks * calcEnergyDrainPerTick(task, num_ticks == completions);
+    return num_ticks * calcEnergyDrainPerTick(task, num_ticks <= completions);
 }
 
 // MARK: Tooltips

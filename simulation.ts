@@ -318,6 +318,28 @@ function calcTaskProgressPerTick(task: Task): number {
     return calcTaskProgressMultiplier(task);
 }
 
+function isSingleTickTaskImpl(progress: number, cost: number) {
+    return progress >= cost;
+}
+
+export function willCompleteAllRepsInOneTick(task: Task) {
+    if (!hasPerk(PerkType.MajorTimeCompression)) {
+        return false;
+    }
+
+    const progress = calcTaskProgressPerTick(task);
+    const cost = calcTaskCost(task);
+
+    return isSingleTickTaskImpl(progress, cost);
+}
+
+export function isSingleTickTask(task: Task) {
+    const progress = calcTaskProgressPerTick(task);
+    const cost = calcTaskCost(task);
+
+    return isSingleTickTaskImpl(progress, cost);
+}
+
 function updateActiveTask() {
     let active_task = GAMESTATE.active_task;
     if (!active_task) {
@@ -333,7 +355,7 @@ function updateActiveTask() {
     progress = Math.min(progress, cost - active_task.progress);
     active_task.progress += progress;
 
-    const is_single_tick = progress >= cost;
+    const is_single_tick = isSingleTickTaskImpl(progress, cost);
     modifyEnergy(-calcEnergyDrainPerTick(active_task, is_single_tick));
 
     for (const skill of active_task.task_definition.skills) {
