@@ -178,7 +178,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         const item_indicator = document.createElement("div");
         item_indicator.className = "task-item-indicator";
         item_indicator.classList.add("indicator");
-        item_indicator.textContent = ITEMS[task.task_definition.item]?.icon as string;
+        item_indicator.textContent = (ITEMS[task.task_definition.item] as ItemDefinition).icon;
         task_button.appendChild(item_indicator);
     }
 
@@ -186,7 +186,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         const perk_indicator = document.createElement("div");
         perk_indicator.className = "task-perk-indicator";
         perk_indicator.classList.add("indicator");
-        perk_indicator.textContent = PERKS[task.task_definition.perk]?.icon as string;
+        perk_indicator.textContent = (PERKS[task.task_definition.perk] as PerkDefinition).icon;
         task_button.appendChild(perk_indicator);
         task_button.classList.add("perk-unlock");
     }
@@ -789,7 +789,7 @@ function setupEnergyReset(energy_reset_div: HTMLElement) {
 
     setupTooltipStaticHeader(open_button, `View Last Energy Reset Summary`, function () {
         let tooltip = `Lets you reopen the last Energy Reset Summary`;
-        if (open_button?.disabled) {
+        if (open_button.disabled) {
             tooltip += `<p class="disable-reason">Disabled until you do your first Energy Reset</p>`
         }
         return tooltip;
@@ -1158,7 +1158,10 @@ function setupPersistence(settings_div: HTMLElement) {
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (event) => {
-                const fileText = event.target?.result as string;
+                if (!event.target) {
+                    return;
+                }
+                const fileText = event.target.result as string;
                 localStorage.setItem(SAVE_LOCATION, fileText as string);
                 location.reload();
             };

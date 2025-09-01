@@ -13,9 +13,8 @@ const ZONE_SPEEDUP_BASE = 1.05;
 
 // MARK: Skills
 
-
 export class Skill {
-    type: SkillType;
+    type: SkillType = SkillType.Count;
     level: number = 0;
     progress: number = 0;
     speed_modifier: number = 1;

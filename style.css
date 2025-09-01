@@ -120,6 +120,19 @@ body {
 button {
     border-radius: var(--default-border-radius);
     background: var(--element-foreground-color);
+
+    border-top: 2px solid #545454;
+    border-left: 2px solid #545454;
+    border-bottom: 2px solid black;
+    border-right: 2px solid black;
+}
+
+button:disabled {
+    border-left-color: rgba(123, 123, 123, 0.35);
+    border-top-color: rgba(123, 123, 123, 0.35);
+    border-right-color: rgba(60, 60, 60, 0.35);
+    border-bottom-color: rgba(60, 60, 60, 0.35);
+    color: rgba(16, 16, 16, 0.3);
 }
 
 #settings-area {
@@ -495,6 +508,7 @@ button:hover:enabled {
     border-style: solid;
     
     color: var(--default-text-color);
+    scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
 }
 
 .scroll-area {
@@ -730,30 +744,4 @@ footer {
     margin: 3px 0;
     padding: 5px 10px;
     border-radius: var(--default-border-radius);
-}
-
-/* MARK: Messages
-*/
-
-/* Target the scrollbar itself */
-#prestige-box ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
-
-/* Track (background) of the scrollbar */
-#prestige-box ::-webkit-scrollbar-track {
-    background: var(--element-foreground-color-brighter); /* Color of the scrollbar track */
-    border-radius: var(--default-border-radius); /* Rounded corners for the track */
-}
-
-/* Handle (thumb) of the scrollbar */
-#prestige-box ::-webkit-scrollbar-thumb {
-    background: var(--element-foreground-color); /* Color of the scrollbar thumb */
-    border-radius: var(--default-border-radius); /* Rounded corners for the thumb */
-}
-
-/* Handle on hover */
-#prestige-box ::-webkit-scrollbar-thumb:hover {
-    background: var(--element-background-color-darker);
 }
