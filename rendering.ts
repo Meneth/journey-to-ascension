@@ -663,7 +663,7 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean)
     RENDERING.perk_elements.set(perk, perk_div);
 }
 
-function createPerks() {
+function recreatePerks() {
     const perks_div = document.getElementById("perks-list");
     if (!perks_div) {
         console.error("The element with ID 'perks-list' was not found.");
@@ -1223,7 +1223,7 @@ function handleEvents() {
                     message_div.innerHTML += `<br>${perk.get_tooltip()}`;
                     setupControls(); // Show the automation controls
                     recreateTasks(); // Get rid of Perk indicator
-                    createPerks();
+                    recreatePerks();
                     break;
                 }
             case EventType.UsedItem:
@@ -1519,7 +1519,7 @@ export class Rendering {
         recreateSkills();
 
         setupZone();
-        createPerks();
+        recreatePerks();
         recreateItems();
 
         updateRendering();
@@ -1534,10 +1534,15 @@ function checkForZoneAndReset() {
         return;
     }
 
+    const was_reset = GAMESTATE.current_zone == 0;
+
     RENDERING.current_zone = GAMESTATE.current_zone;
     RENDERING.energy_reset_count = GAMESTATE.energy_reset_count;
     recreateTasks();
-    recreateItems();
+    if (was_reset) {
+        recreateItems();
+        recreatePerks();
+    }
     setupControls();
     setupZone();
     RENDERING.open_energy_reset_element.disabled = GAMESTATE.energy_reset_count == 0;
