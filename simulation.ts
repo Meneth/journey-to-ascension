@@ -400,8 +400,7 @@ function fullyFinishTask(task: Task) {
         GAMESTATE.queueRenderEvent(event);
     }
 
-    if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_layers_unlocked.includes(task.task_definition.prestige_layer))
-    {
+    if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_layers_unlocked.includes(task.task_definition.prestige_layer)) {
         GAMESTATE.prestige_layers_unlocked.push(task.task_definition.prestige_layer);
     }
 }
@@ -547,9 +546,9 @@ function doAnyReset() {
     GAMESTATE.is_in_energy_reset = false;
     GAMESTATE.automation_mode = AutomationMode.Off;
     GAMESTATE.queued_scrolls_of_haste = 0;
+    GAMESTATE.queued_magic_rings = 0;
     GAMESTATE.items_found_this_energy_reset = [];
     removeTemporarySkillBonuses();
-
 }
 
 function calcEnergeticMemoryGain() {
