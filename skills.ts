@@ -1,3 +1,5 @@
+import { TRAVEL_EMOJI } from "./rendering_constants.js";
+
 export enum SkillType {
     Charisma,
     Study,
@@ -34,7 +36,7 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     new SkillDefinition({ type: SkillType.Subterfuge, name: "Subterfuge", icon: "🗡️" }),
     new SkillDefinition({ type: SkillType.Crafting, name: "Crafting", icon: "🔨" }),
     new SkillDefinition({ type: SkillType.Survival, name: "Survival", icon: "⛺" }),
-    new SkillDefinition({ type: SkillType.Travel, name: "Travel", icon: "🗺️" }),
+    new SkillDefinition({ type: SkillType.Travel, name: "Travel", icon: TRAVEL_EMOJI }),
     new SkillDefinition({ type: SkillType.Magic, name: "Magic", icon: "🔮", xp_needed_mult: 3 }),
     new SkillDefinition({ type: SkillType.Fortitude, name: "Fortitude", icon: "🛡️", xp_needed_mult: 10 }),
     new SkillDefinition({ type: SkillType.Druid, name: "Druid", icon: "🐻", xp_needed_mult: 20 }),

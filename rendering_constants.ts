@@ -13,3 +13,4 @@ export const POWER_EMOJI = "💪";
 export const POWER_TEXT = `${POWER_EMOJI}Power`;
 export const HASTE_EMOJI = "🐇";
 export const HASTE_TEXT = `${HASTE_EMOJI}Haste`;
+export const TRAVEL_EMOJI = "🗺️";

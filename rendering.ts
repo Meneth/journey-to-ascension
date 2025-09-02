@@ -5,7 +5,7 @@ import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAG
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, XP_TEXT } from "./rendering_constants.js";
+import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, TRAVEL_EMOJI, XP_TEXT } from "./rendering_constants.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE } from "./prestige_upgrades.js";
 
 // MARK: Helpers
@@ -271,6 +271,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
         {
             const table = createTableSection("Rewards");
+
+            if (task.task_definition.type == TaskType.Travel) {
+                table.appendChild(createTwoElementRow(`${task.task_definition.zone_id + 2}`, `${TRAVEL_EMOJI}Move to Zone`));
+            }
 
             if (task.task_definition.item != ItemType.Count) {
                 const item = ITEMS[task.task_definition.item] as ItemDefinition;
