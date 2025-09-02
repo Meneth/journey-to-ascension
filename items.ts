@@ -2,7 +2,7 @@ import { GAMESTATE } from "./game.js";
 import { SkillType } from "./skills.js";
 import { addItem, calcItemEnergyGain, getSkill } from "./simulation.js"
 import { getSkillString } from "./rendering.js";
-import { ENERGY_TEXT } from "./rendering_constants.js";
+import { ENERGY_TEXT, HASTE_EMOJI } from "./rendering_constants.js";
 
 export enum ItemType {
     Food,
@@ -122,7 +122,7 @@ export const ITEMS: ItemDefinition[] = [
     {
         enum: ItemType.ScrollOfHaste, name: `Scroll of Haste`, name_plural: `Scrolls of Haste`,
         get_tooltip: () => { return `The next Task you start is ${HASTE_MULT}x as fast`; },
-        icon: `🐇`,
+        icon: HASTE_EMOJI,
         get_effect_text: (amount) => { return `Next ${amount} Tasks are ${HASTE_MULT}x as fast`; },
         on_consume: (amount) => { GAMESTATE.queued_scrolls_of_haste += amount; },
     },

@@ -11,3 +11,5 @@ export const ATTUNEMENT_EMOJI = "🌀";
 export const ATTUNEMENT_TEXT = `${ATTUNEMENT_EMOJI}Attunement`;
 export const POWER_EMOJI = "💪";
 export const POWER_TEXT = `${POWER_EMOJI}Power`;
+export const HASTE_EMOJI = "🐇";
+export const HASTE_TEXT = `${HASTE_EMOJI}Haste`;

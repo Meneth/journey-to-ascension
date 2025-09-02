@@ -5,7 +5,7 @@ import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAG
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
 import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, POWER_TEXT, XP_TEXT } from "./rendering_constants.js";
+import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, XP_TEXT } from "./rendering_constants.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE } from "./prestige_upgrades.js";
 
 // MARK: Helpers
@@ -234,7 +234,12 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         let perk_asterisk_index = -1;
         let level_asterisks = "";
         const remaining_completions = (task.reps == task.task_definition.max_reps) ? task.task_definition.max_reps : (task.task_definition.max_reps - task.reps);
-        const completions = (GAMESTATE.repeat_tasks || willCompleteAllRepsInOneTick(task)) ? remaining_completions : 1;
+        const single_rep_for_all_ticks = willCompleteAllRepsInOneTick(task);
+        const completions = (GAMESTATE.repeat_tasks || single_rep_for_all_ticks) ? remaining_completions : 1;
+        let haste_asterisk_index = -1;
+        const haste_stacks = task.hasted ? GAMESTATE.queued_scrolls_of_haste + 1 : GAMESTATE.queued_scrolls_of_haste;
+        let magic_ring_asterisk_index = -1;
+        const magic_ring_stacks = task.xp_boosted ? GAMESTATE.queued_magic_rings + 1 : GAMESTATE.queued_magic_rings;
 
         function createTwoElementRow(x: string, y: string) {
             const row = document.createElement("tr");
@@ -362,6 +367,22 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             let mult_class = "";
             if (mult != 1) { mult_class = mult > 1 ? "good" : "bad"; }
             table.appendChild(createTwoElementRow(`<span class="${mult_class}">x${mult}</span>`, `${XP_TEXT} Multiplier`));
+
+            if (haste_stacks > 0) {
+                const needs_asterisk = haste_stacks < completions && !single_rep_for_all_ticks;
+                if (needs_asterisk) {
+                    haste_asterisk_index = ++asterisk_count;
+                }
+                table.appendChild(createTwoElementRow(`<span class="good">x${HASTE_MULT}</span>`, `${HASTE_TEXT}${needs_asterisk ? "*".repeat(haste_asterisk_index) : ""}`));
+            }
+
+            if (magic_ring_stacks > 0) {
+                const needs_asterisk = magic_ring_stacks < completions && !single_rep_for_all_ticks;
+                if (needs_asterisk) {
+                    magic_ring_asterisk_index = ++asterisk_count;
+                }
+                table.appendChild(createTwoElementRow(`<span class="good">x${MAGIC_RING_MULT}</span>`, `${XP_TEXT} (Magic Ring)${needs_asterisk ? "*".repeat(magic_ring_asterisk_index) : ""}`));
+            }
         }
 
         tooltip += task_table.outerHTML;
@@ -370,6 +391,12 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             tooltip += `<p class="tooltip-asterisk">${"*".repeat(perk_asterisk_index)} Perk is only gained on completing all Reps of the Task</p>`;
         }
         tooltip += `<p class="tooltip-asterisk">${level_asterisks} Task does not need to be completed, ${XP_TEXT} is given proportionally to the progress made</p>`;
+        if (haste_asterisk_index >= 0) {
+            tooltip += `<p class="tooltip-asterisk">${"*".repeat(haste_asterisk_index)} Haste will only apply to the first ${haste_stacks} reps</p>`;
+        }
+        if (magic_ring_asterisk_index >= 0) {
+            tooltip += `<p class="tooltip-asterisk">${"*".repeat(magic_ring_asterisk_index)} Magic Ring will only apply to the first ${magic_ring_stacks} reps</p>`;
+        }
 
         return tooltip;
     });
