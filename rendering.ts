@@ -1024,6 +1024,12 @@ function setupOpenPrestige() {
         prestige_overlay.classList.remove("hidden");
     });
 
+    prestige_overlay.addEventListener("click", (e) => {
+        if (e.target == prestige_overlay) { // Clicking outside the window
+            prestige_overlay.classList.add("hidden");
+        }
+    });
+
     setupTooltip(open_button, function () { return `${DIVINE_SPARK_TEXT} - ${formatNumber(GAMESTATE.divine_spark, false)}`; }, function () {
         const tooltip = `Within this menu you can Prestige to gain ${DIVINE_SPARK_TEXT}, and buy powerful upgrades`;
 
@@ -1101,6 +1107,12 @@ function setupSettings() {
 
     close_button.addEventListener("click", () => {
         settings_div.classList.add("hidden");
+    });
+
+    settings_div.addEventListener("click", (e) => {
+        if (e.target == settings_div) {
+            settings_div.classList.add("hidden");
+        }
     });
 
     setupTooltipStatic(close_button, `Close Settings Menu`, ``);
