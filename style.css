@@ -453,6 +453,26 @@ button:hover:enabled {
     display: flex;
 }
 
+/* MARK: Overlays
+*/
+
+.overlay-box button {
+    font-size: 1em;
+}
+
+.confirmation {
+    height: 250px;
+    width: 400px;
+
+    flex-direction: column;
+}
+
+.confirmation-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
 /* MARK: Game over
 */
 
@@ -491,7 +511,7 @@ button:hover:enabled {
     background-color: var(--prestige-color);
 }
 
-.do-prestige {
+button.do-prestige {
     background-color: var(--prestige-color);
     font-size: 2em;
 }
@@ -500,14 +520,8 @@ button:hover:enabled {
     position: relative;
     height: 730px;
     width: 500px;
+    padding: 0;
     
-    background: var(--element-background-color);
-    border-radius: var(--default-border-radius);
-    border: #000;
-    border-width: 2px;
-    border-style: solid;
-    
-    color: var(--default-text-color);
     scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
 }
 
@@ -703,10 +717,8 @@ div.prestige-purchase {
 /* MARK: Settings
 */
 
-#settings {
+.overlay-box {
     position: relative;
-    height: 200px;
-    width: 200px;
     justify-content: center;
     align-items: center;
     background: var(--element-background-color);
@@ -716,11 +728,13 @@ div.prestige-purchase {
     border-style: solid;
     padding: 8px;
     display: flex;
+    color: var(--default-text-color);
     gap: 10px;
 }
 
-#settings button {
-    font-size: 1em;
+#settings {
+    height: 200px;
+    width: 200px;
 }
 
 /* MARK: Messages

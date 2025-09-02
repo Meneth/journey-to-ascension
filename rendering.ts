@@ -26,6 +26,33 @@ function joinWithCommasAndAnd(strings: string[]): string {
     return `${allButLast}, and ${last}`;
 }
 
+function createConfirmationOverlay(header_text: string, description_text: string, on_confirm: () => void) {
+    const overlay = RENDERING.confirmation_overlay_element;
+    overlay.innerHTML = "";
+
+    const div = createChildElement(overlay, "div");
+    div.className = "overlay-box confirmation";
+
+    createChildElement(div, "h1").textContent = header_text;
+    createChildElement(div, "p").textContent = description_text;
+
+    const confirmation_buttons_div = createChildElement(div, "div");
+    confirmation_buttons_div.className = "confirmation-buttons";
+
+    const confirm_button = createChildElement(confirmation_buttons_div, "button");
+    confirm_button.textContent = "Confirm";
+    confirm_button.addEventListener("click", on_confirm);
+    confirm_button.addEventListener("click", () => {overlay.classList.add("hidden");});
+    setupTooltipStatic(confirm_button, header_text, "");
+
+    const cancel_button = createChildElement(confirmation_buttons_div, "button");
+    cancel_button.textContent = "Cancel";
+    cancel_button.addEventListener("click", () => {overlay.classList.add("hidden");});
+    setupTooltipStatic(cancel_button, "Cancel", "");
+
+    overlay.classList.remove("hidden");
+}
+
 // MARK: Skills
 
 function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
@@ -901,14 +928,16 @@ function populatePrestigeView() {
                 desc += `<p class="disable-reason">Disabled until you complete the <span class="Prestige">Prestige</span> task in Zone 15</p>`;
             }
 
-            desc += `Will reset <b><i>everything</i></b> except that which is granted by Prestige itself, but gives ${DIVINE_SPARK_TEXT} in return`;
+            desc += `Will reset <b><i>everything</i></b> except that which is granted by Divinity purchases, but gives ${DIVINE_SPARK_TEXT} in return`;
 
             return desc;
         });
 
         prestige_button.addEventListener("click", () => {
-            doPrestige();
+            createConfirmationOverlay("Do Prestige", `Will give ${formatNumber(calcDivineSparkGain(), false)} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases`, () => {
+                doPrestige();
             populatePrestigeView();
+            });
         });
 
         prestige_button.classList.toggle("prestige-glow", GAMESTATE.unlocked_new_prestige_this_prestige);
@@ -1515,6 +1544,7 @@ export class Rendering {
     attunement_element: HTMLElement;
     open_prestige_element: HTMLElement;
     prestige_overlay_element: HTMLElement;
+    confirmation_overlay_element: HTMLElement;
     task_elements: Map<TaskDefinition, ElementWithTooltip> = new Map();
     skill_elements: Map<SkillType, HTMLElement> = new Map();
     item_elements: Map<ItemType, HTMLElement> = new Map();
@@ -1566,6 +1596,7 @@ export class Rendering {
         this.attunement_element = getElement("attunement");
         this.open_prestige_element = getElement("open-prestige");
         this.prestige_overlay_element = getElement("prestige-overlay");
+        this.confirmation_overlay_element = getElement("confirmation-overlay");
     }
 
     public initialize() {
