@@ -456,7 +456,7 @@ button:hover:enabled {
 /* MARK: Overlays
 */
 
-.overlay-box button {
+.full-screen-overlay button {
     font-size: 1em;
 }
 
@@ -496,7 +496,7 @@ button:hover:enabled {
     text-align: center;
 }
 
-.game-over-dismiss {
+#end-of-content-reset, .game-over-dismiss {
     font-size: 1.5em;
 }
 

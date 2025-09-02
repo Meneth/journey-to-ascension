@@ -865,6 +865,20 @@ function populateEndOfContent(end_of_content_div: HTMLElement) {
     }
 
     reset_count.textContent = `You've done ${GAMESTATE.energy_reset_count} Energy Resets`;
+
+    const reset_button = end_of_content_div.querySelector<HTMLElement>("#end-of-content-reset");
+    if (!reset_button) {
+        console.error("No reset button");
+        return;
+    }
+
+    reset_button.innerHTML = "";
+    reset_button.textContent = "Do Energy Reset";
+    setupTooltipStatic(reset_button, "Do Energy Reset", "Do a regular Energy Reset to keep on playing");
+    reset_button.addEventListener("click", () => {
+        end_of_content_div.classList.add("hidden");
+        doEnergyReset();
+    });
 }
 
 function updateGameOver() {

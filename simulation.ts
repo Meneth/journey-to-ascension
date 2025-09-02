@@ -569,6 +569,7 @@ function doAnyReset() {
     resetTasks();
     GAMESTATE.current_energy = GAMESTATE.max_energy;
     GAMESTATE.is_in_energy_reset = false;
+    GAMESTATE.is_at_end_of_content = false;
     GAMESTATE.automation_mode = AutomationMode.Off;
     GAMESTATE.queued_scrolls_of_haste = 0;
     GAMESTATE.queued_magic_rings = 0;
