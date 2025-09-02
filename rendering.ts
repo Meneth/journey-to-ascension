@@ -462,13 +462,14 @@ function updateTaskRendering() {
 
         const automation = task_element.querySelector<HTMLDivElement>(".task-automation");
         if (automation) {
-            const prios = GAMESTATE.automation_prios.get(GAMESTATE.current_zone);
-            if (prios) {
-                const index = prios.indexOf(task.task_definition.id);
-                const index_str = index >= 0 ? `${index + 1}` : "";
-                if (automation.textContent != index_str) {
-                    automation.textContent = index_str;
-                }
+            let prios = GAMESTATE.automation_prios.get(GAMESTATE.current_zone) ?? [];
+            prios = prios.filter((task_id) => {
+                return GAMESTATE.tasks.find((task) => { return task.task_definition.id == task_id; }) != undefined;
+            });
+            const index = prios.indexOf(task.task_definition.id);
+            const index_str = index >= 0 ? `${index + 1}` : "";
+            if (automation.textContent != index_str) {
+                automation.textContent = index_str;
             }
         }
         else {
