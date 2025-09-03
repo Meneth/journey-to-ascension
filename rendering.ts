@@ -1685,23 +1685,25 @@ function showTooltip(element: ElementWithTooltip) {
         return;
     }
 
-    RENDERING.tooltipped_element = element;
-    // We grab this before setting up the tooltip_element, since that can cause a scroll-bar
-    const elementRect = element.getBoundingClientRect();
-
     const tooltip_element = RENDERING.tooltip_element;
+    // Hide first so it doesn't affect the layout while we're calculating things
+    tooltip_element.classList.add("hidden");
+    tooltip_element.innerHTML = "";
+    RENDERING.tooltipped_element = element;
+    
     tooltip_element.innerHTML = `<h3>${element.generateTooltipHeader()}</h3>`;
     const body_text = element.generateTooltipBody();
     if (body_text != ``) {
         tooltip_element.innerHTML += `<hr />`;
         tooltip_element.innerHTML += body_text;
     }
-
+    
     tooltip_element.style.top = "";
     tooltip_element.style.bottom = "";
     tooltip_element.style.left = "";
     tooltip_element.style.right = "";
     
+    const elementRect = element.getBoundingClientRect();
     const beyondVerticalCenter = elementRect.top > (window.innerHeight / 2);
     const beyondHorizontalCenter = elementRect.left > (window.innerWidth / 2);
     let x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
