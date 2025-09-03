@@ -620,7 +620,7 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     button.addEventListener("click", () => { clickItem(item, false); });
     button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
 
-    setupTooltipStatic(button, `${item_definition.name}`, `${item_definition.get_tooltip()}`);
+    setupTooltipStatic(button, `${item_definition.name}`, `${item_definition.getTooltip()}`);
 
     items_div.appendChild(button);
     RENDERING.item_elements.set(item, button);
@@ -1336,7 +1336,7 @@ function handleEvents() {
                     const item = ITEMS[item_context.item] as ItemDefinition;
                     const plural = item_context.count > 1;
                     message_div.innerHTML = `Used ${item_context.count} ${item.icon}${plural ? item.name_plural : item.name}`;
-                    message_div.innerHTML += `<br>${item.get_effect_text(item_context.count)}`;
+                    message_div.innerHTML += `<br>${item.getEffectText(item_context.count)}`;
                     recreateItems();
                     break;
                 }

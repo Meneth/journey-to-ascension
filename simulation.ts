@@ -627,7 +627,7 @@ export function clickItem(item: ItemType, use_all: boolean) {
     }
 
     const num_used = use_all ? old_value : 1;
-    definition.on_consume(num_used);
+    definition.applyEffects(num_used);
     GAMESTATE.items.set(item, old_value - num_used);
 
     const context: UsedItemContext = { item: item, count: num_used };

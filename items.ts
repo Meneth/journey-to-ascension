@@ -1,8 +1,8 @@
 import { GAMESTATE } from "./game.js";
 import { SkillType } from "./skills.js";
-import { addItem, calcItemEnergyGain, getSkill } from "./simulation.js"
-import { getSkillString } from "./rendering.js";
+import { addItem, calcItemEnergyGain } from "./simulation.js"
 import { ENERGY_TEXT, HASTE_EMOJI } from "./rendering_constants.js";
+import { SkillModifierList } from "./modifiers.js";
 
 export enum ItemType {
     Food,
@@ -49,240 +49,232 @@ export class ItemDefinition {
     enum = ItemType.Count;
     name = "";
     name_plural = "";
-    get_tooltip: ItemTooltipLambda = () => { return ""; };
     icon = "";
-    get_effect_text: ItemEffectTextLambda = () => { return ""; };
+    skill_modifiers: SkillModifierList = new SkillModifierList([]);
+    get_custom_tooltip: ItemTooltipLambda = () => { return ""; };
+    get_custom_effect_text: ItemEffectTextLambda = () => { return ""; };
     on_consume: ItemUseLambda = () => { };
+
+    constructor(overrides: Partial<ItemDefinition> = {}) {
+        Object.assign(this, overrides);
+    }
+
+    public getTooltip() {
+        const custom = this.get_custom_tooltip();
+        if (custom.length != 0) {
+            return custom;
+        }
+
+        return this.skill_modifiers.getDescription();
+    }
+
+    public getEffectText(amount: number) {
+        const custom = this.get_custom_effect_text(amount);
+        if (custom.length != 0) {
+            return custom;
+        }
+
+        return this.skill_modifiers.getStacked(amount).getAppliedDescription();
+    }
+
+    public applyEffects(amount: number) {
+        this.on_consume(amount);
+        this.skill_modifiers.getStacked(amount).applyEffect();
+    }
 }
 
 export const HASTE_MULT = 5;
 export const MAGIC_RING_MULT = 3;
 
 export const ITEMS: ItemDefinition[] = [
-    {
+    new ItemDefinition({
         enum: ItemType.Food, name: `Food`, name_plural: `Food`,
-        get_tooltip: () => { return `Gives ${calcItemEnergyGain(5)} ${ENERGY_TEXT} each<br>Can take you above your Max Energy`; },
         icon: `🍲`,
-        get_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(5)} ${ENERGY_TEXT}`; },
+        get_custom_tooltip: () => { return `Gives ${calcItemEnergyGain(5)} ${ENERGY_TEXT} each<br>Can take you above your Max Energy`; },
+        get_custom_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(5)} ${ENERGY_TEXT}`; },
         on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(5) * amount; },
-    },
-    {
+    }),
+    new ItemDefinition({
         enum: ItemType.Arrow, name: `Arrow`, name_plural: `Arrows`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Combat)} Task speed by 15% each`; },
         icon: `🏹`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Combat)} Task speed increased ${amount * 15}%`; },
-        on_consume: (amount) => { getSkill(SkillType.Combat).speed_modifier += 0.15 * amount; },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Combat, 0.15]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.Coin, name: `Coin`, name_plural: `Coins`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Charisma)} Task speed by 15% each`; },
         icon: `💰`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Charisma)} Task speed increased ${amount * 15}%`; },
-        on_consume: (amount) => { getSkill(SkillType.Charisma).speed_modifier += 0.15 * amount; },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Charisma, 0.15]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.Mushroom, name: `Mushroom`, name_plural: `Mushrooms`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} Task speed by 20% and ${getSkillString(SkillType.Search)} Task speed by 10% each`; },
         icon: `🍄`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Magic)} Task speed increased ${amount * 20}%; ${getSkillString(SkillType.Search)} Task speed increased ${amount * 10}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Magic).speed_modifier += 0.2 * amount;
-            getSkill(SkillType.Search).speed_modifier += 0.1 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Magic, 0.2],
+            [SkillType.Search, 0.2]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.GoblinSupplies, name: `Goblin Supplies`, name_plural: `Goblin Supplies`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Subterfuge)} Task speed by 15% and ${getSkillString(SkillType.Combat)} Task speed by 10% each`; },
         icon: `📦`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Subterfuge)} Task speed increased ${amount * 15}%; ${getSkillString(SkillType.Combat)} Task speed increased ${amount * 10}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Subterfuge).speed_modifier += 0.15 * amount;
-            getSkill(SkillType.Combat).speed_modifier += 0.1 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Subterfuge, 0.15],
+            [SkillType.Combat, 0.1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.TravelEquipment, name: `Travel Equipment`, name_plural: `Travel Equipment`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Travel)} Task speed by 10% and ${getSkillString(SkillType.Survival)} Task speed by 10% each`; },
         icon: `🎒`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Travel)} Task speed increased ${amount * 10}%; ${getSkillString(SkillType.Survival)} Task speed increased ${amount * 10}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Travel).speed_modifier += 0.1 * amount;
-            getSkill(SkillType.Survival).speed_modifier += 0.1 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Travel, 0.1],
+            [SkillType.Survival, 0.1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.Book, name: `Book`, name_plural: `Books`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Study)} Task speed by 10% each`; },
         icon: `📚`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Study)} Task speed increased ${amount * 10}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Study).speed_modifier += 0.1 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Study, 0.1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.ScrollOfHaste, name: `Scroll of Haste`, name_plural: `Scrolls of Haste`,
-        get_tooltip: () => { return `The next Task you start is ${HASTE_MULT}x as fast`; },
         icon: HASTE_EMOJI,
-        get_effect_text: (amount) => { return `Next ${amount} Tasks are ${HASTE_MULT}x as fast`; },
+        get_custom_tooltip: () => { return `The next Task you start is ${HASTE_MULT}x as fast`; },
+        get_custom_effect_text: (amount) => { return `Next ${amount} Tasks are ${HASTE_MULT}x as fast`; },
         on_consume: (amount) => { GAMESTATE.queued_scrolls_of_haste += amount; },
-    },
-    {
+    }),
+    new ItemDefinition({
         enum: ItemType.GoblinWaraxe, name: `Goblin Waraxe`, name_plural: `Goblin Waraxes`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Combat)} Task speed by 100% each`; },
         icon: `🪓`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Combat)} Task speed increased ${amount * 100}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Combat).speed_modifier += 1.0 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Combat, 1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.FiremakingKit, name: `Firemaking Kit`, name_plural: `Firemaking Kits`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Survival)} Task speed by 15% each`; },
         icon: `🔥`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Survival)} Task speed increased ${amount * 15}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Survival).speed_modifier += 0.15 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Survival, 0.15]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.Reagents, name: `Reagent`, name_plural: `Reagents`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} Task speed by 20%, and ${getSkillString(SkillType.Crafting)} Crafting and ${getSkillString(SkillType.Druid)} Task speed by 10% each`; },
         icon: `🌿`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Magic)} Task speed increased ${amount * 20}%; ${getSkillString(SkillType.Crafting)} and ${getSkillString(SkillType.Druid)} Task speed increased ${amount * 10}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Magic).speed_modifier += 0.2 * amount;
-            getSkill(SkillType.Crafting).speed_modifier += 0.1 * amount;
-            getSkill(SkillType.Druid).speed_modifier += 0.1 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Magic, 0.2],
+            [SkillType.Crafting, 0.1],
+            [SkillType.Druid, 0.1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.MagicalRoots, name: `Magical Root`, name_plural: `Magical Roots`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Survival)}, ${getSkillString(SkillType.Magic)}, and ${getSkillString(SkillType.Druid)} Task speed by 10% each`; },
         icon: `🌲`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Survival)}, ${getSkillString(SkillType.Magic)}, and ${getSkillString(SkillType.Druid)} Task speed increased ${amount * 10}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Survival).speed_modifier += 0.1 * amount;
-            getSkill(SkillType.Magic).speed_modifier += 0.1 * amount;
-            getSkill(SkillType.Druid).speed_modifier += 0.1 * amount;
-        },
-    },
-    {
+         skill_modifiers: new SkillModifierList([
+            [SkillType.Survival, 0.1],
+            [SkillType.Magic, 0.1],
+            [SkillType.Druid, 0.1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.GoblinTreasure, name: `Goblin Treasure`, name_plural: `Goblin Treasures`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Subterfuge)} Task speed by 50% and ${getSkillString(SkillType.Survival)} Task speed by 50% each`; },
         icon: `💎`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Subterfuge)} Task speed increased ${amount * 50}%; ${getSkillString(SkillType.Survival)} Task speed increased ${amount * 50}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Subterfuge).speed_modifier += 0.5 * amount;
-            getSkill(SkillType.Survival).speed_modifier += 0.5 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Subterfuge, 0.5],
+            [SkillType.Survival, 0.5]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.Fish, name: `Fish`, name_plural: `Fish`,
-        get_tooltip: () => { return `Gives ${calcItemEnergyGain(10)} ${ENERGY_TEXT} each`; },
         icon: `🐟`,
-        get_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(10)} ${ENERGY_TEXT}`; },
+        get_custom_tooltip: () => { return `Gives ${calcItemEnergyGain(10)} ${ENERGY_TEXT} each`; },
+        get_custom_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(10)} ${ENERGY_TEXT}`; },
         on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(10) * amount; },
-    },
-    {
+    }),
+    new ItemDefinition({
         enum: ItemType.BanditWeapons, name: `Bandit Weapon`, name_plural: `Bandit Weapons`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Subterfuge)} Task speed by 10% and ${getSkillString(SkillType.Combat)} Task speed by 20% each`; },
         icon: `🔪`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Subterfuge)} Task speed increased ${amount * 10}%; ${getSkillString(SkillType.Combat)} Task speed increased ${amount * 20}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Subterfuge).speed_modifier += 0.1 * amount;
-            getSkill(SkillType.Combat).speed_modifier += 0.2 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Subterfuge, 0.1],
+            [SkillType.Combat, 0.2]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.BanditWeapons, name: `Cactus`, name_plural: `Cactuses`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Survival)} and ${getSkillString(SkillType.Fortitude)} Task speed by 10% each`; },
         icon: `🌵`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Survival)} and ${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 10}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Survival).speed_modifier += 0.1 * amount;
-            getSkill(SkillType.Fortitude).speed_modifier += 0.1 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Survival, 0.1],
+            [SkillType.Fortitude, 0.1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.CityChain, name: `City Chain`, name_plural: `City Chains`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Charisma)} and ${getSkillString(SkillType.Subterfuge)} Task speed by 50% each`; },
         icon: `🔗`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Charisma)} and ${getSkillString(SkillType.Subterfuge)} Task speed increased ${amount * 50}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Charisma).speed_modifier += 0.5 * amount;
-            getSkill(SkillType.Subterfuge).speed_modifier += 0.5 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Charisma, 0.5],
+            [SkillType.Subterfuge, 0.5]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.WerewolfFur, name: `Werewolf Fur`, name_plural: `Werewolf Furs`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Charisma)} and ${getSkillString(SkillType.Survival)} Task speed by 20% each`; },
         icon: `🐺`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Charisma)} and ${getSkillString(SkillType.Survival)} Task speed increased ${amount * 20}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Charisma).speed_modifier += 0.2 * amount;
-            getSkill(SkillType.Survival).speed_modifier += 0.2 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Charisma, 0.2],
+            [SkillType.Survival, 0.2]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.OasisWater, name: `Oasis Water`, name_plural: `Oasis Water`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} Task speed by 20% and ${getSkillString(SkillType.Survival)} Task speed by 10% each`; },
         icon: `💧`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Magic)} Task speed increased ${amount * 20}%; ${getSkillString(SkillType.Survival)} Task speed increased ${amount * 10}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Magic).speed_modifier += 0.2 * amount;
-            getSkill(SkillType.Survival).speed_modifier += 0.1 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Magic, 0.2],
+            [SkillType.Survival, 0.1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.Calamari, name: `Calamari`, name_plural: `Calamari`,
-        get_tooltip: () => { return `Gives ${calcItemEnergyGain(50)} ${ENERGY_TEXT} each`; },
         icon: `🦑`,
-        get_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(50)} ${ENERGY_TEXT}`; },
+        get_custom_tooltip: () => { return `Gives ${calcItemEnergyGain(50)} ${ENERGY_TEXT} each`; },
+        get_custom_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(50)} ${ENERGY_TEXT}`; },
         on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(50) * amount; },
-    },
-    {
+    }),
+    new ItemDefinition({
         enum: ItemType.MagicalIncense, name: `Magical Incense`, name_plural: `Magical Incense`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Ascension)} Task speed by 10% each`; },
         icon: `🕯️`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Ascension)} Task speed increased ${amount * 10}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Ascension).speed_modifier += 0.1 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Ascension, 0.1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.OracleBones, name: `Oracle Bone`, name_plural: `Oracle Bones`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Search)} and ${getSkillString(SkillType.Druid)} Task speed by 20% each`; },
         icon: `🦴`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Search)} and ${getSkillString(SkillType.Druid)} Task speed increased ${amount * 20}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Search).speed_modifier += 0.2 * amount;
-            getSkill(SkillType.Druid).speed_modifier += 0.2 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Search, 0.2],
+            [SkillType.Druid, 0.2]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.WormHideCoat, name: `Worm Hide Coat`, name_plural: `Worm Hide Coats`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Fortitude)} Task speed by 100% each`; },
         icon: `🧥`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 100}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Fortitude).speed_modifier += 1 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Fortitude, 1]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.DjinnLamp, name: `Djinn Lamp`, name_plural: `Djinn Lamps`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Ascension)} and ${getSkillString(SkillType.Magic)} Task speed by 30% each`; },
         icon: `🧞`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Ascension)} and ${getSkillString(SkillType.Magic)} Task speed increased ${amount * 30}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Ascension).speed_modifier += 0.3 * amount;
-            getSkill(SkillType.Magic).speed_modifier += 0.3 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Ascension, 0.3],
+            [SkillType.Magic, 0.3]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.Dreamcatcher, name: `Dreamcatcher`, name_plural: `Dreamcatchers`,
-        get_tooltip: () => { return `Creates a copy of every Item type you've obtained this Energy Reset (except Dreamcatchers)`; },
         icon: `🕸️`,
-        get_effect_text: (amount) => { return `Copied ${amount * (GAMESTATE.items_found_this_energy_reset.length - 1)} Items`; },
+        get_custom_tooltip: () => { return `Creates a copy of every Item type you've obtained this Energy Reset (except Dreamcatchers)`; },
+        get_custom_effect_text: (amount) => { return `Copied ${amount * (GAMESTATE.items_found_this_energy_reset.length - 1)} Items`; },
         on_consume: (amount) => {
             for (const item of GAMESTATE.items_found_this_energy_reset) {
                 if (item != ItemType.Dreamcatcher) {
@@ -290,68 +282,58 @@ export const ITEMS: ItemDefinition[] = [
                 }
             }
         },
-    },
-    {
+    }),
+    new ItemDefinition({
         enum: ItemType.MagicEssence, name: `Magical Essence`, name_plural: `Magical Essences`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} Task speed by 300% each`; },
         icon: `🌠`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Magic)} Task speed increased ${amount * 300}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Magic).speed_modifier += 3 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Magic, 3]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.MagicEssence, name: `Crafting Recipe`, name_plural: `Crafting Recipes`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Crafting)} Task speed by 30% each`; },
         icon: `🛠️`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Crafting)} Task speed increased ${amount * 30}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Crafting).speed_modifier += 0.3 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Crafting, 0.3]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.KnightlyBoots, name: `Knightly Boots`, name_plural: `Knightly Boots`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} Task speed by 20% each`; },
         icon: `👢`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 20}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Combat).speed_modifier += 0.2 * amount;
-            getSkill(SkillType.Fortitude).speed_modifier += 0.2 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Combat, 0.2],
+            [SkillType.Fortitude, 0.2]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.DragonScale, name: `Dragon Scale`, name_plural: `Dragon Scales`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} Task speed by 50% each`; },
         icon: `🐲`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} Task speed increased ${amount * 50}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Combat).speed_modifier += 0.5 * amount;
-            getSkill(SkillType.Fortitude).speed_modifier += 0.5 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Combat, 0.5],
+            [SkillType.Fortitude, 0.5]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.CaveInsects, name: `Cave Insect`, name_plural: `Cave Insects`,
-        get_tooltip: () => { return `Gives ${calcItemEnergyGain(5)} ${ENERGY_TEXT} each`; },
         icon: `🦟`,
-        get_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(5)} ${ENERGY_TEXT}`; },
+        get_custom_tooltip: () => { return `Gives ${calcItemEnergyGain(5)} ${ENERGY_TEXT} each`; },
+        get_custom_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(5)} ${ENERGY_TEXT}`; },
         on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(5) * amount; },
-    },
-    {
+    }),
+    new ItemDefinition({
         enum: ItemType.MagicalVessel, name: `Magical Vessel`, name_plural: `Magical Vessels`,
-        get_tooltip: () => { return `Improves ${getSkillString(SkillType.Ascension)} Task speed by 30% each`; },
         icon: `🏺`,
-        get_effect_text: (amount) => { return `${getSkillString(SkillType.Ascension)} Task speed increased ${amount * 30}%`; },
-        on_consume: (amount) => {
-            getSkill(SkillType.Ascension).speed_modifier += 0.3 * amount;
-        },
-    },
-    {
+        skill_modifiers: new SkillModifierList([
+            [SkillType.Ascension, 0.3]
+        ]),
+    }),
+    new ItemDefinition({
         enum: ItemType.MagicRing, name: `Magic Ring`, name_plural: `Magic Rings`,
-        get_tooltip: () => { return `The next Task you start gives ${MAGIC_RING_MULT}x as much XP`; },
         icon: `💍`,
-        get_effect_text: (amount) => { return `Next ${amount} Tasks give ${MAGIC_RING_MULT}x as much XP`; },
+        get_custom_tooltip: () => { return `The next Task you start gives ${MAGIC_RING_MULT}x as much XP`; },
+        get_custom_effect_text: (amount) => { return `Next ${amount} Tasks give ${MAGIC_RING_MULT}x as much XP`; },
         on_consume: (amount) => { GAMESTATE.queued_magic_rings += amount; },
-    },
+    }),
 ]
 
 export const ITEMS_TO_NOT_AUTO_USE = [ItemType.ScrollOfHaste, ItemType.Dreamcatcher, ItemType.MagicRing];
