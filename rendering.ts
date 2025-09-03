@@ -864,7 +864,8 @@ function populateEndOfContent(end_of_content_div: HTMLElement) {
         return;
     }
 
-    reset_count.textContent = `You've done ${GAMESTATE.energy_reset_count} Energy Resets`;
+    reset_count.innerHTML = `You've done ${GAMESTATE.energy_reset_count} Energy Resets this Prestige`;
+    reset_count.innerHTML += `<br>You've done ${GAMESTATE.prestige_count} Prestiges`;
 
     const reset_button = end_of_content_div.querySelector<HTMLElement>("#end-of-content-reset");
     if (!reset_button) {
