@@ -16,6 +16,7 @@
     --default-text-color: #000;
     --disabled-background-color: #777;
     --disabled-background-color-lighter: #999;
+    --standard-div-spacing: 8px;
 
     --palette-dark-gray-darker: #616161;
     --tooltip-line-height: 1.6;
@@ -43,8 +44,8 @@
 
 body {
     color: var(--default-text-color);
-    margin: 8px;
-    min-height: calc(100vh - (8px * 2));
+    margin: var(--standard-div-spacing);
+    min-height: calc(100vh - (var(--standard-div-spacing) * 2));
     background: linear-gradient(120deg, #102661, #8c386d) fixed;
 
     user-select: none;          /* Standard syntax */
@@ -57,7 +58,7 @@ body {
     width: var(--game-width);
     margin: 0 auto;
     display: flex;
-    gap: 10px;
+    gap: var(--standard-div-spacing);
 }
 
 #main-area {
@@ -74,12 +75,16 @@ body {
 }
 
 #left-column {
-    width: 544px;
+    width: 554px;
 }
 
 #right-column {
-    width: 348px;
-    margin-left: 8px;
+    width: 338px;
+    margin-left: var(--standard-div-spacing);
+}
+
+#zone {
+    margin-bottom: var(--standard-div-spacing);
 }
 
 #zone-name {
@@ -108,7 +113,7 @@ body {
 #top-area {
     width: 900px;
     display: flex;
-    gap: 10px;
+    gap: var(--standard-div-spacing);
     background: var(--element-background-color);
     border-radius: var(--default-border-radius);
     position: fixed;
@@ -139,7 +144,7 @@ button:disabled {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: var(--standard-div-spacing);
 }
 
 #settings-area button {
@@ -173,7 +178,7 @@ button:hover:enabled {
 */
 
 .task {
-    margin-bottom: 8px;
+    margin-bottom: var(--standard-div-spacing);
     background: var(--element-background-color);
     border-radius: var(--default-border-radius);
     padding: 5px;
@@ -312,7 +317,7 @@ button:hover:enabled {
 
 #skills {
     width: 100%;
-    gap: 10px;
+    gap: var(--standard-div-spacing);
     display: flex;
     flex-direction: column;
 }
@@ -334,7 +339,7 @@ button:hover:enabled {
 .sidebar {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--standard-div-spacing);
 }
 
 .sidebar-item {
@@ -372,7 +377,7 @@ button:hover:enabled {
 .elements-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: var(--standard-div-spacing);
     margin-bottom: 5px;
 }
 
@@ -535,7 +540,7 @@ button.do-prestige {
     padding: 8px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--standard-div-spacing);
 
     overflow-y: auto;
 }
@@ -730,7 +735,7 @@ div.prestige-purchase {
     padding: 8px;
     display: flex;
     color: var(--default-text-color);
-    gap: 10px;
+    gap: var(--standard-div-spacing);
 }
 
 #settings {

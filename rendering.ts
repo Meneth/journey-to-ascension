@@ -1665,7 +1665,7 @@ function setupZone() {
 
     const zone = ZONES[GAMESTATE.current_zone];
     if (zone) {
-        zone_name.innerHTML = `Zone ${GAMESTATE.current_zone + 1}<br>${zone.name}`;
+        zone_name.innerHTML = `Zone ${GAMESTATE.current_zone + 1} - ${zone.name}`;
     }
 }
 
