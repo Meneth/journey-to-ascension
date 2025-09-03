@@ -764,4 +764,5 @@ footer {
     margin: 3px 0;
     padding: 5px 10px;
     border-radius: var(--default-border-radius);
+    font-size: 0.9em;
 }
