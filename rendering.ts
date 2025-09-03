@@ -688,7 +688,7 @@ function setupAutoUseItemsControl() {
 
     setupTooltipStaticHeader(item_control, `${item_control.textContent}`, function () {
         let tooltip = "Toggle between items being used automatically, and only being used manually";
-        tooltip += "<br>Won't use the Scroll of Haste";
+        tooltip += "<br>Won't use the Scroll of Haste or other Items where you'd want full control over the timing";
 
         return tooltip;
     });
