@@ -1086,7 +1086,6 @@ function populatePrestigeView() {
         }
     }
 
-    console.log(scrollTop);
     scroll_area.scrollTop = scrollTop;
 }
 

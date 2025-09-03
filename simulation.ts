@@ -668,7 +668,6 @@ function tryAddPerk(perk: PerkType, show_notification = true) {
     }
 
     GAMESTATE.perks.set(perk, true);
-    console.log(show_notification);
 
     if (show_notification) {
         const context: GainedPerkContext = { perk: perk };
