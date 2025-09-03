@@ -74,11 +74,11 @@ body {
 }
 
 #left-column {
-    width: 67%;
+    width: 544px;
 }
 
 #right-column {
-    width: 33%;
+    width: 348px;
     margin-left: 8px;
 }
 
@@ -254,14 +254,15 @@ button:hover:enabled {
 }
 
 .task-reps {
-    width: 50%;
+    width: 60%;
     display: flex;
     margin-left: 3px;
+    align-items: center;
 }
 
 .task-rep {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     background: #555;
     margin: 3px;
     border-radius: 5px;
@@ -519,7 +520,7 @@ button.do-prestige {
 #prestige-box {
     position: relative;
     height: 730px;
-    width: 500px;
+    width: 530px;
     padding: 0;
     
     scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
