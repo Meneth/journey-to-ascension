@@ -1,4 +1,4 @@
-import { getSkillString } from "./rendering.js";
+import { getSkillString, joinWithCommasAndAnd } from "./rendering.js";
 import { getSkill } from "./simulation.js";
 import { SkillType } from "./skills.js";
 
@@ -30,29 +30,54 @@ export class SkillModifierList {
         return newList;
     }
 
-    public getDescription(): string {
-        let desc = "";
+    private buildSkillMap() {
+        const map: Map<number, SkillType[]> = new Map();
 
         for (const modifier of this.modifiers) {
+            const existing_value = map.get(modifier.effect) ?? [];
+            existing_value.push(modifier.skill);
+            map.set(modifier.effect, existing_value);
+        }
+
+        const string_map: Map<number, string> = new Map();
+
+        for (const [effect, skills] of map) {
+            const skill_strings: string[] = [];
+            for (const skill of skills) {
+                skill_strings.push(getSkillString(skill));
+            }
+
+            string_map.set(effect, joinWithCommasAndAnd(skill_strings));
+        }
+
+        return string_map;
+    }
+
+    public getDescription(): string {
+        const map: Map<number, string> = this.buildSkillMap();
+        let desc = "";
+
+        for (const [effect, skill_string] of map) {
             if (desc.length != 0) {
                 desc += "<br>";
             }
 
-            desc += `Improves ${getSkillString(modifier.skill)} Task speed by ${(modifier.effect * 100).toFixed(0)}% each`;
+            desc += `Improves ${skill_string} Task speed by ${(effect * 100).toFixed(0)}% each`;
         }
 
         return desc;
     }
 
     public getAppliedDescription(): string {
+        const map: Map<number, string> = this.buildSkillMap();
         let desc = "";
 
-        for (const modifier of this.modifiers) {
+        for (const [effect, skill_string] of map) {
             if (desc.length != 0) {
                 desc += "<br>";
             }
 
-            desc += `${getSkillString(modifier.skill)} Task speed increased ${(modifier.effect * 100).toFixed(0)}%`;
+            desc += `${skill_string} Task speed increased ${(effect * 100).toFixed(0)}%`;
         }
 
         return desc;

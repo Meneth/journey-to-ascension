@@ -16,7 +16,7 @@ function createChildElement(parent: Element, child_type: string): HTMLElement {
     return child;
 }
 
-function joinWithCommasAndAnd(strings: string[]): string {
+export function joinWithCommasAndAnd(strings: string[]): string {
     if (strings.length === 0) return "";
     if (strings.length === 1) return strings[0] as string;
     if (strings.length === 2) return `${strings[0]} and ${strings[1]}`;
