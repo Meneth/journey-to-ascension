@@ -86,7 +86,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         type: PrestigeUnlockType.FullyAttuned,
         layer: PrestigeLayer.TouchTheDivine,
         name: "Fully Attuned",
-        get_description: () => { return `Permanently unlocks the ${ATTUNEMENT_EMOJI}Attunement Perk<br>Makes the Knowledge Boost Prestige upgrade apply to ${ATTUNEMENT_TEXT}<br>Makes ${ATTUNEMENT_TEXT} apply to ${getSkillString(SkillType.Study)}`; },
+        get_description: () => { return `Permanently unlocks the ${ATTUNEMENT_EMOJI}Attunement Perk<br>Makes the Knowledge Boost Prestige upgrade apply to ${ATTUNEMENT_TEXT}<br>Makes ${ATTUNEMENT_TEXT} apply to ${getSkillString(SkillType.Search)}`; },
         cost: 400
     },
 
