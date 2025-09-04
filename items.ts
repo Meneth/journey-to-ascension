@@ -142,8 +142,8 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.ScrollOfHaste, name: `Scroll of Haste`, name_plural: `Scrolls of Haste`,
         icon: HASTE_EMOJI,
-        get_custom_tooltip: () => { return `The next Task you start is ${HASTE_MULT}x as fast`; },
-        get_custom_effect_text: (amount) => { return `Next ${amount} Tasks are ${HASTE_MULT}x as fast`; },
+        get_custom_tooltip: () => { return `The next Task rep you start is ${HASTE_MULT}x as fast`; },
+        get_custom_effect_text: (amount) => { return `Next ${amount} Task reps are ${HASTE_MULT}x as fast`; },
         on_consume: (amount) => { GAMESTATE.queued_scrolls_of_haste += amount; },
     }),
     new ItemDefinition({
@@ -330,8 +330,8 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.MagicRing, name: `Magic Ring`, name_plural: `Magic Rings`,
         icon: `💍`,
-        get_custom_tooltip: () => { return `The next Task you start gives ${MAGIC_RING_MULT}x as much XP`; },
-        get_custom_effect_text: (amount) => { return `Next ${amount} Tasks give ${MAGIC_RING_MULT}x as much XP`; },
+        get_custom_tooltip: () => { return `The next Task rep you start gives ${MAGIC_RING_MULT}x as much XP`; },
+        get_custom_effect_text: (amount) => { return `Next ${amount} Task reps give ${MAGIC_RING_MULT}x as much XP`; },
         on_consume: (amount) => { GAMESTATE.queued_magic_rings += amount; },
     }),
 ]
