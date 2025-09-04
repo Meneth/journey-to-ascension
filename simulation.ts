@@ -356,6 +356,9 @@ function updateActiveTask() {
         return;
     }
 
+    // Can't undo after the item's started having an effect
+    GAMESTATE.undo_item = [ItemType.Count, 0];
+
     let progress = calcTaskProgressPerTick(active_task);
     const cost = calcTaskCost(active_task);
     progress = Math.min(progress, cost - active_task.progress);
@@ -643,8 +646,25 @@ export function addItem(item: ItemType, count: number) {
     GAMESTATE.queueRenderEvent(event);
 }
 
-export function clickItem(item: ItemType, use_all: boolean) {
+function useItem(item: ItemType, amount: number) {
+    const old_value = GAMESTATE.items.get(item) ?? 0;
     const definition = ITEMS[item] as ItemDefinition;
+    definition.applyEffects(amount);
+    GAMESTATE.items.set(item, old_value - amount);
+
+    const context: UsedItemContext = { item: item, count: Math.abs(amount) };
+    const event = new RenderEvent(amount > 0 ? EventType.UsedItem : EventType.UndidItem, context);
+    GAMESTATE.queueRenderEvent(event);
+
+    // Can't undo after the item's started having an effect
+    if (GAMESTATE.active_task == null && amount > 0) {
+        GAMESTATE.undo_item = [item, amount];
+    }
+
+    updateEnabledTasks();
+}
+
+export function clickItem(item: ItemType, use_all: boolean) {
     const old_value = GAMESTATE.items.get(item) ?? 0;
 
     if (old_value <= 0) {
@@ -653,14 +673,7 @@ export function clickItem(item: ItemType, use_all: boolean) {
     }
 
     const num_used = use_all ? old_value : 1;
-    definition.applyEffects(num_used);
-    GAMESTATE.items.set(item, old_value - num_used);
-
-    const context: UsedItemContext = { item: item, count: num_used };
-    const event = new RenderEvent(EventType.UsedItem, context);
-    GAMESTATE.queueRenderEvent(event);
-
-    updateEnabledTasks();
+    useItem(item, num_used);
 }
 
 function halveItemCounts() {
@@ -683,6 +696,17 @@ function autoUseItems() {
             clickItem(key, true);
         }
     }
+}
+
+export function undoItemUse() {
+    const [item_type, amount] = GAMESTATE.undo_item;
+    if (item_type == ItemType.Count) {
+        console.error("Trying to undo non-existing item");
+        return;
+    }
+
+    GAMESTATE.undo_item = [ItemType.Count, 0];
+    useItem(item_type, -amount);
 }
 
 // MARK: Perks
@@ -1167,6 +1191,7 @@ export class Gamestate {
     automation_mode = AutomationMode.Off;
     automation_prios: Map<number, number[]> = new Map();
     auto_use_items = false;
+    undo_item: [ItemType, amount: number] = [ItemType.Count, 0];
 
     skills_at_start_of_reset: number[] = [];
     power_at_start_of_reset = 0;

@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
@@ -616,7 +616,7 @@ function queueUpdateTooltip() {
 // MARK: Items
 
 function createItemDiv(item: ItemType, items_div: HTMLElement) {
-    const button = document.createElement("button");
+    const button = createChildElement(items_div, "button") as HTMLButtonElement;
     button.className = "item-button";
     button.classList.add("element");
 
@@ -631,8 +631,31 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
 
     setupTooltipStatic(button, `${item_definition.name}`, `${item_definition.getTooltip()}`);
 
-    items_div.appendChild(button);
     RENDERING.item_elements.set(item, button);
+}
+
+function setupItemUndo() {
+    const button = RENDERING.item_undo_element;
+    button.addEventListener("click", () => { undoItemUse(); });
+
+    setupTooltip(button, () => {
+        const [item_type, amount] = GAMESTATE.undo_item;
+        if (item_type == ItemType.Count) {
+            return "Undo Last Item Use";
+        }
+        
+        const item = ITEMS[item_type] as ItemDefinition;
+        return `Undo Use of ${amount} ${amount == 1 ? `${item.name}` : `${item.name_plural}`}`;
+    }, () => {
+        const [item_type,] = GAMESTATE.undo_item;
+        const conditions = "Item undo is available until you start your next Task<br>Using an Item while already having a Task active will prevent undoing";
+
+        if (item_type == ItemType.Count) {
+            return conditions + `<br><span class="disable-reason">No Item to undo</span>`;
+        }
+
+        return conditions;
+    });
 }
 
 function recreateItemsIfNeeded() {
@@ -717,6 +740,8 @@ function setupAutoUseItemsControl() {
 }
 
 function updateItems() {
+    RENDERING.item_undo_element.disabled = GAMESTATE.undo_item[0] == ItemType.Count;
+
     for (const [item, button] of RENDERING.item_elements) {
         const item_count = GAMESTATE.items.get(item);
         button.disabled = item_count == 0;
@@ -1371,6 +1396,15 @@ function handleEvents() {
                     recreateItemsIfNeeded();
                     break;
                 }
+            case EventType.UndidItem:
+                {
+                    const item_context = context as UsedItemContext;
+                    const item = ITEMS[item_context.item] as ItemDefinition;
+                    const plural = item_context.count > 1;
+                    message_div.innerHTML = `Undid use of ${item_context.count} ${item.icon}${plural ? item.name_plural : item.name}`;
+                    recreateItemsIfNeeded();
+                    break;
+                }
             case EventType.UnlockedTask:
                 {
                     const unlock_context = context as UnlockedTaskContext;
@@ -1591,6 +1625,7 @@ export class Rendering {
     open_prestige_element: HTMLElement;
     prestige_overlay_element: HTMLElement;
     confirmation_overlay_element: HTMLElement;
+    item_undo_element: HTMLInputElement;
     task_elements: Map<TaskDefinition, ElementWithTooltip> = new Map();
     skill_elements: Map<SkillType, HTMLElement> = new Map();
     item_elements: Map<ItemType, HTMLButtonElement> = new Map();
@@ -1644,6 +1679,7 @@ export class Rendering {
         this.open_prestige_element = getElement("open-prestige");
         this.prestige_overlay_element = getElement("prestige-overlay");
         this.confirmation_overlay_element = getElement("confirmation-overlay");
+        this.item_undo_element = getElement("item-undo") as HTMLInputElement;
     }
 
     public initialize() {
@@ -1652,6 +1688,7 @@ export class Rendering {
         setupControls();
         setupInfoTooltips();
         setupOpenPrestige();
+        setupItemUndo();
     }
 
     public start() {

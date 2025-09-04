@@ -449,6 +449,14 @@ button:hover:not(.disabled) {
     font-size: 0.9em;
 }
 
+#item-undo {
+    position: absolute;
+    top: 4px;
+    right: 34px;
+    height: 30px;
+    font-size: 1em;
+}
+
 /* MARK: Perks
 */
 

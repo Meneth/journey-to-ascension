@@ -8,6 +8,7 @@ export enum EventType {
     GainedPerk,
     GainedItem,
     UsedItem,
+    UndidItem,
     UnlockedTask,
     UnlockedSkill,
     UnlockedPower,
