@@ -53,6 +53,11 @@ function createConfirmationOverlay(header_text: string, description_text: string
     overlay.classList.remove("hidden");
 }
 
+function areArraysEqual(array1: Array<unknown>, array2: Array<unknown>) {
+    return array1.length === array2.length &&
+        array1.every((value, index) => value === array2[index]);
+}
+
 // MARK: Skills
 
 function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
@@ -616,13 +621,9 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     button.classList.add("element");
 
     const item_definition = ITEMS[item] as ItemDefinition;
-    const item_count = GAMESTATE.items.get(item);
     button.innerHTML = `<span class="text">${item_definition.icon}</span>`;
-    button.disabled = item_count == 0;
-    button.classList.toggle("disabled", button.disabled);
 
     const count_text = createChildElement(button, "p");
-    count_text.textContent = `${item_count}`;
     count_text.className = "item-count";
 
     button.addEventListener("click", () => { clickItem(item, false); });
@@ -634,14 +635,12 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     RENDERING.item_elements.set(item, button);
 }
 
-function recreateItems() {
+function recreateItemsIfNeeded() {
     const items_div = document.getElementById("items-list");
     if (!items_div) {
         console.error("The element with ID 'items-list' was not found.");
         return;
     }
-
-    items_div.innerHTML = "";
 
     const items: [type: ItemType, amount: number][] = [];
 
@@ -654,7 +653,20 @@ function recreateItems() {
 
     sortItems(items);
 
+    const item_order: ItemType[] = [];
+
     for (const [item,] of items) {
+        item_order.push(item);
+    }
+
+    if (areArraysEqual(item_order, RENDERING.item_order)) {
+        return;
+    }
+
+    RENDERING.item_order = item_order;
+    items_div.innerHTML = "";
+
+    for (const item of item_order) {
         createItemDiv(item, items_div);
     }
 }
@@ -702,6 +714,17 @@ function setupAutoUseItemsControl() {
     });
 
     RENDERING.controls_list_element.appendChild(item_control);
+}
+
+function updateItems() {
+    for (const [item, button] of RENDERING.item_elements) {
+        const item_count = GAMESTATE.items.get(item);
+        button.disabled = item_count == 0;
+        button.classList.toggle("disabled", button.disabled);
+        
+        const count_text = button.querySelector<HTMLElement>(".item-count") as HTMLElement;
+        count_text.textContent = `${item_count}`;
+    }
 }
 
 // MARK: Perks
@@ -1281,7 +1304,7 @@ function handleEvents() {
         }
 
         if (event.type == EventType.GainedItem) {
-            recreateItems();
+            recreateItemsIfNeeded();
             continue; // No message, just forces item list to update
         }
 
@@ -1345,7 +1368,7 @@ function handleEvents() {
                     const plural = item_context.count > 1;
                     message_div.innerHTML = `Used ${item_context.count} ${item.icon}${plural ? item.name_plural : item.name}`;
                     message_div.innerHTML += `<br>${item.getEffectText(item_context.count)}`;
-                    recreateItems();
+                    recreateItemsIfNeeded();
                     break;
                 }
             case EventType.UnlockedTask:
@@ -1570,12 +1593,13 @@ export class Rendering {
     confirmation_overlay_element: HTMLElement;
     task_elements: Map<TaskDefinition, ElementWithTooltip> = new Map();
     skill_elements: Map<SkillType, HTMLElement> = new Map();
-    item_elements: Map<ItemType, HTMLElement> = new Map();
+    item_elements: Map<ItemType, HTMLButtonElement> = new Map();
     perk_elements: Map<PerkType, HTMLElement> = new Map();
     controls_list_element: HTMLElement;
 
     energy_reset_count: number = 0;
     current_zone: number = 0;
+    item_order: ItemType[] = [];
 
     public createTasks() {
         const tasks_div = document.getElementById("tasks");
@@ -1636,7 +1660,7 @@ export class Rendering {
 
         setupZone();
         recreatePerks();
-        recreateItems();
+        recreateItemsIfNeeded();
 
         updateRendering();
 
@@ -1656,7 +1680,7 @@ function checkForZoneAndReset() {
     RENDERING.energy_reset_count = GAMESTATE.energy_reset_count;
     recreateTasks();
     if (was_reset) {
-        recreateItems();
+        recreateItemsIfNeeded();
         recreatePerks();
     }
     setupControls();
@@ -1748,6 +1772,7 @@ export function updateRendering() {
     updateSkillRendering();
     updateEnergyRendering();
     updateExtraStats();
+    updateItems();
     updateGameOver();
 
     if (RENDERING.queued_update_tooltip) {
