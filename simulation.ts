@@ -10,6 +10,7 @@ import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESS
 // MARK: Constants
 let task_progress_mult = 1;
 const ZONE_SPEEDUP_BASE = 1.05;
+export const BOSS_MAX_ENERGY_DISPARITY = 5;
 
 // MARK: Skills
 
@@ -268,7 +269,7 @@ export function calcTaskCost(task: Task): number {
     return base_cost * task.task_definition.cost_multiplier * zone_mult;
 }
 
-export function calcTaskProgressMultiplier(task: Task, ignore_haste = false): number {
+export function calcTaskProgressMultiplier(task: Task, override_haste: boolean | null = null): number {
     let mult = 1;
 
     let skill_level_mult = 1;
@@ -296,7 +297,7 @@ export function calcTaskProgressMultiplier(task: Task, ignore_haste = false): nu
 
     mult *= Math.pow(GOTTA_GO_FAST_BASE, getPrestigeRepeatableLevel(PrestigeRepeatableType.GottaGoFast));
 
-    if (!ignore_haste && task.hasted) {
+    if ((override_haste === null && task.hasted) || override_haste === true) {
         mult *= HASTE_MULT;
     }
 
@@ -315,6 +316,19 @@ export function calcTaskProgressMultiplier(task: Task, ignore_haste = false): nu
 
 function calcTaskProgressPerTick(task: Task): number {
     return calcTaskProgressMultiplier(task);
+}
+
+export function calcTaskTicks(progress_per_tick: number, cost: number) {
+    return Math.ceil(cost / progress_per_tick);
+}
+
+function calcTaskEnergyCost(task: Task, hasted: boolean): number {
+    const progress_per_tick = calcTaskProgressMultiplier(task, hasted);
+    const cost = calcTaskCost(task);
+    const energy_per_tick = calcEnergyDrainPerTick(task, isSingleTickTaskImpl(progress_per_tick, cost));
+    const ticks = calcTaskTicks(progress_per_tick, cost);
+
+    return ticks * energy_per_tick;
 }
 
 function isSingleTickTaskImpl(progress: number, cost: number) {
@@ -450,12 +464,24 @@ function applyFinishTaskRepEffects(task: Task) {
     GAMESTATE.queueRenderEvent(event);
 }
 
+export function isTaskDisabledDueToTooStrongBoss(task: Task) {
+    if (task.progress > 0) {
+        return false;
+    }
+
+    if (task.task_definition.type != TaskType.Boss) {
+        return false;
+    }
+
+    return calcTaskEnergyCost(task, GAMESTATE.queued_scrolls_of_haste > 0) > (GAMESTATE.current_energy * BOSS_MAX_ENERGY_DISPARITY);
+}
+
 function updateEnabledTasks() {
     let has_unfinished_mandatory_task = false;
 
     for (const task of GAMESTATE.tasks) {
         const finished = task.reps >= task.task_definition.max_reps;
-        task.enabled = !finished;
+        task.enabled = !finished && !isTaskDisabledDueToTooStrongBoss(task);
         has_unfinished_mandatory_task = has_unfinished_mandatory_task
             || (task.task_definition.type == TaskType.Mandatory && !finished)
             || (task.task_definition.type == TaskType.Prestige && !finished);
@@ -633,6 +659,8 @@ export function clickItem(item: ItemType, use_all: boolean) {
     const context: UsedItemContext = { item: item, count: num_used };
     const event = new RenderEvent(EventType.UsedItem, context);
     GAMESTATE.queueRenderEvent(event);
+
+    updateEnabledTasks();
 }
 
 function halveItemCounts() {
@@ -804,8 +832,12 @@ function pickNextTaskInAutomationQueue(): Task | null {
                 continue;
             }
 
+            if (isTaskDisabledDueToTooStrongBoss(task)) {
+                return null; // Better to stop automating than having it fuck up by skipping a boss
+            }
+
             if (!task.enabled) {
-                break
+                break;
             }
 
             return task;

@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS } from "./perks.js";
@@ -255,6 +255,9 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             else if (task.reps >= task.task_definition.max_reps) {
                 tooltip += `<p class="disable-reason">Disabled due to being fully completed</p>`;
             }
+            else if (isTaskDisabledDueToTooStrongBoss(task)) {
+                tooltip += `<p class="disable-reason">Disabled due to this Boss requiring more than ${BOSS_MAX_ENERGY_DISPARITY}x your current ${ENERGY_TEXT}</p>`;
+            }
             else {
                 console.error("Task disabled for unknown reason");
             }
@@ -503,7 +506,7 @@ function estimateTotalTaskTicks(task: Task, completions: number): number {
     const non_haste_completion = completions - haste_completions;
 
     let num_ticks = 0;
-    let progress_mult = calcTaskProgressMultiplier(task, true);
+    let progress_mult = calcTaskProgressMultiplier(task, false);
 
     num_ticks += Math.ceil(calcTaskCost(task) / progress_mult) * non_haste_completion;
     progress_mult *= HASTE_MULT;
