@@ -249,7 +249,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 151, name: "Apologize for Stealing Reagents", type: TaskType.Mandatory, cost_multiplier: 150, max_reps: 3, skills: [SkillType.Charisma], xp_mult: 0.25 }),
             new TaskDefinition({ id: 152, name: "Rest for a While", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 5, skills: [SkillType.Fortitude] }),
             new TaskDefinition({ id: 153, name: "Touch the Divine", type: TaskType.Prestige, max_reps: 1, cost_multiplier: 0.03, skills: [SkillType.Ascension], prestige_layer: PrestigeLayer.TouchTheDivine }),
-            new TaskDefinition({ id: 154, name: "Infuse Magical Incense", max_reps: 9, cost_multiplier: 100, skills: [SkillType.Magic], item: ItemType.MagicalIncense }),
+            new TaskDefinition({ id: 154, name: "Infuse Mystic Incense", max_reps: 9, cost_multiplier: 100, skills: [SkillType.Magic], item: ItemType.MysticIncense }),
             new TaskDefinition({ id: 155, name: "Practice Memorization", cost_multiplier: 4000, max_reps: 5, skills: [SkillType.Study, SkillType.Magic], perk: PerkType.EnergeticMemory, xp_mult: 0.5 }),
             new TaskDefinition({ id: 156, name: "Guided Spellcasting", cost_multiplier: 100, max_reps: 3, xp_mult: 10, skills: [SkillType.Magic] }),
             new TaskDefinition({ id: 157, name: "Go for a Walk", cost_multiplier: 4, max_reps: 1, xp_mult: 8, skills: [SkillType.Search, SkillType.Travel] }),

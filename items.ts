@@ -25,7 +25,7 @@ export enum ItemType {
     WerewolfFur,
     OasisWater,
     Calamari,
-    MagicalIncense,
+    MysticIncense,
     OracleBones,
     WormHideCoat,
     DjinnLamp,
@@ -241,7 +241,7 @@ export const ITEMS: ItemDefinition[] = [
         on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(50) * amount; },
     }),
     new ItemDefinition({
-        enum: ItemType.MagicalIncense, name: `Magical Incense`, name_plural: `Magical Incense`,
+        enum: ItemType.MysticIncense, name: `Mystic Incense`, name_plural: `Mystic Incense`,
         icon: `🕯️`,
         skill_modifiers: new SkillModifierList([
             [SkillType.Ascension, 0.1]
