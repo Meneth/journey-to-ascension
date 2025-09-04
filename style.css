@@ -132,7 +132,7 @@ button {
     border-right: 2px solid black;
 }
 
-button:disabled {
+button.disabled {
     border-left-color: rgba(123, 123, 123, 0.35);
     border-top-color: rgba(123, 123, 123, 0.35);
     border-right-color: rgba(60, 60, 60, 0.35);
@@ -157,7 +157,7 @@ button:disabled {
 /* MARK: Common
 */
 
-button:hover:enabled {
+button:hover:not(.disabled) {
     filter: brightness(1.1);
 }
 
@@ -201,7 +201,7 @@ button:hover:enabled {
     opacity: 1.0;
 }
 
-.task.Normal button:enabled {
+.task.Normal button:not(.disabled) {
     background: linear-gradient(5deg, rgb(22, 196, 88), rgb(53, 197, 101));
 }
 
@@ -209,7 +209,7 @@ button:hover:enabled {
     color: rgb(22, 196, 88);
 }
 
-.task.Travel button:enabled {
+.task.Travel button:not(.disabled) {
     background: linear-gradient(5deg, rgb(23, 112, 196), rgb(54, 132, 204));
 }
 
@@ -217,7 +217,7 @@ button:hover:enabled {
     color: rgb(23, 112, 196);
 }
 
-.task.Mandatory button:enabled {
+.task.Mandatory button:not(.disabled) {
     background: linear-gradient(5deg, rgb(224, 193, 68), rgb(220, 221, 130));
 }
 
@@ -225,7 +225,7 @@ button:hover:enabled {
     color: rgb(224, 193, 68);
 }
 
-.task.Boss button:enabled {
+.task.Boss button:not(.disabled) {
     background: linear-gradient(5deg, rgb(214, 60, 60), rgb(236, 107, 107));
 }
 
@@ -233,7 +233,7 @@ button:hover:enabled {
     color: rgb(214, 60, 60);
 }
 
-.task.Prestige button:enabled {
+.task.Prestige button:not(.disabled) {
     background: linear-gradient(5deg, var(--prestige-color), var(--prestige-color-brighter));
 }
 

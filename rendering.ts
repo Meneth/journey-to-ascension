@@ -172,7 +172,13 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     const task_button = document.createElement("button");
     task_button.className = "task-button";
     task_button.textContent = `${task.task_definition.name}`;
-    task_button.addEventListener("click", () => { clickTask(task); });
+    task_button.addEventListener("click", () => {
+        // We do this just via classes rather than the disabled propery
+        // As Firefox would also disable right-clicking otherwise
+        if (!task_button.classList.contains("disabled")) {
+            clickTask(task); 
+        }
+    });
     task_button.addEventListener("contextmenu", (e) => { e.preventDefault(); toggleAutomation(task); });
 
     if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_available) {
@@ -453,8 +459,7 @@ function updateTaskRendering() {
 
         const button = task_element.querySelector<HTMLInputElement>(".task-button");
         if (button) {
-            button.disabled = !task.enabled;
-            button.classList.toggle("disabled", button.disabled);
+            button.classList.toggle("disabled", !task.enabled);
         }
         else {
             console.error("No task-button");
