@@ -157,7 +157,7 @@ button.disabled {
 /* MARK: Common
 */
 
-button:hover:not(.disabled) {
+button:hover:not(.disabled):not(:disabled) {
     filter: brightness(1.1);
 }
 
