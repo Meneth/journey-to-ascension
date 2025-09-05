@@ -651,7 +651,7 @@ function setupItemUndo() {
         const conditions = "Item undo is available until you start your next Task<br>Using an Item while already having a Task active will prevent undoing";
 
         if (item_type == ItemType.Count) {
-            return conditions + `<br><span class="disable-reason">No Item to undo</span>`;
+            return `<span class="disable-reason">No Item to undo</span><br><br>` + conditions;
         }
 
         return conditions;
