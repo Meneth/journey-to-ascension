@@ -60,6 +60,8 @@ export class PrestigeRepeatable {
     scaling_exponent = 0;
 }
 
+export const DIVINE_SPEED_TICKS_PER_PERCENT = 3;
+
 export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
         type: PrestigeUnlockType.PermanentAutomation,
@@ -101,7 +103,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         type: PrestigeUnlockType.DivineSpeed,
         layer: PrestigeLayer.TranscendHumanity,
         name: "Divine Speed",
-        get_description: () => { return `Makes the game tick 0.5% faster (additively) for every Max ${ENERGY_TEXT} beyond 100<br>No effect on ${ENERGY_TEXT} use, but makes tasks take less real-world time`; },
+        get_description: () => { return `Makes the game tick 1% faster (additively) for every ${DIVINE_SPEED_TICKS_PER_PERCENT} Max ${ENERGY_TEXT} beyond 100<br>No effect on ${ENERGY_TEXT} use, but makes tasks take less real-world time`; },
         cost: 500
     },
     {

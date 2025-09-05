@@ -4,13 +4,15 @@ import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType, MAG
 import { PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
 // MARK: Constants
 let task_progress_mult = 1;
 const ZONE_SPEEDUP_BASE = 1.05;
 export const BOSS_MAX_ENERGY_DISPARITY = 5;
+const STARTING_ENERGY = 100;
+const DEFAULT_TICK_RATE = 66.6;
 
 // MARK: Skills
 
@@ -1176,9 +1178,6 @@ function loadGameFromData(data: any) {
 
 // MARK: Gamestate
 
-const STARTING_ENERGY = 100;
-const DEFAULT_TICK_RATE = 100;
-
 export class Gamestate {
     tasks: Task[] = [];
     active_task: Task | null = null;
@@ -1282,7 +1281,8 @@ function advanceZone() {
 export function calcTickRate() {
     let tick_rate = DEFAULT_TICK_RATE;
     if (hasPrestigeUnlock(PrestigeUnlockType.DivineSpeed)) {
-        tick_rate /= 1 + (GAMESTATE.max_energy - 100) / 200;
+        const overflow = GAMESTATE.max_energy - STARTING_ENERGY;
+        tick_rate /= 1 + overflow / DIVINE_SPEED_TICKS_PER_PERCENT;
     }
 
     return tick_rate;
