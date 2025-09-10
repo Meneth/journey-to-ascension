@@ -398,7 +398,7 @@ function updateActiveTask() {
     }
 
     // Can't undo after the item's started having an effect
-    GAMESTATE.undo_item = [ItemType.Count, 0];
+    disableItemUndo();
 
     const progress = calcTaskProgressPerTick(active_task);
     const old_rep_count = active_task.reps;
@@ -719,8 +719,13 @@ function autoUseItems() {
 
         if (value > 0) {
             clickItem(key, true);
+            disableItemUndo(); // It'd just cause weird flashing
         }
     }
+}
+
+function disableItemUndo() {
+    GAMESTATE.undo_item = [ItemType.Count, 0];
 }
 
 export function undoItemUse() {
@@ -730,7 +735,7 @@ export function undoItemUse() {
         return;
     }
 
-    GAMESTATE.undo_item = [ItemType.Count, 0];
+    disableItemUndo();
     useItem(item_type, -amount);
 }
 

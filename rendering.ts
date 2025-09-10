@@ -648,7 +648,7 @@ function setupItemUndo() {
         return `Undo Use of ${amount} ${amount == 1 ? `${item.name}` : `${item.name_plural}`}`;
     }, () => {
         const [item_type,] = GAMESTATE.undo_item;
-        const conditions = "Item undo is available until you start your next Task<br>Using an Item while already having a Task active will prevent undoing";
+        const conditions = "Item undo is available until you start your next Task<br>Using an Item while already having a Task active will prevent undoing<br>Automatically used Items also cannot be undone";
 
         if (item_type == ItemType.Count) {
             return `<span class="disable-reason">No Item to undo</span><br><br>` + conditions;
