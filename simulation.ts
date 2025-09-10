@@ -1,7 +1,7 @@
 import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE, setTickRate } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType, MAGIC_RING_MULT } from "./items.js";
-import { PerkType } from "./perks.js";
+import { PerkDefinition, PERKS, PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT } from "./prestige_upgrades.js";
@@ -100,113 +100,13 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
     const skill = getSkill(skill_type);
     mult *= skill.speed_modifier;
 
-    switch (skill_type) {
-        case SkillType.Study:
-            if (hasPerk(PerkType.Reading)) {
-                mult *= 1.5;
-            }
-            if (hasPerk(PerkType.Headmaster)) {
-                mult *= 1.3;
-            }
-            break;
-        case SkillType.Charisma:
-            if (hasPerk(PerkType.VillagerGratitude)) {
-                mult *= 1.5;
-            }
-            if (hasPerk(PerkType.VillageHero)) {
-                mult *= 1.2;
-            }
-            if (hasPerk(PerkType.UndergroundConnection)) {
-                mult *= 1.2;
-            }
-            if (hasPerk(PerkType.PurgedBureaucracy)) {
-                mult *= 1.3;
-            }
-            if (hasPerk(PerkType.TheWorm)) {
-                mult *= 1.5;
-            }
-            if (hasPerk(PerkType.DragonSlayer)) {
-                mult *= 1.3;
-            }
-            if (hasPerk(PerkType.TowerOfBabel)) {
-                mult *= 1.3;
-            }
-            break;
-        case SkillType.Magic:
-            if (hasPerk(PerkType.Amulet)) {
-                mult *= 1.5;
-            }
-            if (hasPerk(PerkType.DreamPrism)) {
-                mult *= 1.3;
-            }
-            if (hasPerk(PerkType.Headmaster)) {
-                mult *= 1.3;
-            }
-            break;
-        case SkillType.Subterfuge:
-            if (hasPerk(PerkType.UndergroundConnection)) {
-                mult *= 1.4;
-            }
-            if (hasPerk(PerkType.WalkWithoutRhythm)) {
-                mult *= 1.4;
-            }
-            if (hasPerk(PerkType.HideInPlainSight)) {
-                mult *= 1.5;
-            }
-            break;
-        case SkillType.Combat:
-            if (hasPerk(PerkType.VillageHero)) {
-                mult *= 1.2;
-            }
-            if (hasPerk(PerkType.GoblinScourge)) {
-                mult *= 1.3;
-            }
-            if (hasPerk(PerkType.DragonKillingPlan)) {
-                mult *= 1.5;
-            }
-            if (hasPerk(PerkType.DragonSlayer)) {
-                mult *= 1.3;
-            }
-            break;
-        case SkillType.Survival:
-            if (hasPerk(PerkType.SunkenTreasure)) {
-                mult *= 1.3;
-            }
-            break;
-        case SkillType.Fortitude:
-            if (hasPerk(PerkType.GoblinScourge)) {
-                mult *= 1.3;
-            }
-            if (hasPerk(PerkType.SunkenTreasure)) {
-                mult *= 1.3;
-            }
-            break;
-        case SkillType.Druid:
-            if (hasPerk(PerkType.LostTemple)) {
-                mult *= 1.5;
-            }
-            break;
-        case SkillType.Travel:
-            if (hasPerk(PerkType.ExperiencedTraveler)) {
-                mult *= 1.5;
-            }
-            if (hasPerk(PerkType.WalkWithoutRhythm)) {
-                mult *= 1.2;
-            }
-            if (hasPerk(PerkType.DreamPrism)) {
-                mult *= 1.3;
-            }
-            break;
-        case SkillType.Crafting:
-            if (hasPerk(PerkType.PurgedBureaucracy)) {
-                mult *= 1.3;
-            }
-            break;
-        case SkillType.Ascension:
-            if (hasPerk(PerkType.TowerOfBabel)) {
-                mult *= 1.3;
-            }
-            break;
+    for (const [perk_type, active] of GAMESTATE.perks) {
+        if (!active) {
+            continue;
+        }
+
+        const perk = PERKS[perk_type] as PerkDefinition;
+        mult *= 1 + perk.skill_modifiers.getSkillEffect(skill_type);
     }
 
     switch (skill_type) {

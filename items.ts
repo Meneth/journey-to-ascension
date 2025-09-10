@@ -2,7 +2,7 @@ import { GAMESTATE } from "./game.js";
 import { SkillType } from "./skills.js";
 import { addItem, calcItemEnergyGain } from "./simulation.js"
 import { ENERGY_TEXT, HASTE_EMOJI } from "./rendering_constants.js";
-import { SkillModifierList } from "./modifiers.js";
+import { ItemSkillModifierList } from "./modifiers.js";
 
 export enum ItemType {
     Food,
@@ -50,7 +50,7 @@ export class ItemDefinition {
     name = "";
     name_plural = "";
     icon = "";
-    skill_modifiers: SkillModifierList = new SkillModifierList([]);
+    skill_modifiers: ItemSkillModifierList = new ItemSkillModifierList([]);
     get_custom_tooltip: ItemTooltipLambda = () => { return ""; };
     get_custom_effect_text: ItemEffectTextLambda = () => { return ""; };
     on_consume: ItemUseLambda = () => { };
@@ -101,21 +101,21 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.Arrow, name: `Arrow`, name_plural: `Arrows`,
         icon: `🏹`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Combat, 0.15]
         ]),
     }),
     new ItemDefinition({
         enum: ItemType.Coin, name: `Coin`, name_plural: `Coins`,
         icon: `💰`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Charisma, 0.15]
         ]),
     }),
     new ItemDefinition({
         enum: ItemType.Mushroom, name: `Mushroom`, name_plural: `Mushrooms`,
         icon: `🍄`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Magic, 0.2],
             [SkillType.Search, 0.2]
         ]),
@@ -123,7 +123,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.GoblinSupplies, name: `Goblin Supplies`, name_plural: `Goblin Supplies`,
         icon: `📦`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Subterfuge, 0.15],
             [SkillType.Combat, 0.1]
         ]),
@@ -131,7 +131,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.TravelEquipment, name: `Travel Equipment`, name_plural: `Travel Equipment`,
         icon: `🎒`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Travel, 0.1],
             [SkillType.Survival, 0.1]
         ]),
@@ -139,7 +139,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.Book, name: `Book`, name_plural: `Books`,
         icon: `📚`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Study, 0.1]
         ]),
     }),
@@ -153,21 +153,21 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.GoblinWaraxe, name: `Goblin Waraxe`, name_plural: `Goblin Waraxes`,
         icon: `🪓`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Combat, 1]
         ]),
     }),
     new ItemDefinition({
         enum: ItemType.FiremakingKit, name: `Firemaking Kit`, name_plural: `Firemaking Kits`,
         icon: `🔥`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Survival, 0.15]
         ]),
     }),
     new ItemDefinition({
         enum: ItemType.Reagents, name: `Reagent`, name_plural: `Reagents`,
         icon: `🌿`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Magic, 0.2],
             [SkillType.Crafting, 0.1],
             [SkillType.Druid, 0.1]
@@ -176,7 +176,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.MagicalRoots, name: `Magical Root`, name_plural: `Magical Roots`,
         icon: `🌲`,
-         skill_modifiers: new SkillModifierList([
+         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Survival, 0.1],
             [SkillType.Magic, 0.1],
             [SkillType.Druid, 0.1]
@@ -185,7 +185,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.GoblinTreasure, name: `Goblin Treasure`, name_plural: `Goblin Treasures`,
         icon: `💎`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Subterfuge, 0.5],
             [SkillType.Survival, 0.5]
         ]),
@@ -200,7 +200,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.BanditWeapons, name: `Bandit Weapon`, name_plural: `Bandit Weapons`,
         icon: `🔪`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Subterfuge, 0.1],
             [SkillType.Combat, 0.2]
         ]),
@@ -208,7 +208,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.BanditWeapons, name: `Cactus`, name_plural: `Cactuses`,
         icon: `🌵`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Survival, 0.1],
             [SkillType.Fortitude, 0.1]
         ]),
@@ -216,7 +216,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.CityChain, name: `City Chain`, name_plural: `City Chains`,
         icon: `🔗`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Charisma, 0.5],
             [SkillType.Subterfuge, 0.5]
         ]),
@@ -224,7 +224,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.WerewolfFur, name: `Werewolf Fur`, name_plural: `Werewolf Furs`,
         icon: `🐺`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Charisma, 0.2],
             [SkillType.Survival, 0.2]
         ]),
@@ -232,7 +232,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.OasisWater, name: `Oasis Water`, name_plural: `Oasis Water`,
         icon: `💧`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Magic, 0.2],
             [SkillType.Survival, 0.1]
         ]),
@@ -247,14 +247,14 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.MysticIncense, name: `Mystic Incense`, name_plural: `Mystic Incense`,
         icon: `🕯️`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Ascension, 0.1]
         ]),
     }),
     new ItemDefinition({
         enum: ItemType.OracleBones, name: `Oracle Bone`, name_plural: `Oracle Bones`,
         icon: `🦴`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Search, 0.2],
             [SkillType.Druid, 0.2]
         ]),
@@ -262,14 +262,14 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.WormHideCoat, name: `Worm Hide Coat`, name_plural: `Worm Hide Coats`,
         icon: `🧥`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Fortitude, 1]
         ]),
     }),
     new ItemDefinition({
         enum: ItemType.DjinnLamp, name: `Djinn Lamp`, name_plural: `Djinn Lamps`,
         icon: `🧞`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Ascension, 0.3],
             [SkillType.Magic, 0.3]
         ]),
@@ -290,21 +290,21 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.MagicEssence, name: `Magical Essence`, name_plural: `Magical Essences`,
         icon: `🌠`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Magic, 3]
         ]),
     }),
     new ItemDefinition({
         enum: ItemType.MagicEssence, name: `Crafting Recipe`, name_plural: `Crafting Recipes`,
         icon: `🛠️`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Crafting, 0.3]
         ]),
     }),
     new ItemDefinition({
         enum: ItemType.KnightlyBoots, name: `Knightly Boots`, name_plural: `Knightly Boots`,
         icon: `👢`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Combat, 0.2],
             [SkillType.Fortitude, 0.2]
         ]),
@@ -312,7 +312,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.DragonScale, name: `Dragon Scale`, name_plural: `Dragon Scales`,
         icon: `🐲`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Combat, 0.5],
             [SkillType.Fortitude, 0.5]
         ]),
@@ -327,7 +327,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.MagicalVessel, name: `Magical Vessel`, name_plural: `Magical Vessels`,
         icon: `🏺`,
-        skill_modifiers: new SkillModifierList([
+        skill_modifiers: new ItemSkillModifierList([
             [SkillType.Ascension, 0.3]
         ]),
     }),

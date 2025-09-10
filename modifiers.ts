@@ -2,6 +2,13 @@ import { getSkillString, joinWithCommasAndAnd } from "./rendering.js";
 import { getSkill } from "./simulation.js";
 import { SkillType } from "./skills.js";
 
+enum SkillModifierType {
+    Item,
+    Perk,
+
+    Count
+}
+
 export class SkillModifier {
     skill: SkillType = SkillType.Count;
     effect: number = 0;
@@ -12,17 +19,19 @@ export class SkillModifier {
     }
 }
 
-export class SkillModifierList {
+class SkillModifierList {
     modifiers: SkillModifier[] = [];
+    type: SkillModifierType = SkillModifierType.Count;
 
-    constructor(modifiers: [skill: SkillType, effect:number][]) {
+    constructor(type: SkillModifierType, modifiers: [skill: SkillType, effect:number][]) {
+        this.type = type;
         for (const [skill, effect] of modifiers) {
             this.modifiers.push(new SkillModifier(skill, effect));
         }
     }
 
     public getStacked(stacks: number): SkillModifierList {
-        const newList = new SkillModifierList([]);
+        const newList = new SkillModifierList(this.type, []);
         for (const modifier of this.modifiers) {
             newList.modifiers.push(new SkillModifier(modifier.skill, modifier.effect * stacks));
         }
@@ -62,7 +71,10 @@ export class SkillModifierList {
                 desc += "<br>";
             }
 
-            desc += `Improves ${skill_string} Task speed by ${(effect * 100).toFixed(0)}% each`;
+            desc += `Improves ${skill_string} Task speed by ${(effect * 100).toFixed(0)}%`;
+            if (this.type == SkillModifierType.Item) {
+                desc += " each";
+            }
         }
 
         return desc;
@@ -97,5 +109,17 @@ export class SkillModifierList {
 
     public affectsSkill(type: SkillType) {
         return this.getSkillEffect(type) != 0;
+    }
+}
+
+export class ItemSkillModifierList extends SkillModifierList {
+    constructor(modifiers: [skill: SkillType, effect:number][]) {
+        super(SkillModifierType.Item, modifiers);
+    }
+}
+
+export class PerkSkillModifierList extends SkillModifierList {
+    constructor(modifiers: [skill: SkillType, effect:number][]) {
+        super(SkillModifierType.Perk, modifiers);
     }
 }

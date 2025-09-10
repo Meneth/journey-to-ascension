@@ -765,7 +765,7 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean)
             return zone.tasks.find((task) => { return task.perk == perk; }) !== undefined;
         });
 
-    setupTooltipStatic(perk_div, `${perk_definition.name}`, `${perk_definition.get_tooltip()}<br><br>Unlocked in Zone ${zone + 1}`);
+    setupTooltipStatic(perk_div, `${perk_definition.name}`, `${perk_definition.getTooltip()}<br><br>Unlocked in Zone ${zone + 1}`);
 
     perk_div.appendChild(perk_text);
     perks_div.appendChild(perk_div);
@@ -1373,7 +1373,7 @@ function handleEvents() {
                     const perk_context = context as GainedPerkContext;
                     const perk = PERKS[perk_context.perk] as PerkDefinition;
                     message_div.innerHTML = `Unlocked ${perk.icon}${perk.name}`;
-                    message_div.innerHTML += `<br>${perk.get_tooltip()}`;
+                    message_div.innerHTML += `<br>${perk.getTooltip()}`;
                     setupControls(); // Show the automation controls
                     recreateTasks(); // Get rid of Perk indicator
                     recreatePerks();

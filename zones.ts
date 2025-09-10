@@ -287,9 +287,9 @@ export const ZONES: Zone[] = [
         name: "The Foothills",
         tasks: [
             new TaskDefinition({ id: 180, name: "Enter the Dragon's Lair", type: TaskType.Travel, cost_multiplier: 100, skills: [SkillType.Travel] }),
-            new TaskDefinition({ id: 181, name: "Find the Hidden Entrance", type: TaskType.Mandatory, cost_multiplier: 20_000, max_reps: 1, skills: [SkillType.Search], xp_mult: 0.05 }),
+            new TaskDefinition({ id: 181, name: "Find the Hidden Entrance", type: TaskType.Mandatory, cost_multiplier: 30_000, max_reps: 1, skills: [SkillType.Search], xp_mult: 0.05 }),
             new TaskDefinition({ id: 182, name: "Evade the Dragon", type: TaskType.Mandatory, cost_multiplier: 100, max_reps: 5, skills: [SkillType.Subterfuge], xp_mult: 0.2 }),
-            new TaskDefinition({ id: 183, name: "Loot Dragon's Victims", max_reps: 4, cost_multiplier: 500, skills: [SkillType.Search], item: ItemType.KnightlyBoots, xp_mult: 0.5 }),
+            new TaskDefinition({ id: 183, name: "Loot Dragon's Victims", max_reps: 4, cost_multiplier: 700, skills: [SkillType.Search], item: ItemType.KnightlyBoots, xp_mult: 0.5 }),
             new TaskDefinition({ id: 184, name: "Hide from the Dragon", cost_multiplier: 1_000, max_reps: 3, skills: [SkillType.Subterfuge, SkillType.Survival], xp_mult: 0.1, perk: PerkType.HideInPlainSight }),
             new TaskDefinition({ id: 185, name: "Go on a Long Trek", cost_multiplier: 100, max_reps: 5, xp_mult: 5, skills: [SkillType.Travel, SkillType.Survival] }),
             new TaskDefinition({ id: 186, name: "Try to Turn into a Dragon", cost_multiplier: 10000, max_reps: 3, xp_mult: 2, skills: [SkillType.Druid] }),
@@ -301,14 +301,14 @@ export const ZONES: Zone[] = [
         name: "The Dragon's Lair",
         tasks: [
             new TaskDefinition({ id: 190, name: "Go to a Place of Power", type: TaskType.Travel, cost_multiplier: 100, skills: [SkillType.Travel] }),
-            new TaskDefinition({ id: 191, name: "Grab the Reagent You Need", type: TaskType.Mandatory, cost_multiplier: 2_000_000, max_reps: 3, skills: [SkillType.Search, SkillType.Subterfuge], xp_mult: 0.001 }),
+            new TaskDefinition({ id: 191, name: "Grab the Reagent You Need", type: TaskType.Mandatory, cost_multiplier: 2_750_000, max_reps: 3, skills: [SkillType.Search, SkillType.Subterfuge], xp_mult: 0.001 }),
             new TaskDefinition({ id: 192, name: "Live Off of Cave Critters", type: TaskType.Mandatory, cost_multiplier: 100, max_reps: 3, skills: [SkillType.Survival], xp_mult: 0.2 }),
             new TaskDefinition({ id: 193, name: "Catch Some Insects for Later", max_reps: 9, cost_multiplier: 20, skills: [SkillType.Survival], item: ItemType.CaveInsects }),
             new TaskDefinition({ id: 194, name: "Plan How to Kill the Dragon", cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 0.1, perk: PerkType.DragonKillingPlan }),
             new TaskDefinition({ id: 195, name: "Hide from the Dragon Some More", cost_multiplier: 3_000, max_reps: 5, xp_mult: 5, skills: [SkillType.Subterfuge, SkillType.Survival] }),
             new TaskDefinition({ id: 196, name: "Practice Magic Under Pressure", cost_multiplier: 5_000_000, max_reps: 3, xp_mult: 1.5, skills: [SkillType.Magic] }),
             new TaskDefinition({ id: 197, name: "Dragon", type: TaskType.Boss, cost_multiplier: 200_000_000_000, xp_mult: 0.02, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 198 }),
-            new TaskDefinition({ id: 198, name: "Hunt Down the Dragon's Spawn", cost_multiplier: 2_000_000_000_000, xp_mult: 0.001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+            new TaskDefinition({ id: 198, name: "Hunt Down the Dragon's Spawn", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
     {
