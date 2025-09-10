@@ -789,6 +789,7 @@ function skipFreeZones() {
     while (skipCurrentZoneIfFree()) { /* Effect is in conditional */ }
 
     if (GAMESTATE.current_zone > 0) {
+        autoUseItems(); // Do this first so our zone skip notification is at the top
         const event = new RenderEvent(EventType.SkippedZones, {});
         GAMESTATE.queueRenderEvent(event);
     }
