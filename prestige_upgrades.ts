@@ -1,5 +1,6 @@
+import { getPerkNameWithEmoji, PerkType } from "./perks.js";
 import { getSkillString } from "./rendering.js";
-import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DEEP_TRANCE_EMOJI, DIVINE_SPARK_TEXT, ENERGETIC_MEMORY_EMOJI, ENERGY_TEXT, REFLECTIONS_ON_THE_JOURNEY_EMOJI, XP_TEXT } from "./rendering_constants.js";
+import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
 import { hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 import { SkillType } from "./skills.js";
@@ -60,14 +61,14 @@ export class PrestigeRepeatable {
     scaling_exponent = 0;
 }
 
-export const DIVINE_SPEED_TICKS_PER_PERCENT = 3;
+export const DIVINE_SPEED_TICKS_PER_PERCENT = 5;
 
 export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
         type: PrestigeUnlockType.PermanentAutomation,
         layer: PrestigeLayer.TouchTheDivine,
         name: "Permanent Automation",
-        get_description: () => { return `Permanently unlocks the ${DEEP_TRANCE_EMOJI}Deep Trance Perk`; },
+        get_description: () => { return `Permanently unlocks the ${getPerkNameWithEmoji(PerkType.DeepTrance)} Perk`; },
         cost: 1
     },
     {
@@ -81,7 +82,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         type: PrestigeUnlockType.LookInTheMirror,
         layer: PrestigeLayer.TouchTheDivine,
         name: "Look in the Mirror",
-        get_description: () => { return `Permanently unlocks the ${REFLECTIONS_ON_THE_JOURNEY_EMOJI}Reflections on the Journey Perk<br>Boosts its base from ${REFLECTIONS_ON_THE_JOURNEY_BASE} to ${REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE}`; },
+        get_description: () => { return `Permanently unlocks the ${getPerkNameWithEmoji(PerkType.ReflectionsOnTheJourney)} Perk<br>Boosts its base from ${REFLECTIONS_ON_THE_JOURNEY_BASE} to ${REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE}`; },
         cost: 80
     },
     {
@@ -96,7 +97,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         type: PrestigeUnlockType.TranscendantMemory,
         layer: PrestigeLayer.TranscendHumanity,
         name: "Transcendant Memory",
-        get_description: () => { return `Permanently unlocks the ${ENERGETIC_MEMORY_EMOJI} Energetic Memory Perk<br>Squares the Max ${ENERGY_TEXT} gain after Zone 10`; },
+        get_description: () => { return `Permanently unlocks the ${getPerkNameWithEmoji(PerkType.EnergeticMemory)} Perk<br>Squares the Max ${ENERGY_TEXT} gain after Zone 10`; },
         cost: 10
     },
     {
@@ -167,7 +168,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         type: PrestigeRepeatableType.DivineLightning,
         layer: PrestigeLayer.TranscendHumanity,
         name: "Divine Lightning",
-        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by ${DIVINE_LIGHTNING_EXPONENT_INCREASE}`; },
+        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by ${DIVINE_LIGHTNING_EXPONENT_INCREASE}<br>This significantly improves the rate at which you gain ${DIVINE_SPARK_TEXT}`; },
         initial_cost: 50,
         scaling_exponent: 3
     },

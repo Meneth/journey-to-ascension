@@ -337,15 +337,54 @@ function isSingleTickTaskImpl(progress: number, cost: number) {
     return progress >= cost;
 }
 
+function isSingleTickTask(task: Task) {
+    const progress = calcTaskProgressPerTick(task);
+    const cost = calcTaskCost(task);
+
+    return isSingleTickTaskImpl(progress, cost);
+}
+
 export function willCompleteAllRepsInOneTick(task: Task) {
     if (!hasPerk(PerkType.MajorTimeCompression)) {
         return false;
     }
 
-    const progress = calcTaskProgressPerTick(task);
-    const cost = calcTaskCost(task);
+    return isSingleTickTask(task);
+}
 
-    return isSingleTickTaskImpl(progress, cost);
+function progressTask(task: Task, progress: number, consume_energy = true) {
+    const cost = calcTaskCost(task);
+    progress = Math.min(progress, cost - task.progress);
+    task.progress += progress;
+
+    const is_single_tick = isSingleTickTaskImpl(progress, cost);
+    if (consume_energy) {
+        modifyEnergy(-calcEnergyDrainPerTick(task, is_single_tick));
+    }
+
+    for (const skill of task.task_definition.skills) {
+        addSkillXp(skill, calcSkillXp(task, progress));
+    }
+
+    const finished_rep = task.progress >= cost;
+    if (finished_rep) {
+        applyFinishTaskRepEffects(task);
+    } else {
+        return;
+    }
+
+    if (is_single_tick && hasPerk(PerkType.MajorTimeCompression)) {
+        while (task.reps < task.task_definition.max_reps) {
+            applyFinishTaskRepEffects(task);
+        }
+    }
+
+    const fully_finished = task.reps == task.task_definition.max_reps;
+    if (fully_finished) {
+        fullyFinishTask(task);
+    }
+
+    updateEnabledTasks();
 }
 
 function updateActiveTask() {
@@ -361,44 +400,23 @@ function updateActiveTask() {
     // Can't undo after the item's started having an effect
     GAMESTATE.undo_item = [ItemType.Count, 0];
 
-    let progress = calcTaskProgressPerTick(active_task);
-    const cost = calcTaskCost(active_task);
-    progress = Math.min(progress, cost - active_task.progress);
-    active_task.progress += progress;
+    const progress = calcTaskProgressPerTick(active_task);
+    const old_rep_count = active_task.reps;
+    progressTask(active_task, progress);
 
-    const is_single_tick = isSingleTickTaskImpl(progress, cost);
-    modifyEnergy(-calcEnergyDrainPerTick(active_task, is_single_tick));
-
-    for (const skill of active_task.task_definition.skills) {
-        addSkillXp(skill, calcSkillXp(active_task, progress));
-    }
-
-    const finished_rep = active_task.progress >= cost;
-    if (finished_rep) {
-        applyFinishTaskRepEffects(active_task);
-    } else {
+    if (old_rep_count == active_task.reps) {
         return;
     }
 
-    if (is_single_tick && hasPerk(PerkType.MajorTimeCompression)) {
-        while (active_task.reps < active_task.task_definition.max_reps) {
-            applyFinishTaskRepEffects(active_task);
-        }
-    }
-
     const fully_finished = active_task.reps == active_task.task_definition.max_reps;
-    if (fully_finished) {
-        fullyFinishTask(active_task);
-    }
-
-    updateEnabledTasks();
-    saveGame();
-
+    
     if (!GAMESTATE.repeat_tasks || fully_finished) {
         GAMESTATE.active_task = null;
     } else if (!fully_finished) {
         tryApplySingleRepEffects(active_task);
     }
+
+    saveGame();
 }
 
 export function tryApplySingleRepEffects(task: Task) {
@@ -540,6 +558,10 @@ export function toggleRepeatTasks() {
     GAMESTATE.repeat_tasks = !GAMESTATE.repeat_tasks;
 }
 
+function taskUnlocksTask(task: Task) {
+    return task.task_definition.unlocks_task >= 0 && !GAMESTATE.unlocked_tasks.includes(task.task_definition.unlocks_task);
+}
+
 function unlockTask(task_id: number) {
     if (GAMESTATE.unlocked_tasks.includes(task_id)) {
         return;
@@ -626,6 +648,7 @@ export function doEnergyReset() {
     GAMESTATE.energy_reset_count += 1;
     halveItemCounts();
     storeLoopStartNumbersForNextGameOver();
+    skipFreeZones();
 
     saveGame();
 }
@@ -736,6 +759,39 @@ export function hasPerk(perk: PerkType): boolean {
 
 export function knowsPerk(perk: PerkType): boolean {
     return GAMESTATE.perks.get(perk) != null;
+}
+
+function skipCurrentZoneIfFree() : boolean {
+    if (!GAMESTATE.tasks.every(task => {
+        // Unlocking stuff the player needs to deal with themselves
+        return !taskUnlocksTask(task) && isSingleTickTask(task)
+    })) {
+        return false;
+    }
+
+    const consume_energy = false;
+
+    // In reverse so travel happens last
+    for (const task of GAMESTATE.tasks.slice().reverse()) {
+        while (task.reps < task.task_definition.max_reps) {
+            progressTask(task, calcTaskCost(task), consume_energy);
+        }
+    }
+
+    return true;
+}
+
+function skipFreeZones() {
+    if (!hasPerk(PerkType.MinorTimeCompression)) {
+        return;
+    }
+
+    while (skipCurrentZoneIfFree()) { /* Effect is in conditional */ }
+
+    if (GAMESTATE.current_zone > 0) {
+        const event = new RenderEvent(EventType.SkippedZones, {});
+        GAMESTATE.queueRenderEvent(event);
+    }
 }
 
 // MARK: Extra stats
@@ -1250,11 +1306,6 @@ export class Gamestate {
 }
 
 function advanceZone() {
-    if ((GAMESTATE.current_zone + 1) >= ZONES.length) {
-        GAMESTATE.is_at_end_of_content = true;
-        return;
-    }
-
     if (GAMESTATE.current_zone > GAMESTATE.highest_zone_fully_completed 
         && GAMESTATE.tasks.every((task: Task) => { return isTaskFullyCompleted(task); })) {
         GAMESTATE.highest_zone_fully_completed = GAMESTATE.current_zone;
@@ -1264,17 +1315,23 @@ function advanceZone() {
     }
 
 
-    GAMESTATE.current_zone += 1;
-    if (GAMESTATE.current_zone > GAMESTATE.highest_zone) {
-        GAMESTATE.highest_zone = GAMESTATE.current_zone;
-        const context: HighestZoneContext = { zone: GAMESTATE.current_zone };
+    if (GAMESTATE.current_zone >= GAMESTATE.highest_zone) {
+        GAMESTATE.highest_zone = GAMESTATE.current_zone + 1;
+        const context: HighestZoneContext = { zone: GAMESTATE.current_zone + 1 };
         const event = new RenderEvent(EventType.NewHighestZone, context);
         GAMESTATE.queueRenderEvent(event);
     }
     if (GAMESTATE.automation_mode == AutomationMode.Zone) {
         GAMESTATE.automation_mode = AutomationMode.Off;
     }
-
+    
+    // Happens after the highest zone stuff, since we do want the user to get those effects at the end of content
+    if ((GAMESTATE.current_zone + 1) >= ZONES.length) {
+        GAMESTATE.is_at_end_of_content = true;
+        return;
+    }
+    
+    GAMESTATE.current_zone += 1;
     resetTasks();
 }
 
@@ -1282,7 +1339,7 @@ export function calcTickRate() {
     let tick_rate = DEFAULT_TICK_RATE;
     if (hasPrestigeUnlock(PrestigeUnlockType.DivineSpeed)) {
         const overflow = GAMESTATE.max_energy - STARTING_ENERGY;
-        tick_rate /= 1 + overflow / DIVINE_SPEED_TICKS_PER_PERCENT;
+        tick_rate /= 1 + overflow / DIVINE_SPEED_TICKS_PER_PERCENT / 100;
     }
 
     return tick_rate;

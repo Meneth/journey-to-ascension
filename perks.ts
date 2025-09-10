@@ -1,11 +1,8 @@
 import { PrestigeUnlockType } from "./prestige_upgrades.js";
 import { formatNumber, getSkillString } from "./rendering.js";
 import {
-    DEEP_TRANCE_EMOJI,
     DIVINE_SPARK_TEXT,
-    ENERGETIC_MEMORY_EMOJI,
     ENERGY_TEXT,
-    REFLECTIONS_ON_THE_JOURNEY_EMOJI,
     XP_TEXT
 } from "./rendering_constants.js";
 import { hasPrestigeUnlock } from "./simulation.js";
@@ -45,6 +42,11 @@ export enum PerkType {
     DragonSlayer,
 
     Count
+}
+
+export function getPerkNameWithEmoji(type: PerkType) {
+    const perk = PERKS[type] as PerkDefinition;
+    return perk.icon + perk.name;
 }
 
 type PerkTooltipLambda = () => string;
@@ -108,7 +110,7 @@ export const PERKS: PerkDefinition[] = [
     {
         enum: PerkType.MinorTimeCompression,
         name: `Minor Time Compression`,
-        get_tooltip: () => { return `Tasks reps that are completed instantly (in a single ⏰Tick) now cost 80% less ${ENERGY_TEXT}`; },
+        get_tooltip: () => { return `Tasks reps that are completed instantly (in a single ⏰Tick) now cost 80% less ${ENERGY_TEXT}<br>Zones where all Tasks are instant are completed for free in a single ⏰Tick when doing an ${ENERGY_TEXT} Reset`; },
         icon: `⌚`,
     },
     {
@@ -121,7 +123,7 @@ export const PERKS: PerkDefinition[] = [
         enum: PerkType.DeepTrance,
         name: `Deep Trance`,
         get_tooltip: () => { return `Unlocks Zone Automation<br>Unlocks automatic Item use`; },
-        icon: DEEP_TRANCE_EMOJI,
+        icon: `💫`,
     },
     {
         enum: PerkType.VillageHero,
@@ -163,7 +165,7 @@ export const PERKS: PerkDefinition[] = [
         enum: PerkType.ReflectionsOnTheJourney,
         name: `Reflections on the Journey`,
         get_tooltip: () => { return `Reduce ${ENERGY_TEXT} drain based on the highest Zone reached<br>In each Zone ${ENERGY_TEXT} consumption is reduced ${((1 - getReflectionsOnTheJourneyExponent()) * 100).toFixed(0)}% compounding for each Zone you've reached past it<br>So Zone 12 has ${ENERGY_TEXT} cost multiplied by ${getReflectionsOnTheJourneyExponent()}^2 if the highest Zone reached is 14`; },
-        icon: REFLECTIONS_ON_THE_JOURNEY_EMOJI,
+        icon: `🕰️`,
     },
     {
         enum: PerkType.PurgedBureaucracy,
@@ -181,7 +183,7 @@ export const PERKS: PerkDefinition[] = [
         enum: PerkType.EnergeticMemory,
         name: `Energetic Memory`,
         get_tooltip: () => { return `On each Energy Reset, increase max ${ENERGY_TEXT} by the current Zone / 10<br>So Zone 9 gives 0.9 max ${ENERGY_TEXT}${hasPrestigeUnlock(PrestigeUnlockType.TranscendantMemory) ? `<br>Squared after Zone 10, so Zone 20 gives 2 * 2 = 4 max ${ENERGY_TEXT}`: ``}`; },
-        icon: `${ENERGETIC_MEMORY_EMOJI}`,
+        icon: `💭`,
     },
     {
         enum: PerkType.TheWorm,

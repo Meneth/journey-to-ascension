@@ -17,6 +17,7 @@ export enum EventType {
     NewHighestZone,
     NewHighestZoneFullyCompleted,
     NewPrestigeLayer,
+    SkippedZones,
 
     Count
 }
