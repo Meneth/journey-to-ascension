@@ -673,9 +673,11 @@ export function addItem(item: ItemType, count: number) {
 
 function useItem(item: ItemType, amount: number) {
     const old_value = GAMESTATE.items.get(item) ?? 0;
+    const old_use_value = GAMESTATE.used_items.get(item) ?? 0;
     const definition = ITEMS[item] as ItemDefinition;
     definition.applyEffects(amount);
     GAMESTATE.items.set(item, old_value - amount);
+    GAMESTATE.used_items.set(item, old_use_value + amount);
 
     const context: UsedItemContext = { item: item, count: Math.abs(amount) };
     const event = new RenderEvent(amount > 0 ? EventType.UsedItem : EventType.UndidItem, context);
@@ -737,6 +739,22 @@ export function undoItemUse() {
 
     disableItemUndo();
     useItem(item_type, -amount);
+}
+
+type ItemAmount = [item: ItemType, amount: number];
+export function gatherItemBonuses(skill: SkillType): ItemAmount[] {
+    const ret: ItemAmount[] = [];
+
+    for (const [item_type, amount] of GAMESTATE.used_items) {
+        const item = ITEMS[item_type] as ItemDefinition;
+        if (!item.skill_modifiers.affectsSkill(skill)) {
+            continue;
+        }
+
+        ret.push([item_type, amount]);
+    }
+
+    return ret;
 }
 
 // MARK: Perks
@@ -1263,6 +1281,7 @@ export class Gamestate {
     perks: Map<PerkType, boolean> = new Map();
     items: Map<ItemType, number> = new Map();
     items_found_this_energy_reset: ItemType[] = [];
+    used_items: Map<ItemType, number> = new Map();
     queued_scrolls_of_haste = 0;
     queued_magic_rings = 0;
 

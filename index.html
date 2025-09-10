@@ -15,10 +15,11 @@
         <div id="game-area" class="hidden">
             <div id="left-sidebar" class="sidebar">
                 <div id="settings-area">
-                    <button id="open-settings">⚙</button>
-                    <button id="open-energy-reset">♻</button>
+                    <button id="open-settings" class="sidebar-button">⚙</button>
+                    <button id="open-energy-reset" class="sidebar-button">♻</button>
                 </div>
                 <button id="open-prestige" class="hidden"><h2>Prestige: 1337<br />(+42)</h2></button>
+                <button id="open-stats" class="sidebar-button"><span>📈Stats</span></button>
                 <div id="attunement" class="sidebar-section sidebar-item-text hidden">🌀Attunement: 1337</div>
                 <div id="power" class="sidebar-section sidebar-item-text hidden">💪Power: 1337</div>
                 <div id="skills"></div>
@@ -88,6 +89,9 @@
         </div>
 
         <div id="confirmation-overlay" class="full-screen-overlay hidden"></div>
+        <div id="stats-overlay" class="full-screen-overlay hidden">
+            <div id="stats-box" class="overlay-box"></div>
+        </div>
     </main>
 
     <footer>

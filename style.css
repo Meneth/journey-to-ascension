@@ -148,10 +148,16 @@ button.disabled {
 }
 
 #settings-area button {
-    height: 48px;
-    text-align: center;
-    font-size: 2em;
     flex: 1;
+    font-size: 2em;
+}
+
+.sidebar-button {
+    height: 48px;
+    font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* MARK: Common
@@ -556,14 +562,10 @@ button.do-prestige {
 .close {
     position: absolute;
     top: 8px;
-    right: 8px;
+    right: 20px;
     width: 32px;
     height: 32px;
     font-size: 1em;
-}
-
-#prestige-box .close {
-    right: 20px;
 }
 
 .prestige-purchase {
@@ -615,6 +617,22 @@ div.prestige-purchase {
 /* MARK: Tooltips
 */
 
+#stats-box {
+    position: relative;
+    height: 730px;
+    width: 530px;
+    padding: 0;
+    
+    scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
+}
+
+.stat-section {
+    width: 50%;
+}
+
+/* MARK: Tooltips
+*/
+
 #tooltip {
     position: absolute;
     background-color: var(--tooltip-palette-surface);
@@ -641,7 +659,6 @@ div.prestige-purchase {
 }
 
 .table {
-    color: var(--tooltip-palette-text-primary);
     overflow-x: auto;
 }
 

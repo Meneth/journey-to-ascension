@@ -88,4 +88,14 @@ export class SkillModifierList {
             getSkill(modifier.skill).speed_modifier += modifier.effect;
         }
     }
+
+    public getSkillEffect(type: SkillType) {
+        const modifier = this.modifiers.find(modifier => { return modifier.skill == type; });
+
+        return modifier ? modifier.effect : 0;
+    }
+
+    public affectsSkill(type: SkillType) {
+        return this.getSkillEffect(type) != 0;
+    }
 }

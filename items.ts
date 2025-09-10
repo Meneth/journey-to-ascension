@@ -81,6 +81,10 @@ export class ItemDefinition {
         this.on_consume(amount);
         this.skill_modifiers.getStacked(amount).applyEffect();
     }
+
+    public getName(amount: number) {
+        return amount == 1 ? this.name : this.name_plural;
+    }
 }
 
 export const HASTE_MULT = 5;

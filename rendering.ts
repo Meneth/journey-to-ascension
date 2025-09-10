@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
@@ -56,6 +56,22 @@ function createConfirmationOverlay(header_text: string, description_text: string
 function areArraysEqual(array1: Array<unknown>, array2: Array<unknown>) {
     return array1.length === array2.length &&
         array1.every((value, index) => value === array2[index]);
+}
+
+function createTableSection(table: HTMLElement, name: string) {
+    const row = createChildElement(table, "tr");
+    createChildElement(row, "td").innerHTML = name;
+
+    const contents = createChildElement(row, "td");
+    const section = createChildElement(contents, "table");
+    section.className = "table simple-table";
+
+    return section;
+}
+
+function createTwoElementRow(table: HTMLElement, x: string, y: string) {
+    const row = createChildElement(table, "tr");
+    row.innerHTML = `<td>${x}</td><td>${y}</td>`;
 }
 
 // MARK: Skills
@@ -282,52 +298,29 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         let magic_ring_asterisk_index = -1;
         const magic_ring_stacks = task.xp_boosted ? GAMESTATE.queued_magic_rings + 1 : GAMESTATE.queued_magic_rings;
 
-        function createTwoElementRow(x: string, y: string) {
-            const row = document.createElement("tr");
-            row.innerHTML = `<td>${y}</td><td>${x}</td>`;
-            return row;
-        }
-
-        function createTableSection(name: string) {
-            const row = document.createElement("tr");
-            const header = document.createElement("td");
-            header.innerHTML = name;
-            row.appendChild(header);
-
-            const contents = document.createElement("td");
-            const table = document.createElement("table");
-            table.className = "table simple-table";
-
-            contents.appendChild(table);
-            row.appendChild(contents);
-            task_table.appendChild(row);
-
-            return table;
+        {
+            const table = createTableSection(task_table, "Completions");
+            createTwoElementRow(table, "", `${completions}`);
         }
 
         {
-            const table = createTableSection("Completions");
-            table.appendChild(createTwoElementRow(`${completions}`, ""));
-        }
-
-        {
-            const table = createTableSection("Rewards");
+            const table = createTableSection(task_table,"Rewards");
 
             if (task.task_definition.type == TaskType.Travel) {
-                table.appendChild(createTwoElementRow(`${task.task_definition.zone_id + 2}`, `${TRAVEL_EMOJI}Move to Zone`));
+                createTwoElementRow(table, `${TRAVEL_EMOJI}Move to Zone`, `${task.task_definition.zone_id + 2}`);
             }
 
             if (task.task_definition.item != ItemType.Count) {
                 const item = ITEMS[task.task_definition.item] as ItemDefinition;
                 const plural = completions > 1;
-                table.appendChild(createTwoElementRow(`${completions}`, `${item.icon}${item.name} ${plural ? "Items" : "Items"}`));
+                createTwoElementRow(table, `${item.icon}${item.name} ${plural ? "Items" : "Items"}`, `${completions}`);
             }
 
             if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
                 const perk = PERKS[task.task_definition.perk] as PerkDefinition;
                 const is_last_rep = (task.reps + completions) == task.task_definition.max_reps;
                 if (!is_last_rep) { ++asterisk_count; perk_asterisk_index = asterisk_count; }
-                table.appendChild(createTwoElementRow(is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`, `${perk.icon}${knowsPerk(perk.enum) ? perk.name : "Mystery"} Perk`));
+                createTwoElementRow(table, `${perk.icon}${knowsPerk(perk.enum) ? perk.name : "Mystery"} Perk`, is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`);
             }
 
             asterisk_count += 1; // Levels will always produce one
@@ -361,22 +354,22 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 }
 
 
-                table.appendChild(createTwoElementRow(levels, `${skill_definition.icon}${skill_definition.name}`));
+                createTwoElementRow(table, `${skill_definition.icon}${skill_definition.name}`, levels);
             }
 
             const attunement_gain = completions * calcAttunementGain(task);
             if (attunement_gain > 0) {
-                table.appendChild(createTwoElementRow(`${attunement_gain}`, `🌀Attunement`));
+                createTwoElementRow(table, `🌀Attunement`, `${attunement_gain}`);
             }
 
             const power_gain = completions * calcPowerGain(task);
             if (power_gain > 0 && GAMESTATE.has_unlocked_power) {
-                table.appendChild(createTwoElementRow(`${power_gain}`, `💪Power`));
+                createTwoElementRow(table, `💪Power`, `${power_gain}`);
             }
         }
 
         {
-            const table = createTableSection("Cost Estimate");
+            const table = createTableSection(task_table,"Cost Estimate");
 
             const energy_cost = estimateTotalTaskEnergyConsumption(task, completions);
             const energy_cost_ratio = energy_cost / GAMESTATE.current_energy;
@@ -396,29 +389,29 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             }
 
             const energy_cost_text = `<span class="${energy_cost_class}">${formatNumber(energy_cost)}</span>`;
-            table.appendChild(createTwoElementRow(`${energy_cost_text}`, ENERGY_TEXT));
+            createTwoElementRow(table, ENERGY_TEXT, `${energy_cost_text}`);
 
             const task_ticks = estimateTotalTaskTicks(task, completions);
             if (task_ticks > completions) {
-                table.appendChild(createTwoElementRow(formatNumber(estimateTaskTimeInSeconds(task, completions)), `⏰Seconds`));
+                createTwoElementRow(table, `⏰Seconds`, formatNumber(estimateTaskTimeInSeconds(task, completions)));
             } else {
-                table.appendChild(createTwoElementRow(`${task_ticks}`, `⏰Ticks`));
+                createTwoElementRow(table, `⏰Ticks`, `${task_ticks}`);
             }
         }
 
         {
-            const table = createTableSection("Modifiers");
+            const table = createTableSection(task_table,"Modifiers");
             const mult = task.task_definition.xp_mult;
             let mult_class = "";
             if (mult != 1) { mult_class = mult > 1 ? "good" : "bad"; }
-            table.appendChild(createTwoElementRow(`<span class="${mult_class}">x${mult}</span>`, `${XP_TEXT} Multiplier`));
+            createTwoElementRow(table, `${XP_TEXT} Multiplier`, `<span class="${mult_class}">x${mult}</span>`);
 
             if (haste_stacks > 0) {
                 const needs_asterisk = haste_stacks < completions && !single_rep_for_all_ticks;
                 if (needs_asterisk) {
                     haste_asterisk_index = ++asterisk_count;
                 }
-                table.appendChild(createTwoElementRow(`<span class="good">x${HASTE_MULT}</span>`, `${HASTE_TEXT}${needs_asterisk ? "*".repeat(haste_asterisk_index) : ""}`));
+                createTwoElementRow(table, `${HASTE_TEXT}${needs_asterisk ? "*".repeat(haste_asterisk_index) : ""}`, `<span class="good">x${HASTE_MULT}</span>`);
             }
 
             if (magic_ring_stacks > 0) {
@@ -426,7 +419,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 if (needs_asterisk) {
                     magic_ring_asterisk_index = ++asterisk_count;
                 }
-                table.appendChild(createTwoElementRow(`<span class="good">x${MAGIC_RING_MULT}</span>`, `${XP_TEXT} (Magic Ring)${needs_asterisk ? "*".repeat(magic_ring_asterisk_index) : ""}`));
+                createTwoElementRow(table, `${XP_TEXT} (Magic Ring)${needs_asterisk ? "*".repeat(magic_ring_asterisk_index) : ""}`, `<span class="good">x${MAGIC_RING_MULT}</span>`);
             }
         }
 
@@ -1612,6 +1605,85 @@ function updateExtraStats() {
     RENDERING.open_prestige_element.classList.toggle("prestige-glow", GAMESTATE.unlocked_new_prestige_this_prestige);
 }
 
+// MARK: Stats
+
+function setupOpenStats() {
+    const stats_overlay = RENDERING.stats_overlay_element;
+    const open_button = RENDERING.open_stats_element;
+
+    open_button.addEventListener("click", () => {
+        populateStatsView();
+        stats_overlay.classList.remove("hidden");
+    });
+
+    stats_overlay.addEventListener("click", (e) => {
+        if (e.target == stats_overlay) { // Clicking outside the window
+            stats_overlay.classList.add("hidden");
+        }
+    });
+
+    setupTooltipStaticHeader(open_button, "Stats", function () {
+        const tooltip = `Within this menu you can see the effects of your Items on your Skills`;
+
+        return tooltip;
+    });
+}
+
+function populateStatsView() {
+    const stats_overlay = RENDERING.stats_overlay_element;
+    const stats_div = stats_overlay.querySelector("#stats-box");
+    if (!stats_div) {
+        console.error("No prestige-box");
+        return;
+    }
+
+    stats_div.innerHTML = "";
+
+    const scroll_area = createChildElement(stats_div, "div");
+    scroll_area.className = "scroll-area";
+
+    {
+        const close_button = createChildElement(stats_div, "button");
+        close_button.className = "close";
+        close_button.textContent = "X";
+
+        close_button.addEventListener("click", () => {
+            stats_overlay.classList.add("hidden");
+        });
+
+        setupTooltipStatic(close_button, `Close Stats Menu`, ``);
+    }
+
+    createChildElement(scroll_area, "h1").textContent = "Stats";
+
+    for (const skill_type of GAMESTATE.unlocked_skills) {
+        const skill = getSkill(skill_type);
+        const div = createChildElement(scroll_area, "div");
+        div.className = "stat-section";
+        createChildElement(div, "h2").textContent = getSkillString(skill_type);
+
+        if (skill.speed_modifier == 1) {
+            createChildElement(div, "p").textContent = "No Item bonuses";
+            continue;
+        }
+
+        const table = createChildElement(div, "table");
+        table.className = "table simple-table";
+
+        const item_bonuses = gatherItemBonuses(skill_type);
+
+        for (const [item_type, amount] of item_bonuses) {
+            const item = ITEMS[item_type] as ItemDefinition;
+            const modifier = item.skill_modifiers.getStacked(amount);
+            const effect = modifier.getSkillEffect(skill_type);
+
+            createTwoElementRow(table, `${amount} ${item.getName(amount)}`, `+${formatNumber(effect * 100)}%`);
+        }
+
+        createTwoElementRow(table, "Total Item bonus", `x${formatNumber(skill.speed_modifier)}`);
+    }
+}
+
 // MARK: Rendering
 
 export class Rendering {
@@ -1636,6 +1708,8 @@ export class Rendering {
     item_elements: Map<ItemType, HTMLButtonElement> = new Map();
     perk_elements: Map<PerkType, HTMLElement> = new Map();
     controls_list_element: HTMLElement;
+    open_stats_element: HTMLElement;
+    stats_overlay_element: HTMLElement;
 
     energy_reset_count: number = 0;
     current_zone: number = 0;
@@ -1685,6 +1759,8 @@ export class Rendering {
         this.prestige_overlay_element = getElement("prestige-overlay");
         this.confirmation_overlay_element = getElement("confirmation-overlay");
         this.item_undo_element = getElement("item-undo") as HTMLInputElement;
+        this.open_stats_element = getElement("open-stats");
+        this.stats_overlay_element = getElement("stats-overlay");
     }
 
     public initialize() {
@@ -1693,6 +1769,7 @@ export class Rendering {
         setupControls();
         setupInfoTooltips();
         setupOpenPrestige();
+        setupOpenStats();
         setupItemUndo();
     }
 
