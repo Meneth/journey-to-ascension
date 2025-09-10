@@ -1,7 +1,7 @@
 import { getPerkNameWithEmoji, PerkType } from "./perks.js";
 import { getSkillString } from "./rendering.js";
 import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { hasPrestigeUnlock } from "./simulation.js";
+import { getPrestigeGainExponent, hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 import { SkillType } from "./skills.js";
 
@@ -130,6 +130,14 @@ export const TRANSCENDANT_APTITUDE_MULT = 100;
 export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.1;
 export const ENERGIZED_INCREASE = 20;
 
+function calcDivineSparkIncrease(zone: number) {
+    const current_exponent = getPrestigeGainExponent();
+    const new_exponent = current_exponent + DIVINE_LIGHTNING_EXPONENT_INCREASE;
+    const ratio = Math.pow(zone + 1, new_exponent) / Math.pow(zone + 1, current_exponent);
+
+    return ratio - 1;
+}
+
 export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     {
         type: PrestigeRepeatableType.DivineKnowledge,
@@ -168,7 +176,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         type: PrestigeRepeatableType.DivineLightning,
         layer: PrestigeLayer.TranscendHumanity,
         name: "Divine Lightning",
-        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by ${DIVINE_LIGHTNING_EXPONENT_INCREASE}<br>This significantly improves the rate at which you gain ${DIVINE_SPARK_TEXT}`; },
+        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by ${DIVINE_LIGHTNING_EXPONENT_INCREASE}<br>One more level would increase ${DIVINE_SPARK_TEXT} gain at Zone 15 by ${(calcDivineSparkIncrease(15) * 100).toFixed(0)}%, and ${(calcDivineSparkIncrease(20) * 100).toFixed(0)}% at Zone 20`; },
         initial_cost: 50,
         scaling_exponent: 3
     },
