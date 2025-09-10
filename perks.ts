@@ -110,7 +110,7 @@ export const PERKS: PerkDefinition[] = [
     {
         enum: PerkType.MinorTimeCompression,
         name: `Minor Time Compression`,
-        get_tooltip: () => { return `Tasks reps that are completed instantly (in a single ⏰Tick) now cost 80% less ${ENERGY_TEXT}<br>Zones where all Tasks are instant are completed for free in a single ⏰Tick when doing an ${ENERGY_TEXT} Reset`; },
+        get_tooltip: () => { return `Tasks reps that are completed instantly (in a single ⏰Tick) now cost 80% less ${ENERGY_TEXT}<br>Zones where all Tasks are instant without using Items are completed for free in a single ⏰Tick when doing an ${ENERGY_TEXT} Reset`; },
         icon: `⌚`,
     },
     {
