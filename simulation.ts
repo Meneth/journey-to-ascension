@@ -718,6 +718,21 @@ function skipFreeZones() {
     }
 }
 
+export function gatherPerkBonuses(skill: SkillType): PerkType[] {
+    const ret: PerkType[] = [];
+
+    for (const [perk_type, active] of GAMESTATE.perks) {
+        const perk = PERKS[perk_type] as PerkDefinition;
+        if (!active || !perk.skill_modifiers.affectsSkill(skill)) {
+            continue;
+        }
+
+        ret.push(perk_type);
+    }
+
+    return ret;
+}
+
 // MARK: Extra stats
 
 function addPower(amount: number) {

@@ -82,8 +82,8 @@ export class ItemDefinition {
         this.skill_modifiers.getStacked(amount).applyEffect();
     }
 
-    public getName(amount: number) {
-        return amount == 1 ? this.name : this.name_plural;
+    public getNameWithEmoji(amount: number) {
+        return `${this.icon}${amount == 1 ? this.name : this.name_plural}`;
     }
 }
 

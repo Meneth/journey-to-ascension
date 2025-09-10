@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
@@ -1662,25 +1662,39 @@ function populateStatsView() {
         div.className = "stat-section";
         createChildElement(div, "h2").textContent = getSkillString(skill_type);
 
-        if (skill.speed_modifier == 1) {
-            createChildElement(div, "p").textContent = "No Item bonuses";
-            continue;
-        }
-
         const table = createChildElement(div, "table");
         table.className = "table simple-table";
 
         const item_bonuses = gatherItemBonuses(skill_type);
+        if (item_bonuses.length > 0) {
+            const item_table = createTableSection(table, "Items");
 
-        for (const [item_type, amount] of item_bonuses) {
-            const item = ITEMS[item_type] as ItemDefinition;
-            const modifier = item.skill_modifiers.getStacked(amount);
-            const effect = modifier.getSkillEffect(skill_type);
-
-            createTwoElementRow(table, `${amount} ${item.getName(amount)}`, `+${formatNumber(effect * 100)}%`);
+            for (const [item_type, amount] of item_bonuses) {
+                const item = ITEMS[item_type] as ItemDefinition;
+                const modifier = item.skill_modifiers.getStacked(amount);
+                const effect = modifier.getSkillEffect(skill_type);
+    
+                createTwoElementRow(item_table, `${amount} ${item.getNameWithEmoji(amount)}`, `+${formatNumber(effect * 100)}%`);
+            }
+    
+            createTwoElementRow(item_table, "Total Item bonus", `x${formatNumber(skill.speed_modifier)}`);
         }
 
-        createTwoElementRow(table, "Total Item bonus", `x${formatNumber(skill.speed_modifier)}`);
+        const perk_bonuses = gatherPerkBonuses(skill_type);
+        if (perk_bonuses.length > 0) {
+            const perk_table = createTableSection(table, "Perks");
+
+            let total_effect = 1;
+            for (const perk_type of perk_bonuses) {
+                const perk = PERKS[perk_type] as PerkDefinition;
+                const effect = 1 + perk.skill_modifiers.getSkillEffect(skill_type);
+    
+                createTwoElementRow(perk_table, `${getPerkNameWithEmoji(perk_type)}`, `x${effect}`);
+                total_effect *= effect;
+            }
+    
+            createTwoElementRow(perk_table, "Total Perk bonus", `x${formatNumber(total_effect)}`);
+        }
     }
 }
 
