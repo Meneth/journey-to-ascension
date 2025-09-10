@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
@@ -1655,6 +1655,8 @@ function populateStatsView() {
     }
 
     createChildElement(scroll_area, "h1").textContent = "Stats";
+    const attunement_skills = calcAttunementSkills();
+    const power_skills = getPowerSkills();
 
     for (const skill_type of GAMESTATE.unlocked_skills) {
         const skill = getSkill(skill_type);
@@ -1664,6 +1666,19 @@ function populateStatsView() {
 
         const table = createChildElement(div, "table");
         table.className = "table simple-table";
+
+        {
+            const skill_table = createTableSection(table, "Basic");
+            createTwoElementRow(skill_table, `Level`, `x${formatNumber(calcSkillTaskProgressMultiplierFromLevel(skill.level))}`);
+
+            if (GAMESTATE.attunement > 0 && attunement_skills.includes(skill_type)) {
+                createTwoElementRow(skill_table, ATTUNEMENT_TEXT, `x${formatNumber(calcAttunementSpeedBonusAtLevel(GAMESTATE.attunement))}`);
+            }
+
+            if (GAMESTATE.power > 0 && power_skills.includes(skill_type)) {
+                createTwoElementRow(skill_table, POWER_TEXT, `x${formatNumber(calcPowerSpeedBonusAtLevel(GAMESTATE.attunement))}`);
+            }
+        }
 
         const item_bonuses = gatherItemBonuses(skill_type);
         if (item_bonuses.length > 0) {
@@ -1695,7 +1710,13 @@ function populateStatsView() {
     
             createTwoElementRow(perk_table, "Total Perk bonus", `x${formatNumber(total_effect)}`);
         }
+
+        {
+            const total_table = createTableSection(table, "Total Speed");
+            createTwoElementRow(total_table, "", `x${formatNumber(calcSkillTaskProgressMultiplier(skill_type))}`);
+        }
     }
+
 }
 
 // MARK: Rendering

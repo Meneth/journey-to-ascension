@@ -109,11 +109,8 @@ export function calcSkillTaskProgressWithoutLevel(skill_type: SkillType): number
         mult *= 1 + perk.skill_modifiers.getSkillEffect(skill_type);
     }
 
-    switch (skill_type) {
-        case SkillType.Combat:
-        case SkillType.Fortitude:
-            mult *= calcPowerSpeedBonusAtLevel(GAMESTATE.power);
-            break;
+    if (getPowerSkills().includes(skill_type)) {
+        mult *= calcPowerSpeedBonusAtLevel(GAMESTATE.power);
     }
 
     if (calcAttunementSkills().includes(skill_type)) {
@@ -800,6 +797,10 @@ export function calcAttunementSkills() {
     }
 
     return attunement_skills;
+}
+
+export function getPowerSkills() {
+    return [SkillType.Combat, SkillType.Fortitude];
 }
 
 // MARK: Automation
