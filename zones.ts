@@ -70,7 +70,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 22, name: "Deal with Drunkards", type: TaskType.Mandatory, cost_multiplier: 1.6, max_reps: 2, skills: [SkillType.Charisma] }),
             new TaskDefinition({ id: 25, name: "Fletch Arrows", max_reps: 5, cost_multiplier: 0.4, skills: [SkillType.Crafting], item: ItemType.Arrow }),
             new TaskDefinition({ id: 27, name: "Learn How to Write", cost_multiplier: 20, xp_mult: 0.2, skills: [SkillType.Study], perk: PerkType.Writing }),
-            new TaskDefinition({ id: 23, name: "Chit-chat", max_reps: 3, skills: [SkillType.Charisma], xp_mult: 2 }),
+            new TaskDefinition({ id: 23, name: "Chit-chat", max_reps: 3, skills: [SkillType.Charisma], xp_mult: 3 }),
             new TaskDefinition({ id: 24, name: "Sparring", cost_multiplier: 1.5, xp_mult: 5, max_reps: 4, skills: [SkillType.Combat] }),
             new TaskDefinition({ id: 26, name: "Daydream About Leaving", cost_multiplier: 1, max_reps: 6, xp_mult: 3, skills: [SkillType.Travel, SkillType.Survival] }),
         ],
@@ -135,7 +135,7 @@ export const ZONES: Zone[] = [
         tasks: [
             new TaskDefinition({ id: 70, name: "Enter the City", type: TaskType.Travel, cost_multiplier: 1.5, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 71, name: "Bribe the City Guards", type: TaskType.Mandatory, cost_multiplier: 4, skills: [SkillType.Charisma] }),
-            new TaskDefinition({ id: 72, name: "Survive a Mugging", type: TaskType.Mandatory, cost_multiplier: 1, max_reps: 1, xp_mult: 0.5, skills: [SkillType.Combat, SkillType.Fortitude] }),
+            new TaskDefinition({ id: 72, name: "Survive a Mugging", type: TaskType.Mandatory, cost_multiplier: 1, max_reps: 1, xp_mult: 0.75, skills: [SkillType.Combat, SkillType.Fortitude] }),
             new TaskDefinition({ id: 73, name: "Buy a Book", max_reps: 5, cost_multiplier: 1, skills: [SkillType.Charisma], item: ItemType.Book }),
             new TaskDefinition({ id: 74, name: "Negotiate with a Rogue Guard", cost_multiplier: 12, max_reps: 1, xp_mult: 0.3, skills: [SkillType.Charisma, SkillType.Subterfuge], perk: PerkType.UndergroundConnection }),
             new TaskDefinition({ id: 75, name: "Spar with the Guards", cost_multiplier: 1, max_reps: 3, xp_mult: 1.5, skills: [SkillType.Combat] }),
