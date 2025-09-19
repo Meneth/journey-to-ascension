@@ -810,8 +810,8 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
     energy_reset_div.innerHTML = "";
 
     if (GAMESTATE.is_in_energy_reset) {
-        energy_reset_div.innerHTML = "<h2>Run Over</h2>" +
-            "<p>You used up all your Energy.</p>" +
+        energy_reset_div.innerHTML = "<h2>Out of Energy</h2>" +
+            "<p>You used up all your Energy, but this is not the end.</p>" +
             "<p>You keep half your Items (rounded up).</p>" +
             "<p>The effects of used Items disappear.</p>" +
             "<p>You keep all your Skills and Perks.</p>";
@@ -821,7 +821,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
 
     const button = document.createElement("button");
     button.className = "game-over-dismiss";
-    button.textContent = GAMESTATE.is_in_energy_reset ? "Restart" : "Dismiss";
+    button.textContent = GAMESTATE.is_in_energy_reset ? "Start the Journey Over, Wiser" : "Dismiss";
 
     button.addEventListener("click", () => {
         energy_reset_div.classList.add("hidden");
@@ -835,6 +835,8 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
     const skill_gain = document.createElement("div");
 
     skill_gain.innerHTML = "";
+
+    createChildElement(skill_gain, "h3").textContent = "Skills gained:";
 
     const info = GAMESTATE.energy_reset_info;
 
