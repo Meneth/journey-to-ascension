@@ -813,7 +813,7 @@ export enum AutomationMode {
 }
 
 export function toggleAutomation(task: Task) {
-    if (!hasPerk(PerkType.DeepTrance)) {
+    if (!hasPerk(PerkType.Amulet)) {
         return;
     }
 
@@ -991,7 +991,7 @@ export function addPrestigeUnlock(unlock: PrestigeUnlockType) {
     GAMESTATE.prestige_unlocks.push(unlock);
 
     if (unlock == PrestigeUnlockType.PermanentAutomation) {
-        tryAddPerk(PerkType.DeepTrance);
+        tryAddPerk(PerkType.Amulet);
     } else if (unlock == PrestigeUnlockType.LookInTheMirror) {
         tryAddPerk(PerkType.ReflectionsOnTheJourney);
     } else if (unlock == PrestigeUnlockType.FullyAttuned) {
@@ -1037,7 +1037,7 @@ function applyGameStartPrestigeEffects() {
     const show_notification = false;
 
     if (hasPrestigeUnlock(PrestigeUnlockType.PermanentAutomation)) {
-        tryAddPerk(PerkType.DeepTrance, show_notification);
+        tryAddPerk(PerkType.Amulet, show_notification);
     }
     if (hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror)) {
         tryAddPerk(PerkType.ReflectionsOnTheJourney, show_notification);

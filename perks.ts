@@ -20,7 +20,7 @@ export enum PerkType {
     UndergroundConnection,
     MinorTimeCompression,
     HighAltitudeClimbing,
-    DeepTrance,
+    DELETED,
     VillageHero,
     Attunement,
     GoblinScourge,
@@ -65,11 +65,12 @@ export class PerkDefinition {
 
     public getTooltip() {
         const custom = this.get_custom_tooltip();
-        if (custom.length != 0) {
-            return custom;
+        const skill_modifiers = this.skill_modifiers.getDescription();
+        if (custom.length != 0 && skill_modifiers.length != 0) {
+            return skill_modifiers + "<br>" + custom;
         }
 
-        return this.skill_modifiers.getDescription();
+        return skill_modifiers + custom; // Whichever has length
     }
 }
 
@@ -109,6 +110,7 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Magic, 0.5]
         ]),
         icon: `📿`,
+        get_custom_tooltip: () => { return `Unlocks Zone Automation<br>Unlocks automatic Item use`; },
     }),
     new PerkDefinition({
         enum: PerkType.EnergySpell,
@@ -146,10 +148,9 @@ export const PERKS: PerkDefinition[] = [
         icon: `🗻`,
     }),
     new PerkDefinition({
-        enum: PerkType.DeepTrance,
-        name: `Deep Trance`,
-        get_custom_tooltip: () => { return `Unlocks Zone Automation<br>Unlocks automatic Item use`; },
-        icon: `💫`,
+        enum: PerkType.DELETED,
+        name: `DELETED PERK - Deep Trance`,
+        icon: `❓`,
     }),
     new PerkDefinition({
         enum: PerkType.VillageHero,

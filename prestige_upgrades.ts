@@ -68,14 +68,14 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         type: PrestigeUnlockType.PermanentAutomation,
         layer: PrestigeLayer.TouchTheDivine,
         name: "Permanent Automation",
-        get_description: () => { return `Permanently unlocks the ${getPerkNameWithEmoji(PerkType.DeepTrance)} Perk`; },
+        get_description: () => { return `Permanently unlocks the ${getPerkNameWithEmoji(PerkType.Amulet)} Perk`; },
         cost: 1
     },
     {
         type: PrestigeUnlockType.DivineInspiration,
         layer: PrestigeLayer.TouchTheDivine,
         name: "Divine Inspiration",
-        get_description: () => { return `Increases ${XP_TEXT} gain by 50% and 🌀Attunement gain by 100%<br>Note that 🌀Attunement still needs to be unlocked in Zone 8`; },
+        get_description: () => { return `Increases ${XP_TEXT} gain by 50% and 🌀Attunement gain by 100%<br>Note that 🌀Attunement still needs to be unlocked in Zone 10`; },
         cost: 1
     },
     {

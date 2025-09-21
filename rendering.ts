@@ -705,7 +705,7 @@ function sortItems(items: [type: ItemType, amount: number][]) {
 }
 
 function setupAutoUseItemsControl() {
-    if (!hasPerk(PerkType.DeepTrance)) {
+    if (!hasPerk(PerkType.Amulet)) {
         return;
     }
 
@@ -1503,7 +1503,7 @@ function setupRepeatTasksControl() {
 // MARK: Controls - Automation
 
 function setupAutomationControls() {
-    if (!hasPerk(PerkType.DeepTrance)) {
+    if (!hasPerk(PerkType.Amulet)) {
         return;
     }
 
