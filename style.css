@@ -24,9 +24,9 @@
     --tooltip-subtitle-size: 1rem;
 
     --tooltip-palette-text-primary: rgba(255, 255, 255, 0.7);
-    --tooltip-palette-surface: #000000AA;
+    --tooltip-palette-surface: #000000BB;
 
-    --tooltip-palette-table-lines: rgba(255, 255, 255, 0.12);
+    --tooltip-palette-table-lines: rgba(255, 255, 255, 0.25);
 
     --prestige-color: rgb(141, 23, 196);
     --prestige-color-brighter: rgb(162, 54, 204);
@@ -614,7 +614,7 @@ div.prestige-purchase {
     border: 2px solid #000;
 }
 
-/* MARK: Tooltips
+/* MARK: Stats
 */
 
 #stats-box {
