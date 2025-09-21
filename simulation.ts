@@ -273,6 +273,10 @@ function progressTask(task: Task, progress: number, consume_energy = true) {
     if (is_single_tick && hasPerk(PerkType.MajorTimeCompression)) {
         while (task.reps < task.task_definition.max_reps) {
             applyFinishTaskRepEffects(task);
+
+            for (const skill of task.task_definition.skills) {
+                addSkillXp(skill, calcSkillXp(task, progress));
+            }
         }
     }
 
