@@ -94,7 +94,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.Food, name: `Food`, name_plural: `Food`,
         icon: `🍲`,
-        get_custom_tooltip: () => { return `Gives ${calcItemEnergyGain(5)} ${ENERGY_TEXT} each<br>Can take you above your Max Energy`; },
+        get_custom_tooltip: () => { return `Gives ${calcItemEnergyGain(5)} ${ENERGY_TEXT} each<br>Can take you above your Max Energy<br><br>Right-click to use all`; },
         get_custom_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(5)} ${ENERGY_TEXT}`; },
         on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(5) * amount; },
     }),
