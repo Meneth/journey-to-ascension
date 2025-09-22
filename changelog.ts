@@ -15,6 +15,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Stopped showing XP Mult in the Task tooltip, as it just caused confusion<br>"
         + "- Fixed two Perks starting their effect twice<br>"
         + "- Added number postfixes beyond T; all the way up To Dc (though currently higher than Qi does not occur)<br>"
+        + "- The Items and Perks info tooltips now show all the active Skill bonuses provided<br>"
     },
     {
         version: "0.1.2",

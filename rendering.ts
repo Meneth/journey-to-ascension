@@ -75,6 +75,11 @@ function createTwoElementRow(table: HTMLElement, x: string, y: string) {
     row.innerHTML = `<td>${x}</td><td>${y}</td>`;
 }
 
+function createThreeElementRow(table: HTMLElement, x: string, y: string, z: string) {
+    const row = createChildElement(table, "tr");
+    row.innerHTML = `<td>${x}</td><td>${y}</td><td>${z}</td>`;
+}
+
 // MARK: Skills
 
 function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
@@ -594,6 +599,35 @@ function setupInfoTooltips() {
         tooltip += `<br>The bonuses stack additively; 2 +100% results in 3x speed, not 4x`;
         tooltip += `<br>Bonuses to different Task types stack multiplicatively with one another`;
         tooltip += `<br><br>Right-click to use all rather than just one`;
+        
+        tooltip += `<br><br>Current Skill bonuses:`;
+
+        const table = document.createElement("table");
+        table.className = "table simple-table";
+
+        createThreeElementRow(table, "<h3>Skill</h3>", "<h3>Item(s)</h3>", "<h3>Bonus</h3>");
+
+        for (const skill_type of GAMESTATE.unlocked_skills) {
+            const skill = getSkill(skill_type);
+            if (skill.speed_modifier <= 0) {
+                continue;
+            }
+
+            let items_string = "";
+            const item_bonuses = gatherItemBonuses(skill_type);
+            for (const [item_type,] of item_bonuses) {
+                items_string += ITEMS[item_type]?.icon;
+            }
+
+            createThreeElementRow(table, getSkillString(skill_type), items_string, `+${formatNumber(skill.speed_modifier * 100, false)}%`);
+        }
+
+        if (table.children.length == 1) {
+            tooltip += "<br>None";
+        } else {
+            tooltip += table.outerHTML;
+        }
+        
         return tooltip;
     });
 
@@ -621,6 +655,37 @@ function setupInfoTooltips() {
     setupTooltipStaticHeader(perk_info, `Perks`, function () {
         let tooltip = `Perks are permanent bonuses with a variety of effects`;
         tooltip += `<br>The bonuses stack multiplicatively; 2 +100% results in 4x speed, not 3x`;
+
+        tooltip += `<br><br>Current Skill bonuses:`;
+
+        const table = document.createElement("table");
+        table.className = "table simple-table";
+
+        createThreeElementRow(table, "<h3>Skill</h3>", "<h3>Item(s)</h3>", "<h3>Bonus</h3>");
+
+        for (const skill_type of GAMESTATE.unlocked_skills) {
+            const perk_bonuses = gatherPerkBonuses(skill_type);
+            if (perk_bonuses.length <= 0) {
+                continue;
+            }
+
+            let total_effect = 1;
+            let perks_string = "";
+            for (const perk_type of perk_bonuses) {
+                const perk = PERKS[perk_type] as PerkDefinition;
+                perks_string += perk.icon;
+                total_effect *= 1 + perk.skill_modifiers.getSkillEffect(skill_type);
+            }
+
+            createThreeElementRow(table, getSkillString(skill_type), perks_string, `x${formatNumber(total_effect)}`);
+        }
+
+        if (table.children.length == 1) {
+            tooltip += "<br>None";
+        } else {
+            tooltip += table.outerHTML;
+        }
+
         return tooltip;
     });
 }

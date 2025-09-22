@@ -295,7 +295,7 @@ export const ITEMS: ItemDefinition[] = [
         ]),
     }),
     new ItemDefinition({
-        enum: ItemType.MagicEssence, name: `Crafting Recipe`, name_plural: `Crafting Recipes`,
+        enum: ItemType.CraftingRecipe, name: `Crafting Recipe`, name_plural: `Crafting Recipes`,
         icon: `🛠️`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Crafting, 0.3]
