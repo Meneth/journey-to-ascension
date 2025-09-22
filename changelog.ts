@@ -9,7 +9,8 @@ export const CHANGELOG: ChangelogEntry[] = [
         version: "0.1.3",
         date: "2025-09-21",
         changes: "- Added changelog<br>"
-        + "- Split Items into two categories; normal Items and Artifacts"
+        + "- Split Items into two categories; normal Items and Artifacts<br>"
+        + "- Split out Skill Gains in the Task tooltip from Rewards<br>"
     },
     {
         version: "0.1.2",

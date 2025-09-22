@@ -290,7 +290,6 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
         let asterisk_count = 0;
         let perk_asterisk_index = -1;
-        let level_asterisks = "";
         const remaining_completions = (task.reps == task.task_definition.max_reps) ? task.task_definition.max_reps : (task.task_definition.max_reps - task.reps);
         const single_rep_for_all_ticks = willCompleteAllRepsInOneTick(task);
         const completions = (GAMESTATE.repeat_tasks || single_rep_for_all_ticks) ? remaining_completions : 1;
@@ -305,27 +304,46 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         }
 
         {
-            const table = createTableSection(task_table,"Rewards");
+            let table: HTMLElement | null = null;
+            function getOrCreateTable() {
+                if (!table) {
+                    table = createTableSection(task_table, "Rewards");
+                }
+
+                return table;
+            }
 
             if (task.task_definition.type == TaskType.Travel) {
-                createTwoElementRow(table, `${TRAVEL_EMOJI}Move to Zone`, `${task.task_definition.zone_id + 2}`);
+                createTwoElementRow(getOrCreateTable(), `${TRAVEL_EMOJI}Move to Zone`, `${task.task_definition.zone_id + 2}`);
             }
 
             if (task.task_definition.item != ItemType.Count) {
                 const item = ITEMS[task.task_definition.item] as ItemDefinition;
                 const plural = completions > 1;
-                createTwoElementRow(table, `${item.icon}${item.name} ${plural ? "Items" : "Items"}`, `${completions}`);
+                createTwoElementRow(getOrCreateTable(), `${item.icon}${item.name} ${plural ? "Items" : "Items"}`, `${completions}`);
             }
 
             if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
                 const perk = PERKS[task.task_definition.perk] as PerkDefinition;
                 const is_last_rep = (task.reps + completions) == task.task_definition.max_reps;
                 if (!is_last_rep) { ++asterisk_count; perk_asterisk_index = asterisk_count; }
-                createTwoElementRow(table, `${perk.icon}${knowsPerk(perk.enum) ? perk.name : "Mystery"} Perk`, is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`);
+                createTwoElementRow(getOrCreateTable(), `${perk.icon}${knowsPerk(perk.enum) ? perk.name : "Mystery"} Perk`, is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`);
             }
 
-            asterisk_count += 1; // Levels will always produce one
-            level_asterisks = "*".repeat(asterisk_count);
+            const attunement_gain = completions * calcAttunementGain(task);
+            if (attunement_gain > 0) {
+                createTwoElementRow(getOrCreateTable(), `🌀Attunement`, `${attunement_gain}`);
+            }
+
+            const power_gain = completions * calcPowerGain(task);
+            if (power_gain > 0 && GAMESTATE.has_unlocked_power) {
+                createTwoElementRow(getOrCreateTable(), `💪Power`, `${power_gain}`);
+            }
+        }
+
+        {
+            const table = createTableSection(task_table, "Skill Gains");
+
             for (const skill of task.task_definition.skills) {
                 const skill_progress = getSkill(skill);
                 const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
@@ -344,28 +362,18 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
                 const levels_diff = resulting_level - skill_progress.level;
                 if (levels_diff > 0) {
-                    levels = `${resulting_level - skill_progress.level}${level_asterisks}`;
+                    levels = `${resulting_level - skill_progress.level}`;
                 } else {
                     const level_percentage = xp_gained / calcSkillXpNeeded(skill_progress);
                     if (level_percentage < 0.01) {
-                        levels = `<0.01${level_asterisks}`;
+                        levels = `<0.01`;
                     } else {
-                        levels = `${formatNumber(level_percentage)}${level_asterisks}`;
+                        levels = `${formatNumber(level_percentage)}`;
                     }
                 }
 
 
                 createTwoElementRow(table, `${skill_definition.icon}${skill_definition.name}`, levels);
-            }
-
-            const attunement_gain = completions * calcAttunementGain(task);
-            if (attunement_gain > 0) {
-                createTwoElementRow(table, `🌀Attunement`, `${attunement_gain}`);
-            }
-
-            const power_gain = completions * calcPowerGain(task);
-            if (power_gain > 0 && GAMESTATE.has_unlocked_power) {
-                createTwoElementRow(table, `💪Power`, `${power_gain}`);
             }
         }
 
@@ -429,7 +437,6 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         if (perk_asterisk_index >= 0) {
             tooltip += `<p class="tooltip-asterisk">${"*".repeat(perk_asterisk_index)} Perk is only gained on completing all Reps of the Task</p>`;
         }
-        tooltip += `<p class="tooltip-asterisk">${level_asterisks} Task does not need to be completed, ${XP_TEXT} is given proportionally to the progress made</p>`;
         if (haste_asterisk_index >= 0) {
             tooltip += `<p class="tooltip-asterisk">${"*".repeat(haste_asterisk_index)} Haste will only apply to the first ${haste_stacks} reps</p>`;
         }
