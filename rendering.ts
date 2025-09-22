@@ -7,6 +7,7 @@ import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpC
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, TRAVEL_EMOJI, XP_TEXT } from "./rendering_constants.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE } from "./prestige_upgrades.js";
+import { CHANGELOG } from "./changelog.js";
 
 // MARK: Helpers
 
@@ -1244,6 +1245,25 @@ function setupSettings() {
     setupTooltipStatic(close_button, `Close Settings Menu`, ``);
 
     setupPersistence(settings_div);
+
+    const changelog_button = settings_div.querySelector<HTMLElement>("#changelog");
+    if (!changelog_button) {
+        console.error("No changelog button");
+        return;
+    }
+
+    setupTooltipStatic(changelog_button, "Open Changelog", "View the full Changelog of Journey to Ascension");
+
+    changelog_button.addEventListener("click", () => {
+        showChangelog();
+    });
+
+    const changelog_overlay = RENDERING.changelog_overlay_element;
+    changelog_overlay.addEventListener("click", (e) => {
+        if (e.target == changelog_overlay) { // Clicking outside the window
+            changelog_overlay.classList.add("hidden");
+        }
+    });
 }
 
 // MARK: Settings: Saves
@@ -1721,6 +1741,45 @@ function populateStatsView() {
 
 }
 
+// MARK: Changelog
+
+function showChangelog() {
+    RENDERING.changelog_overlay_element.classList.remove("hidden");
+
+    const changelog_overlay = RENDERING.changelog_overlay_element;
+    const changelog_div = changelog_overlay.querySelector("#changelog-box");
+    if (!changelog_div) {
+        console.error("No changelog-box");
+        return;
+    }
+
+    changelog_div.innerHTML = "";
+
+    const scroll_area = createChildElement(changelog_div, "div");
+    scroll_area.className = "scroll-area";
+
+    {
+        const close_button = createChildElement(changelog_div, "button");
+        close_button.className = "close";
+        close_button.textContent = "X";
+
+        close_button.addEventListener("click", () => {
+            changelog_overlay.classList.add("hidden");
+        });
+
+        setupTooltipStatic(close_button, `Close Changelog`, ``);
+    }
+
+    createChildElement(scroll_area, "h1").textContent = "Changelog";
+
+    for (const entry of CHANGELOG) {
+        const entry_div = createChildElement(scroll_area, "div");
+        entry_div.className = "changelog-entry";
+        createChildElement(entry_div, "h2").textContent = `${entry.version} (${entry.date})`;
+        createChildElement(entry_div, "p").innerHTML = entry.changes;
+    }
+}
+
 // MARK: Rendering
 
 export class Rendering {
@@ -1747,6 +1806,7 @@ export class Rendering {
     controls_list_element: HTMLElement;
     open_stats_element: HTMLElement;
     stats_overlay_element: HTMLElement;
+    changelog_overlay_element: HTMLElement;
 
     energy_reset_count: number = 0;
     current_zone: number = 0;
@@ -1798,6 +1858,7 @@ export class Rendering {
         this.item_undo_element = getElement("item-undo") as HTMLInputElement;
         this.open_stats_element = getElement("open-stats");
         this.stats_overlay_element = getElement("stats-overlay");
+        this.changelog_overlay_element = getElement("changelog-overlay");
     }
 
     public initialize() {

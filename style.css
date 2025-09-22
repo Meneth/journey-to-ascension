@@ -759,6 +759,7 @@ div.prestige-purchase {
     border-style: solid;
     padding: 8px;
     display: flex;
+    flex-direction: column;
     color: var(--default-text-color);
     gap: var(--standard-div-spacing);
 }
@@ -766,6 +767,23 @@ div.prestige-purchase {
 #settings {
     height: 200px;
     width: 200px;
+}
+
+/* MARK: Changelog
+*/
+
+#changelog-box {
+    position: relative;
+    height: 730px;
+    width: 530px;
+    padding: 0;
+    
+    scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
+}
+
+.changelog-entry {
+    width: 90%;
+    text-align: left;
 }
 
 /* MARK: Messages
