@@ -1243,6 +1243,7 @@ export class Gamestate {
     public initialize() {
         resetTasks();
         initializeSkills();
+        GAMESTATE.save_version = SAVE_VERSION;
     }
 
     public popRenderEvents(): RenderEvent[] {
