@@ -196,7 +196,6 @@ export const PERKS: PerkDefinition[] = [
     new PerkDefinition({
         enum: PerkType.WalkWithoutRhythm,
         name: `Walk Without Rhythm`,
-        get_custom_tooltip: () => { return `Improves ${getSkillString(SkillType.Subterfuge)} Task speed by 40% and ${getSkillString(SkillType.Travel)} Task speed by 20%`; },
         skill_modifiers: new PerkSkillModifierList([
             [SkillType.Subterfuge, 0.4],
             [SkillType.Travel, 0.2],
@@ -297,7 +296,6 @@ export const PERKS: PerkDefinition[] = [
     new PerkDefinition({
         enum: PerkType.Headmaster,
         name: `Headmaster`,
-        get_custom_tooltip: () => { return `Improves ${getSkillString(SkillType.Magic)} and ${getSkillString(SkillType.Study)} Task speed by 30%`; },
         skill_modifiers: new PerkSkillModifierList([
             [SkillType.Magic, 0.3],
             [SkillType.Study, 0.3],
