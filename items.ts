@@ -340,4 +340,4 @@ export const ITEMS: ItemDefinition[] = [
     }),
 ]
 
-export const ITEMS_TO_NOT_AUTO_USE = [ItemType.ScrollOfHaste, ItemType.Dreamcatcher, ItemType.MagicRing];
+export const ARTIFACTS = [ItemType.ScrollOfHaste, ItemType.Dreamcatcher, ItemType.MagicRing];

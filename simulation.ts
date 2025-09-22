@@ -1,6 +1,6 @@
 import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE, setTickRate } from "./game.js";
-import { HASTE_MULT, ItemDefinition, ITEMS, ITEMS_TO_NOT_AUTO_USE, ItemType, MAGIC_RING_MULT } from "./items.js";
+import { HASTE_MULT, ItemDefinition, ITEMS, ARTIFACTS, ItemType, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PERKS, PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
@@ -618,7 +618,7 @@ function autoUseItems() {
     }
 
     for (const [key, value] of GAMESTATE.items) {
-        if (ITEMS_TO_NOT_AUTO_USE.includes(key)) {
+        if (ARTIFACTS.includes(key)) {
             continue;
         }
 

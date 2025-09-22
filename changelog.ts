@@ -8,7 +8,8 @@ export const CHANGELOG: ChangelogEntry[] = [
     {
         version: "0.1.3",
         date: "2025-09-21",
-        changes: "- Added changelog"
+        changes: "- Added changelog<br>"
+        + "- Split Items into two categories; normal Items and Artifacts"
     },
     {
         version: "0.1.2",

@@ -455,7 +455,7 @@ button:hover:not(.disabled):not(:disabled) {
     font-size: 0.9em;
 }
 
-#item-undo {
+#item-undo, #artifact-undo {
     position: absolute;
     top: 4px;
     right: 34px;

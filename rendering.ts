@@ -1,7 +1,7 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
 import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, PRESTIGE_FULLY_COMPLETED_MULT, calcDivineSparkGain, calcDivineSparkGainFromHighestZoneFullyCompleted, calcDivineSparkGainFromHighestZone, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcDivineSparkDivisor, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION } from "./simulation.js";
 import { GAMESTATE, RENDERING } from "./game.js";
-import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ITEMS_TO_NOT_AUTO_USE, MAGIC_RING_MULT } from "./items.js";
+import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
 import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
@@ -587,6 +587,20 @@ function setupInfoTooltips() {
         return tooltip;
     });
 
+    const artifact_info = document.querySelector<HTMLElement>("#artifacts .section-info");
+
+    if (!artifact_info) {
+        console.error("No artifact info element");
+        return;
+    }
+
+    setupTooltipStaticHeader(artifact_info, `Artifacts`, function () {
+        let tooltip = `Artifacts are special Items with powerful single-use effects`;
+        tooltip += `<br>The effects apply to just a single rep of the next Task started`;
+        tooltip += `<br>They otherwise behave identically to other Items`;
+        return tooltip;
+    });
+
     const perk_info = document.querySelector<HTMLElement>("#perks .section-info");
 
     if (!perk_info) {
@@ -628,8 +642,7 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     RENDERING.item_elements.set(item, button);
 }
 
-function setupItemUndo() {
-    const button = RENDERING.item_undo_element;
+function setupItemUndoForButton(button: HTMLInputElement) {
     button.addEventListener("click", () => { undoItemUse(); });
 
     setupTooltip(button, () => {
@@ -652,6 +665,11 @@ function setupItemUndo() {
     });
 }
 
+function setupItemUndo() {
+    setupItemUndoForButton(RENDERING.item_undo_element);
+    setupItemUndoForButton(RENDERING.artifact_undo_element);
+}
+
 function recreateItemsIfNeeded() {
     const items_div = document.getElementById("items-list");
     if (!items_div) {
@@ -659,32 +677,60 @@ function recreateItemsIfNeeded() {
         return;
     }
 
+    const artifacts_div = document.getElementById("artifacts-list");
+    if (!artifacts_div) {
+        console.error("The element with ID 'artifacts-list' was not found.");
+        return;
+    }
+
     const items: [type: ItemType, amount: number][] = [];
+    const artifacts: [type: ItemType, amount: number][] = [];
 
     for (const item of ITEMS_BY_ZONE) {
         const amount = GAMESTATE.items.get(item);
         if (amount !== undefined) {
-            items.push([item, amount]);
+            const list = ARTIFACTS.includes(item) ? artifacts : items;
+            list.push([item, amount]);
         }
     }
 
     sortItems(items);
+    sortItems(artifacts);
 
     const item_order: ItemType[] = [];
+    const artifact_order: ItemType[] = [];
 
     for (const [item,] of items) {
         item_order.push(item);
     }
-
-    if (areArraysEqual(item_order, RENDERING.item_order)) {
-        return;
+    for (const [item,] of artifacts) {
+        artifact_order.push(item);
     }
 
-    RENDERING.item_order = item_order;
-    items_div.innerHTML = "";
+    if (!areArraysEqual(item_order, RENDERING.item_order)) {
+        RENDERING.item_order = item_order;
+        items_div.innerHTML = "";
 
-    for (const item of item_order) {
-        createItemDiv(item, items_div);
+        for (const item of item_order) {
+            createItemDiv(item, items_div);
+        }
+    }
+
+    if (!areArraysEqual(artifact_order, RENDERING.artifact_order)) {
+        RENDERING.artifact_order = item_order;
+        artifacts_div.innerHTML = "";
+
+        for (const item of artifact_order) {
+            createItemDiv(item, artifacts_div);
+        }
+
+        const artifacts_container = document.getElementById("artifacts");
+        if (!artifacts_container) {
+            console.error("The element with ID 'artifacts' was not found.");
+            return;
+        }
+
+        artifacts_container.classList.remove("hidden");
     }
 }
 
@@ -693,11 +739,6 @@ function sortItems(items: [type: ItemType, amount: number][]) {
         // Items we actually have first
         if ((a[1] == 0) != (b[1] == 0)) {
             return (a[1] == 0) ? 1 : -1;
-        }
-
-        // Then special items
-        if (ITEMS_TO_NOT_AUTO_USE.includes(a[0]) != ITEMS_TO_NOT_AUTO_USE.includes(b[0])) {
-            return ITEMS_TO_NOT_AUTO_USE.includes(a[0]) ? -1 : 1;
         }
 
         // Then just stick with the order provided
@@ -725,7 +766,7 @@ function setupAutoUseItemsControl() {
 
     setupTooltipStaticHeader(item_control, `${item_control.textContent}`, function () {
         let tooltip = "Toggle between items being used automatically, and only being used manually";
-        tooltip += "<br>Won't use the Scroll of Haste or other Items where you'd want full control over the timing";
+        tooltip += "<br>Won't use Artifacts";
 
         return tooltip;
     });
@@ -735,6 +776,7 @@ function setupAutoUseItemsControl() {
 
 function updateItems() {
     RENDERING.item_undo_element.disabled = GAMESTATE.undo_item[0] == ItemType.Count;
+    RENDERING.artifact_undo_element.disabled = GAMESTATE.undo_item[0] == ItemType.Count;
 
     for (const [item, button] of RENDERING.item_elements) {
         const item_count = GAMESTATE.items.get(item);
@@ -1807,6 +1849,7 @@ export class Rendering {
     prestige_overlay_element: HTMLElement;
     confirmation_overlay_element: HTMLElement;
     item_undo_element: HTMLInputElement;
+    artifact_undo_element: HTMLInputElement;
     task_elements: Map<TaskDefinition, ElementWithTooltip> = new Map();
     skill_elements: Map<SkillType, HTMLElement> = new Map();
     item_elements: Map<ItemType, HTMLButtonElement> = new Map();
@@ -1819,6 +1862,7 @@ export class Rendering {
     energy_reset_count: number = 0;
     current_zone: number = 0;
     item_order: ItemType[] = [];
+    artifact_order: ItemType[] = [];
 
     public createTasks() {
         const tasks_div = document.getElementById("tasks");
@@ -1864,6 +1908,7 @@ export class Rendering {
         this.prestige_overlay_element = getElement("prestige-overlay");
         this.confirmation_overlay_element = getElement("confirmation-overlay");
         this.item_undo_element = getElement("item-undo") as HTMLInputElement;
+        this.artifact_undo_element = getElement("artifact-undo") as HTMLInputElement;
         this.open_stats_element = getElement("open-stats");
         this.stats_overlay_element = getElement("stats-overlay");
         this.changelog_overlay_element = getElement("changelog-overlay");
