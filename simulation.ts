@@ -13,6 +13,7 @@ const ZONE_SPEEDUP_BASE = 1.05;
 export const BOSS_MAX_ENERGY_DISPARITY = 5;
 const STARTING_ENERGY = 100;
 const DEFAULT_TICK_RATE = 66.6;
+export const SAVE_VERSION = "0.1.2";
 
 // MARK: Skills
 
@@ -1107,6 +1108,8 @@ export function saveGame() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const saveData: any = {};
 
+    GAMESTATE.save_version = SAVE_VERSION;
+
     for (const key in GAMESTATE) {
         if (key == "active_task") {
             continue; // This would feel weird for the player if was persisted
@@ -1180,6 +1183,8 @@ function loadGameFromData(data: any) {
 // MARK: Gamestate
 
 export class Gamestate {
+    save_version: string = "";
+
     tasks: Task[] = [];
     active_task: Task | null = null;
     unlocked_tasks: number[] = [];
