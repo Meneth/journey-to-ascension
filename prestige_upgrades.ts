@@ -118,7 +118,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         type: PrestigeUnlockType.SeeBeyondTheVeil,
         layer: PrestigeLayer.TranscendHumanity,
         name: "See Beyond the Veil",
-        get_description: () => { return `Unlocks NUMBER new tasks before Zone 20`; },
+        get_description: () => { return `Unlocks NUMBER new tasks before Zone 20<br>This does nothing yet`; },
         cost: 2500
     },
 ];
