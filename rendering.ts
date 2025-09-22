@@ -298,7 +298,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         let magic_ring_asterisk_index = -1;
         const magic_ring_stacks = task.xp_boosted ? GAMESTATE.queued_magic_rings + 1 : GAMESTATE.queued_magic_rings;
 
-        {
+        if (task.task_definition.max_reps > 1) {
             const table = createTableSection(task_table, "Completions");
             createTwoElementRow(table, "", `${completions}`);
         }

@@ -11,6 +11,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         changes: "- Added changelog<br>"
         + "- Split Items into two categories; normal Items and Artifacts<br>"
         + "- Split out Skill Gains in the Task tooltip from Rewards<br>"
+        + "- Stopped showing Completions in the Task tooltip of single-rep Tasks<br>"
     },
     {
         version: "0.1.2",
