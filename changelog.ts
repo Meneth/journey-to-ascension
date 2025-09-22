@@ -14,6 +14,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Stopped showing Completions in the Task tooltip of single-rep Tasks<br>"
         + "- Stopped showing XP Mult in the Task tooltip, as it just caused confusion<br>"
         + "- Fixed two Perks starting their effect twice<br>"
+        + "- Added number postfixes beyond T; all the way up To Dc (though currently higher than Qi does not occur)<br>"
     },
     {
         version: "0.1.2",
