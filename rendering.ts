@@ -409,18 +409,21 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         }
 
         {
-            const table = createTableSection(task_table,"Modifiers");
-            const mult = task.task_definition.xp_mult;
-            let mult_class = "";
-            if (mult != 1) { mult_class = mult > 1 ? "good" : "bad"; }
-            createTwoElementRow(table, `${XP_TEXT} Multiplier`, `<span class="${mult_class}">x${mult}</span>`);
+            let table: HTMLElement | null = null;
+            function getOrCreateTable() {
+                if (!table) {
+                    table = createTableSection(task_table, "Modifiers");
+                }
+
+                return table;
+            }
 
             if (haste_stacks > 0) {
                 const needs_asterisk = haste_stacks < completions && !single_rep_for_all_ticks;
                 if (needs_asterisk) {
                     haste_asterisk_index = ++asterisk_count;
                 }
-                createTwoElementRow(table, `${HASTE_TEXT}${needs_asterisk ? "*".repeat(haste_asterisk_index) : ""}`, `<span class="good">x${HASTE_MULT}</span>`);
+                createTwoElementRow(getOrCreateTable(), `${HASTE_TEXT}${needs_asterisk ? "*".repeat(haste_asterisk_index) : ""}`, `<span class="good">x${HASTE_MULT}</span>`);
             }
 
             if (magic_ring_stacks > 0) {
@@ -428,7 +431,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 if (needs_asterisk) {
                     magic_ring_asterisk_index = ++asterisk_count;
                 }
-                createTwoElementRow(table, `${XP_TEXT} (Magic Ring)${needs_asterisk ? "*".repeat(magic_ring_asterisk_index) : ""}`, `<span class="good">x${MAGIC_RING_MULT}</span>`);
+                createTwoElementRow(getOrCreateTable(), `${XP_TEXT} (Magic Ring)${needs_asterisk ? "*".repeat(magic_ring_asterisk_index) : ""}`, `<span class="good">x${MAGIC_RING_MULT}</span>`);
             }
         }
 

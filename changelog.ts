@@ -12,6 +12,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Split Items into two categories; normal Items and Artifacts<br>"
         + "- Split out Skill Gains in the Task tooltip from Rewards<br>"
         + "- Stopped showing Completions in the Task tooltip of single-rep Tasks<br>"
+        + "- Stopped showing XP Mult in the Task tooltip, as it just caused confusion<br>"
     },
     {
         version: "0.1.2",
