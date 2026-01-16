@@ -10,6 +10,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         date: "2025-01-16",
         changes: "- Merged the Druid skill into the Magic skill<br>"
         + "- Fixed the Perks Skill bonuses breakdown saying 'Item(s)' rather than 'Perk(s)<br>"
+        + "- Fixed the Fully Attuned unlockable referring to the Divine Knowledge unlockable by the wrong name<br>"
     },
     {
         version: "0.1.3",
