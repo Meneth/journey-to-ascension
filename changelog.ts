@@ -6,6 +6,12 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "0.2.0",
+        date: "2025-01-16",
+        changes: "- Merged the Druid skill into the Magic skill<br>"
+        + "- Fixed the Perks Skill bonuses breakdown saying 'Item(s)' rather than 'Perk(s)<br>"
+    },
+    {
         version: "0.1.3",
         date: "2025-09-22",
         changes: "- Added changelog<br>"

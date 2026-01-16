@@ -661,7 +661,7 @@ function setupInfoTooltips() {
         const table = document.createElement("table");
         table.className = "table simple-table";
 
-        createThreeElementRow(table, "<h3>Skill</h3>", "<h3>Item(s)</h3>", "<h3>Bonus</h3>");
+        createThreeElementRow(table, "<h3>Skill</h3>", "<h3>Perk(s)</h3>", "<h3>Bonus</h3>");
 
         for (const skill_type of GAMESTATE.unlocked_skills) {
             const perk_bonuses = gatherPerkBonuses(skill_type);
