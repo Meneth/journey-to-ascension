@@ -11,11 +11,25 @@ export enum SkillType {
     Travel,
     Magic,
     Fortitude,
-    Druid,
+    REMOVED,
     Ascension,
 
     Count
 }
+
+export const SKILLS : SkillType[] = [
+    SkillType.Charisma,
+    SkillType.Study,
+    SkillType.Combat,
+    SkillType.Search,
+    SkillType.Subterfuge,
+    SkillType.Crafting,
+    SkillType.Survival,
+    SkillType.Travel,
+    SkillType.Magic,
+    SkillType.Fortitude,
+    SkillType.Ascension,
+]
 
 export class SkillDefinition {
     type: SkillType = SkillType.Count;
@@ -39,6 +53,6 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     new SkillDefinition({ type: SkillType.Travel, name: "Travel", icon: TRAVEL_EMOJI }),
     new SkillDefinition({ type: SkillType.Magic, name: "Magic", icon: "🔮", xp_needed_mult: 3 }),
     new SkillDefinition({ type: SkillType.Fortitude, name: "Fortitude", icon: "🛡️", xp_needed_mult: 10 }),
-    new SkillDefinition({ type: SkillType.Druid, name: "Druid", icon: "🐻", xp_needed_mult: 20 }),
+    new SkillDefinition({ type: SkillType.REMOVED, name: "REMOVED", icon: "⁉" }),
     new SkillDefinition({ type: SkillType.Ascension, name: "Ascension", icon: "🙏", xp_needed_mult: 1000 }),
 ]

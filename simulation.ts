@@ -3,7 +3,7 @@ import { GAMESTATE, setTickRate } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ARTIFACTS, ItemType, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PERKS, PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext } from "./events.js";
-import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
+import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 
@@ -142,16 +142,16 @@ function initializeSkills() {
     GAMESTATE.skills_at_start_of_reset = [];
     const global_target_level = getPrestigeRepeatableLevel(PrestigeRepeatableType.TranscendantAptitude) * TRANSCENDANT_APTITUDE_MULT;
 
-    for (let i = 0; i < SkillType.Count; i++) {
-        const target_level = i == SkillType.Ascension ? global_target_level / 2 : global_target_level;
-        GAMESTATE.skills.push(new Skill(i, target_level));
+    for (const skill of SKILLS) {
+        const target_level = skill == SkillType.Ascension ? global_target_level / 2 : global_target_level;
+        GAMESTATE.skills.push(new Skill(skill, target_level));
         GAMESTATE.skills_at_start_of_reset.push(target_level);
     }
 }
 
 function storeLoopStartNumbersForNextGameOver() {
-    for (let i = 0; i < SkillType.Count; i++) {
-        GAMESTATE.skills_at_start_of_reset[i] = getSkill(i).level;
+    for (const skill of SKILLS) {
+        GAMESTATE.skills_at_start_of_reset[skill] = getSkill(skill).level;
     }
 
     GAMESTATE.attunement_at_start_of_reset = GAMESTATE.attunement;
@@ -797,7 +797,7 @@ export function calcAttunementGain(task: Task): number {
 }
 
 export function calcAttunementSkills() {
-    const attunement_skills = [SkillType.Druid, SkillType.Magic, SkillType.Study];
+    const attunement_skills = [SkillType.Magic, SkillType.Study];
     if (hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned)) {
         attunement_skills.push(SkillType.Search);
     }
@@ -909,13 +909,13 @@ function checkEnergyReset() {
 function populateEnergyResetInfo() {
     const info = new EnergyResetInfo();
 
-    for (let i = 0; i < SkillType.Count; i++) {
-        const current_level = getSkill(i).level;
-        const starting_level = GAMESTATE.skills_at_start_of_reset[i] as number;
+    for (const skill of SKILLS) {
+        const current_level = getSkill(skill).level;
+        const starting_level = GAMESTATE.skills_at_start_of_reset[skill] as number;
         const skill_diff = current_level - starting_level;
 
         if (skill_diff > 0) {
-            info.skill_gains.push([i, skill_diff]);
+            info.skill_gains.push([skill, skill_diff]);
         }
     }
 
@@ -1178,6 +1178,9 @@ function loadGameFromData(data: any) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (GAMESTATE as any)[key] = (GAMESTATE as any)[key] instanceof Map ? new Map(value) : value;
     });
+
+    // Get rid of any skills that no longer exist
+    GAMESTATE.unlocked_skills = GAMESTATE.unlocked_skills.filter((skill) => SKILLS.includes(skill));
 }
 
 // MARK: Gamestate

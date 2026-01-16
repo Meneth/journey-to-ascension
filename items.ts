@@ -170,7 +170,6 @@ export const ITEMS: ItemDefinition[] = [
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Magic, 0.2],
             [SkillType.Crafting, 0.1],
-            [SkillType.Druid, 0.1]
         ]),
     }),
     new ItemDefinition({
@@ -179,7 +178,6 @@ export const ITEMS: ItemDefinition[] = [
          skill_modifiers: new ItemSkillModifierList([
             [SkillType.Survival, 0.1],
             [SkillType.Magic, 0.1],
-            [SkillType.Druid, 0.1]
         ]),
     }),
     new ItemDefinition({
@@ -256,7 +254,7 @@ export const ITEMS: ItemDefinition[] = [
         icon: `🦴`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Search, 0.2],
-            [SkillType.Druid, 0.2]
+            [SkillType.Magic, 0.2]
         ]),
     }),
     new ItemDefinition({

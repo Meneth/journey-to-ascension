@@ -189,7 +189,7 @@ export const PERKS: PerkDefinition[] = [
         enum: PerkType.LostTemple,
         name: `Found Lost Temple`,
         skill_modifiers: new PerkSkillModifierList([
-            [SkillType.Druid, 0.5]
+            [SkillType.Magic, 0.5]
         ]),
         icon: `🏯`,
     }),
@@ -222,7 +222,7 @@ export const PERKS: PerkDefinition[] = [
         name: `Deep Sea Diving`,
         skill_modifiers: new PerkSkillModifierList([
             [SkillType.Search, 0.3],
-            [SkillType.Druid, 0.3],
+            [SkillType.Magic, 0.3],
         ]),
         icon: `🤿`,
     }),
