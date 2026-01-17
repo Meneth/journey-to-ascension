@@ -13,6 +13,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Fixed the Fully Attuned unlockable referring to the Divine Knowledge unlockable by the wrong name<br>"
         + "- If you don't have enough Energy to fully complete a Task, it'll now show the Skill Gains as a range (from how much you'd gain using your current Energy, to fully completing)<br>"
         + "- Made the Changelog box wider<br>"
+        + "- Fixed the Items Skill bonus breakdown showing all bonuses as 100 percentage points higher than reality<br>"
     },
     {
         version: "0.1.3",

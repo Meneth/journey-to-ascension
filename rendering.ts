@@ -658,7 +658,7 @@ function setupInfoTooltips() {
 
         for (const skill_type of GAMESTATE.unlocked_skills) {
             const skill = getSkill(skill_type);
-            if (skill.speed_modifier <= 0) {
+            if (skill.speed_modifier <= 1) {
                 continue;
             }
 
@@ -668,7 +668,7 @@ function setupInfoTooltips() {
                 items_string += ITEMS[item_type]?.icon;
             }
 
-            createThreeElementRow(table, getSkillString(skill_type), items_string, `+${formatNumber(skill.speed_modifier * 100, false)}%`);
+            createThreeElementRow(table, getSkillString(skill_type), items_string, `+${formatNumber((skill.speed_modifier - 1) * 100, false)}%`);
         }
 
         if (table.children.length == 1) {
