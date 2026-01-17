@@ -88,7 +88,7 @@ export class ItemDefinition {
 }
 
 export const HASTE_MULT = 5;
-export const MAGIC_RING_MULT = 3;
+export const MAGIC_RING_MULT = 5;
 
 export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({

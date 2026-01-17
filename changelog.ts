@@ -15,6 +15,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- If you don't have enough Energy to fully complete a Task, it'll now show the Skill Gains as a range (from how much you'd gain using your current Energy, to fully completing)<br>"
         + "- Made the Changelog box wider<br>"
         + "- Fixed the Items Skill bonus breakdown showing all bonuses as 100 percentage points higher than reality<br>"
+        + "- Increased the Magic Ring boost from 3x to 5x<br>"
     },
     {
         version: "0.1.3",
