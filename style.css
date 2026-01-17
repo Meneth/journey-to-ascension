@@ -775,7 +775,7 @@ div.prestige-purchase {
 #changelog-box {
     position: relative;
     height: 730px;
-    width: 530px;
+    width: 800px;
     padding: 0;
     
     scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
