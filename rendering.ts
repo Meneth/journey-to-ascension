@@ -979,7 +979,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
     if (GAMESTATE.is_in_energy_reset) {
         energy_reset_div.innerHTML = "<h2>Out of Energy</h2>" +
             "<p>You used up all your Energy, but this is not the end.</p>" +
-            "<p>You keep half your Items (rounded up).</p>" +
+            (hasPerk(PerkType.UnderstandingTheReset) ? "<p>You keep half your Items (rounded up).</p>" : "<p>You lose your unused Items.</p>") +
             "<p>The effects of used Items disappear.</p>" +
             "<p>You keep all your Skills and Perks.</p>";
     } else {

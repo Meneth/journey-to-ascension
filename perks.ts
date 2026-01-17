@@ -41,6 +41,7 @@ export enum PerkType {
     UnifiedTheoryOfMagic,
     Headmaster,
     DragonSlayer,
+    UnderstandingTheReset,
 
     Count
 }
@@ -310,5 +311,11 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Charisma, 0.3],
         ]),
         icon: `🐉`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.UnderstandingTheReset,
+        name: `Understanding of the Reset`,
+        get_custom_tooltip: () => { return `When you run out of ${ENERGY_TEXT} and reincarnate you keep half your Items (rounded up)<br>This means you can use more Items in a run than just those gained in that specific run`; },
+        icon: `🔁`,
     }),
 ]

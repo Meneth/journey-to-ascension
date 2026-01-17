@@ -549,7 +549,7 @@ export function doEnergyReset() {
 
     doAnyReset(); // Gotta be after the current_zone check
     GAMESTATE.energy_reset_count += 1;
-    halveItemCounts();
+    handleEnergyResetItemCounts();
     storeLoopStartNumbersForNextGameOver();
     skipFreeZones();
 
@@ -606,9 +606,10 @@ export function clickItem(item: ItemType, use_all: boolean) {
     useItem(item, num_used);
 }
 
-function halveItemCounts() {
+function handleEnergyResetItemCounts() {
     for (const [key, value] of GAMESTATE.items) {
-        GAMESTATE.items.set(key, Math.ceil(value / 2));
+        const new_value = hasPerk(PerkType.UnderstandingTheReset) ? Math.ceil(value / 2) : 0;
+        GAMESTATE.items.set(key, new_value);
     }
 }
 

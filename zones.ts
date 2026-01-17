@@ -124,6 +124,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 62, name: "Scout the Road Ahead", type: TaskType.Mandatory, cost_multiplier: 1.3, max_reps: 3, skills: [SkillType.Study, SkillType.Search] }),
             new TaskDefinition({ id: 63, name: "Make Travel Equipment", max_reps: 4, cost_multiplier: 0.5, skills: [SkillType.Crafting], item: ItemType.TravelEquipment }),
             new TaskDefinition({ id: 64, name: "Get Used to Traveling", cost_multiplier: 1, max_reps: 3, xp_mult: 3, skills: [SkillType.Travel, SkillType.Fortitude], perk: PerkType.ExperiencedTraveler }),
+            new TaskDefinition({ id: 69, name: "Study the Amulet", cost_multiplier: 5, xp_mult: 0.2, skills: [SkillType.Study], perk: PerkType.UnderstandingTheReset }),
             new TaskDefinition({ id: 65, name: "Chat with Travelers", cost_multiplier: 1, max_reps: 4, xp_mult: 3, skills: [SkillType.Charisma] }),
             new TaskDefinition({ id: 66, name: "Practice Traveling Unnoticed", cost_multiplier: 2, max_reps: 1, xp_mult: 4, skills: [SkillType.Subterfuge] }),
             new TaskDefinition({ id: 67, name: "Bandits", type: TaskType.Boss, cost_multiplier: 10000, skills: [SkillType.Combat], item: ItemType.BanditWeapons, unlocks_task: 68 }),
