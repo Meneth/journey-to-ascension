@@ -133,7 +133,7 @@ export const ITEMS: ItemDefinition[] = [
         icon: `🎒`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Travel, 0.1],
-            [SkillType.Survival, 0.1]
+            [SkillType.Fortitude, 0.1]
         ]),
     }),
     new ItemDefinition({
@@ -161,7 +161,7 @@ export const ITEMS: ItemDefinition[] = [
         enum: ItemType.FiremakingKit, name: `Firemaking Kit`, name_plural: `Firemaking Kits`,
         icon: `🔥`,
         skill_modifiers: new ItemSkillModifierList([
-            [SkillType.Survival, 0.15]
+            [SkillType.Fortitude, 0.15]
         ]),
     }),
     new ItemDefinition({
@@ -176,7 +176,7 @@ export const ITEMS: ItemDefinition[] = [
         enum: ItemType.MagicalRoots, name: `Magical Root`, name_plural: `Magical Roots`,
         icon: `🌲`,
          skill_modifiers: new ItemSkillModifierList([
-            [SkillType.Survival, 0.1],
+            [SkillType.Fortitude, 0.1],
             [SkillType.Magic, 0.1],
         ]),
     }),
@@ -185,7 +185,7 @@ export const ITEMS: ItemDefinition[] = [
         icon: `💎`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Subterfuge, 0.5],
-            [SkillType.Survival, 0.5]
+            [SkillType.Magic, 0.5]
         ]),
     }),
     new ItemDefinition({
@@ -207,8 +207,7 @@ export const ITEMS: ItemDefinition[] = [
         enum: ItemType.BanditWeapons, name: `Cactus`, name_plural: `Cactuses`,
         icon: `🌵`,
         skill_modifiers: new ItemSkillModifierList([
-            [SkillType.Survival, 0.1],
-            [SkillType.Fortitude, 0.1]
+            [SkillType.Fortitude, 0.15]
         ]),
     }),
     new ItemDefinition({
@@ -224,7 +223,7 @@ export const ITEMS: ItemDefinition[] = [
         icon: `🐺`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Charisma, 0.2],
-            [SkillType.Survival, 0.2]
+            [SkillType.Fortitude, 0.2]
         ]),
     }),
     new ItemDefinition({
@@ -232,7 +231,7 @@ export const ITEMS: ItemDefinition[] = [
         icon: `💧`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Magic, 0.2],
-            [SkillType.Survival, 0.1]
+            [SkillType.Fortitude, 0.1]
         ]),
     }),
     new ItemDefinition({

@@ -9,6 +9,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         version: "0.2.0",
         date: "2025-01-16",
         changes: "- Merged the Druid skill into the Magic skill<br>"
+        + "- Removed the Survival skill. Replaced with Search, Fortitude, Crafting, or nothing depending on the Task<br>"
         + "- Fixed the Perks Skill bonuses breakdown saying 'Item(s)' rather than 'Perk(s)<br>"
         + "- Fixed the Fully Attuned unlockable referring to the Divine Knowledge unlockable by the wrong name<br>"
         + "- If you don't have enough Energy to fully complete a Task, it'll now show the Skill Gains as a range (from how much you'd gain using your current Energy, to fully completing)<br>"

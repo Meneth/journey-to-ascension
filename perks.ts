@@ -180,7 +180,7 @@ export const PERKS: PerkDefinition[] = [
         enum: PerkType.SunkenTreasure,
         name: `Sunken Treasure`,
         skill_modifiers: new PerkSkillModifierList([
-            [SkillType.Survival, 0.3],
+            [SkillType.Search, 0.3],
             [SkillType.Fortitude, 0.3],
         ]),
         icon: `⚓`,
