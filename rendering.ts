@@ -184,6 +184,21 @@ function calcTotalSkillXp(task: Task, completions: number) {
     return xp;
 }
 
+function calcLevelsGained(type: SkillType, xp_gained: number ) {
+    const skill_progress = getSkill(type);
+
+    let resulting_level = skill_progress.level;
+    let xp_needed = calcSkillXpNeeded(skill_progress) - skill_progress.progress;
+
+    while (xp_gained > xp_needed) {
+        xp_gained -= xp_needed;
+        resulting_level += 1;
+        xp_needed = calcSkillXpNeededAtLevel(resulting_level, type);
+    }
+
+    return resulting_level - skill_progress.level;
+}
+
 // MARK: Tasks
 
 const TASK_TYPE_NAMES = ["Normal", "Travel", "Mandatory", "Prestige", "Boss"];
@@ -295,12 +310,15 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
         let asterisk_count = 0;
         let perk_asterisk_index = -1;
+        let partial_skill_gain_asterisk_index = -1;
+        let haste_asterisk_index = -1;
+        let magic_ring_asterisk_index = -1;
+
         const remaining_completions = (task.reps == task.task_definition.max_reps) ? task.task_definition.max_reps : (task.task_definition.max_reps - task.reps);
         const single_rep_for_all_ticks = willCompleteAllRepsInOneTick(task);
         const completions = (GAMESTATE.repeat_tasks || single_rep_for_all_ticks) ? remaining_completions : 1;
-        let haste_asterisk_index = -1;
+        const expected_completions = calcExpectedCompletions(task, completions);
         const haste_stacks = task.hasted ? GAMESTATE.queued_scrolls_of_haste + 1 : GAMESTATE.queued_scrolls_of_haste;
-        let magic_ring_asterisk_index = -1;
         const magic_ring_stacks = task.xp_boosted ? GAMESTATE.queued_magic_rings + 1 : GAMESTATE.queued_magic_rings;
 
         if (task.task_definition.max_reps > 1) {
@@ -331,7 +349,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
                 const perk = PERKS[task.task_definition.perk] as PerkDefinition;
                 const is_last_rep = (task.reps + completions) == task.task_definition.max_reps;
-                if (!is_last_rep) { ++asterisk_count; perk_asterisk_index = asterisk_count; }
+                if (!is_last_rep) { perk_asterisk_index = ++asterisk_count; }
                 createTwoElementRow(getOrCreateTable(), `${perk.icon}${knowsPerk(perk.enum) ? perk.name : "Mystery"} Perk`, is_last_rep ? `1` : `0${"*".repeat(perk_asterisk_index)}`);
             }
 
@@ -347,36 +365,40 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         }
 
         {
-            const table = createTableSection(task_table, "Skill Gains");
+            let skill_gain_text = "Skill Gains";
+            if (completions != expected_completions) {
+                partial_skill_gain_asterisk_index = ++asterisk_count;
+                skill_gain_text += "*".repeat(partial_skill_gain_asterisk_index);
+            }
+            const table = createTableSection(task_table, skill_gain_text);
+            const xp_gained = calcTotalSkillXp(task, completions);
+            const xp_gained_before_energy_runs_out = calcTotalSkillXp(task, expected_completions);
 
             for (const skill of task.task_definition.skills) {
                 const skill_progress = getSkill(skill);
                 const skill_definition = SKILL_DEFINITIONS[skill] as SkillDefinition;
 
-                let xp_gained = calcTotalSkillXp(task, completions);
-                let resulting_level = skill_progress.level;
-                let xp_needed = calcSkillXpNeeded(skill_progress) - skill_progress.progress;
-
-                while (xp_gained > xp_needed) {
-                    xp_gained -= xp_needed;
-                    resulting_level += 1;
-                    xp_needed = calcSkillXpNeededAtLevel(resulting_level, skill);
-                }
-
                 let levels = ``;
 
-                const levels_diff = resulting_level - skill_progress.level;
-                if (levels_diff > 0) {
-                    levels = `${resulting_level - skill_progress.level}`;
-                } else {
-                    const level_percentage = xp_gained / calcSkillXpNeeded(skill_progress);
-                    if (level_percentage < 0.01) {
-                        levels = `<0.01`;
+                const levels_diff = calcLevelsGained(skill, xp_gained);
+                const expected_levels_diff = calcLevelsGained(skill, xp_gained_before_energy_runs_out);
+                if (levels_diff == expected_levels_diff) {
+                    if (levels_diff > 0) {
+                        levels = `${levels_diff}`;
                     } else {
-                        levels = `${formatNumber(level_percentage)}`;
+                        const level_percentage = xp_gained / calcSkillXpNeeded(skill_progress);
+                        if (level_percentage < 0.01) {
+                            levels = `<0.01`;
+                        } else if (completions == expected_completions) {
+                            levels = `${formatNumber(level_percentage)}`;
+                        } else {
+                            const expected_level_percentage = xp_gained_before_energy_runs_out / calcSkillXpNeeded(skill_progress);
+                            levels = `${formatNumber(expected_level_percentage)}-${formatNumber(level_percentage)}`;
+                        }
                     }
+                } else {
+                    levels = `${expected_levels_diff}-${levels_diff}`;
                 }
-
 
                 createTwoElementRow(table, `${skill_definition.icon}${skill_definition.name}`, levels);
             }
@@ -445,6 +467,9 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         if (perk_asterisk_index >= 0) {
             tooltip += `<p class="tooltip-asterisk">${"*".repeat(perk_asterisk_index)} Perk is only gained on completing all Reps of the Task</p>`;
         }
+        if (partial_skill_gain_asterisk_index >= 0) {
+            tooltip += `<p class="tooltip-asterisk">${"*".repeat(partial_skill_gain_asterisk_index)} Skill gain as range since you're expected to run out of ${ENERGY_TEXT} before fully completing this Task</p>`;
+        }
         if (haste_asterisk_index >= 0) {
             tooltip += `<p class="tooltip-asterisk">${"*".repeat(haste_asterisk_index)} Haste will only apply to the first ${haste_stacks} reps</p>`;
         }
@@ -507,26 +532,50 @@ function updateTaskRendering() {
     }
 }
 
-function estimateTotalTaskTicks(task: Task, completions: number): number {
-    if (willCompleteAllRepsInOneTick(task)) {
-        return 1; // Major Time Compression combines all single-tick reps
+function calcExpectedCompletions(task: Task, desired_completions: number) {
+    const {normal, haste, haste_completions} = calcSplitTotalTaskTicks(task, desired_completions);
+
+    const cost_per_tick = calcEnergyDrainPerTick(task, (normal + haste) <= desired_completions);
+    let remaining_energy = GAMESTATE.current_energy;
+
+    const haste_cost = haste * cost_per_tick;
+    const normal_cost = normal * cost_per_tick;
+
+    if (haste_cost + normal_cost <= remaining_energy) {
+        return desired_completions;
     }
 
+    const actual_haste_completions = Math.min(remaining_energy / haste_cost, 1) * haste_completions;
+    if (actual_haste_completions < haste_completions) {
+        return actual_haste_completions;
+    }
+
+    remaining_energy -= haste_cost;
+    return haste_completions + Math.min(remaining_energy / normal_cost, 1) * (desired_completions - haste_completions);
+}
+
+function calcSplitTotalTaskTicks(task: Task, completions: number) {
+    if (willCompleteAllRepsInOneTick(task)) {
+        return {normal: 1, haste: 0, haste_completions: 0}; // Major Time Compression combines all single-tick reps
+    }
+
+    let progress_mult = calcTaskProgressMultiplier(task, false);
     let haste_stacks = GAMESTATE.queued_scrolls_of_haste;
     if (task.hasted) {
         haste_stacks += 1;
     }
     const haste_completions = Math.min(completions, haste_stacks);
-    const non_haste_completion = completions - haste_completions;
-
-    let num_ticks = 0;
-    let progress_mult = calcTaskProgressMultiplier(task, false);
-
-    num_ticks += Math.ceil(calcTaskCost(task) / progress_mult) * non_haste_completion;
+    const non_haste_completions = completions - haste_completions;
+    const normal_ticks = Math.ceil(calcTaskCost(task) / progress_mult) * non_haste_completions;
     progress_mult *= HASTE_MULT;
-    num_ticks += Math.ceil(calcTaskCost(task) / progress_mult) * haste_completions;
+    const haste_ticks = Math.ceil(calcTaskCost(task) / progress_mult) * haste_completions;
 
-    return num_ticks;
+    return {normal: normal_ticks, haste: haste_ticks, haste_completions: haste_completions};
+}
+
+function estimateTotalTaskTicks(task: Task, completions: number): number {
+    const {normal, haste} = calcSplitTotalTaskTicks(task, completions);
+    return normal + haste;
 }
 
 function estimateTaskTimeInSeconds(task: Task, completions: number): number {
