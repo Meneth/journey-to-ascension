@@ -51,7 +51,7 @@ export const SKILL_DEFINITIONS: SkillDefinition[] = [
     new SkillDefinition({ type: SkillType.REMOVED, name: "REMOVED", icon: "⁉" }),
     new SkillDefinition({ type: SkillType.Travel, name: "Travel", icon: TRAVEL_EMOJI }),
     new SkillDefinition({ type: SkillType.Magic, name: "Magic", icon: "🔮", xp_needed_mult: 3 }),
-    new SkillDefinition({ type: SkillType.Fortitude, name: "Fortitude", icon: "🛡️", xp_needed_mult: 10 }),
+    new SkillDefinition({ type: SkillType.Fortitude, name: "Fortitude", icon: "🛡️", xp_needed_mult: 5 }),
     new SkillDefinition({ type: SkillType.REMOVED2, name: "REMOVED", icon: "⁉" }),
-    new SkillDefinition({ type: SkillType.Ascension, name: "Ascension", icon: "🙏", xp_needed_mult: 1000 }),
+    new SkillDefinition({ type: SkillType.Ascension, name: "Ascension", icon: "🙏", xp_needed_mult: 200 }),
 ]

@@ -20,6 +20,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Added Credits section<br>"
         + "- If the player doesn't figure out prep runs themselves, a hint gets shown a while after unlocking keeping some Items on death<br>"
         + "- Once keeping some Items on reset is unlocked, the Energy reset lets you decide whether to auto-use Items or not<br>"
+        + "- Rebalanced a ton of Tasks<br>"
     },
     {
         version: "0.1.3",

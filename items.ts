@@ -109,7 +109,7 @@ export const ITEMS: ItemDefinition[] = [
         enum: ItemType.Coin, name: `Coin`, name_plural: `Coins`,
         icon: `💰`,
         skill_modifiers: new ItemSkillModifierList([
-            [SkillType.Charisma, 0.15]
+            [SkillType.Charisma, 0.2]
         ]),
     }),
     new ItemDefinition({
@@ -125,7 +125,8 @@ export const ITEMS: ItemDefinition[] = [
         icon: `📦`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Subterfuge, 0.15],
-            [SkillType.Combat, 0.1]
+            [SkillType.Combat, 0.1],
+            [SkillType.Fortitude, 0.1],
         ]),
     }),
     new ItemDefinition({
@@ -140,7 +141,8 @@ export const ITEMS: ItemDefinition[] = [
         enum: ItemType.Book, name: `Book`, name_plural: `Books`,
         icon: `📚`,
         skill_modifiers: new ItemSkillModifierList([
-            [SkillType.Study, 0.1]
+            [SkillType.Study, 0.1],
+            [SkillType.Magic, 0.1]
         ]),
     }),
     new ItemDefinition({
