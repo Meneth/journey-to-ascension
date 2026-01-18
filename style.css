@@ -520,6 +520,11 @@ button#end-of-content-reset, button.dismiss {
     font-size: 1.5em;
 }
 
+#game-over-overlay button.dismiss {
+    width: 370px;
+    margin: 3px;
+}
+
 #game-over-overlay p {
     margin: 0.7em;
 }

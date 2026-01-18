@@ -987,21 +987,48 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
         energy_reset_div.innerHTML = "<h2>Last Run</h2>";
     }
 
-    const button = document.createElement("button");
-    button.className = "dismiss";
-    button.textContent = GAMESTATE.is_in_energy_reset ? "Start the Journey Over, Wiser" : "Dismiss";
+    const hasHadItemInheritance = hasPerk(PerkType.UnderstandingTheReset) || GAMESTATE.prestige_count > 0;
 
-    button.addEventListener("click", () => {
-        energy_reset_div.classList.add("hidden");
-        if (GAMESTATE.is_in_energy_reset) {
+    if (!GAMESTATE.is_in_energy_reset || !hasHadItemInheritance) {
+        const button = createChildElement(energy_reset_div, "button");
+        button.className = "dismiss";
+        button.textContent = GAMESTATE.is_in_energy_reset ? "Start the Journey Over, Wiser" : "Dismiss";
+    
+        button.addEventListener("click", () => {
+            energy_reset_div.classList.add("hidden");
+            if (GAMESTATE.is_in_energy_reset) {
+                doEnergyReset();
+            }
+        });
+        setupTooltipStatic(button, button.textContent, GAMESTATE.is_in_energy_reset ? "Do Energy Reset" : "Return to the game");
+    } else {
+        const auto_button = createChildElement(energy_reset_div, "button");
+        const no_auto_button = createChildElement(energy_reset_div, "button");
+
+        auto_button.className = "dismiss";
+        no_auto_button.className = "dismiss";
+
+        auto_button.textContent = "Reset, With Auto Use Items";
+        no_auto_button.textContent = "Reset, Without Auto Use Items";
+
+        auto_button.addEventListener("click", () => {
+            energy_reset_div.classList.add("hidden");
+            GAMESTATE.auto_use_items = true;
             doEnergyReset();
             if (shouldShowPrepRunHint()) {
                 showPrepRunHint();
             }
-        }
-    });
-    setupTooltipStatic(button, button.textContent, GAMESTATE.is_in_energy_reset ? "Do Energy Reset" : "Return to the game");
-    energy_reset_div.appendChild(button);
+        });
+        no_auto_button.addEventListener("click", () => {
+            energy_reset_div.classList.add("hidden");
+            GAMESTATE.auto_use_items = false;
+            doEnergyReset();
+            if (shouldShowPrepRunHint()) {
+                showPrepRunHint();
+            }
+        });
+    }
+
 
     const skill_gain = document.createElement("div");
 
