@@ -546,8 +546,9 @@ function calcEnergeticMemoryGain() {
 
 export function doEnergyReset() {
     modifyMaxEnergy(calcEnergeticMemoryGain());
+    updatePrepRunHint(); // Needs to be before we reset the item use
 
-    doAnyReset(); // Gotta be after the current_zone check
+    doAnyReset(); // Gotta be after the current_zone check in calcEnergeticMemoryGain
     GAMESTATE.energy_reset_count += 1;
     handleEnergyResetItemCounts();
     storeLoopStartNumbersForNextGameOver();
@@ -659,6 +660,22 @@ export function gatherItemBonuses(skill: SkillType): ItemAmount[] {
     }
 
     return ret;
+}
+
+function updatePrepRunHint() {
+    if (!hasPerk(PerkType.UnderstandingTheReset)) {
+        return;
+    }
+
+    if (GAMESTATE.used_items.size == 0) {
+        GAMESTATE.hint_prep_runs_done++;
+    } else {
+        GAMESTATE.hint_non_prep_runs_done++;
+    }
+}
+
+export function setHasGottenPrepRunHint() {
+    GAMESTATE.hint_has_gotten_prep_run_hint = true;
 }
 
 // MARK: Perks
@@ -1237,6 +1254,10 @@ export class Gamestate {
     prestige_layers_unlocked: PrestigeLayer[] = [];
 
     pending_render_events: RenderEvent[] = [];
+
+    hint_prep_runs_done = 0;
+    hint_non_prep_runs_done = 0; // Since unlocking prep runs
+    hint_has_gotten_prep_run_hint = false;
 
     public start() {
         if (!loadGame()) {

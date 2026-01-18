@@ -516,7 +516,7 @@ button:hover:not(.disabled):not(:disabled) {
     text-align: center;
 }
 
-button#end-of-content-reset, button.game-over-dismiss {
+button#end-of-content-reset, button.dismiss {
     font-size: 1.5em;
 }
 

@@ -18,6 +18,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Increased the Magic Ring boost from 3x to 5x<br>"
         + "- You no longer keep half your Items on Energy reset; this is unlocked later instead<br>"
         + "- Added Credits section<br>"
+        + "- If the player doesn't figure out prep runs themselves, a hint gets shown a while after unlocking keeping some Items on death<br>"
     },
     {
         version: "0.1.3",
