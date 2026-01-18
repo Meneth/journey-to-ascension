@@ -17,6 +17,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Fixed the Items Skill bonus breakdown showing all bonuses as 100 percentage points higher than reality<br>"
         + "- Increased the Magic Ring boost from 3x to 5x<br>"
         + "- You no longer keep half your Items on Energy reset; this is unlocked later instead<br>"
+        + "- Added Credits section<br>"
     },
     {
         version: "0.1.3",

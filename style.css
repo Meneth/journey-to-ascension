@@ -562,10 +562,14 @@ button.do-prestige {
 .close {
     position: absolute;
     top: 8px;
-    right: 20px;
+    right: 8px;
     width: 32px;
     height: 32px;
     font-size: 1em;
+}
+
+.close.close-scroll {
+   right: 20px;
 }
 
 .prestige-purchase {
@@ -764,9 +768,9 @@ div.prestige-purchase {
     gap: var(--standard-div-spacing);
 }
 
-#settings {
-    height: 200px;
-    width: 200px;
+#settings button:not(.close) {
+    width: 120px;
+    font-size: 1.2em;
 }
 
 /* MARK: Changelog
@@ -784,6 +788,17 @@ div.prestige-purchase {
 .changelog-entry {
     width: 90%;
     text-align: left;
+}
+
+/* MARK: Credits
+*/
+
+#credits-box {
+    position: relative;
+    width: 530px;
+    padding: 0;
+    
+    scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
 }
 
 /* MARK: Messages

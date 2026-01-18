@@ -8,6 +8,7 @@ import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, TRAVEL_EMOJI, XP_TEXT } from "./rendering_constants.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE } from "./prestige_upgrades.js";
 import { CHANGELOG } from "./changelog.js";
+import { CREDITS } from "./credits.js";
 
 // MARK: Helpers
 
@@ -1135,7 +1136,7 @@ function populatePrestigeView() {
 
     {
         const close_button = createChildElement(prestige_div, "button");
-        close_button.className = "close";
+        close_button.className = "close close-scroll";
         close_button.textContent = "X";
 
         close_button.addEventListener("click", () => {
@@ -1428,6 +1429,25 @@ function setupSettings() {
     changelog_overlay.addEventListener("click", (e) => {
         if (e.target == changelog_overlay) { // Clicking outside the window
             changelog_overlay.classList.add("hidden");
+        }
+    });
+
+    const credits_button = settings_div.querySelector<HTMLElement>("#credits");
+    if (!credits_button) {
+        console.error("No credits button");
+        return;
+    }
+
+    setupTooltipStatic(credits_button, "Open Credits", "View the game credits");
+
+    credits_button.addEventListener("click", () => {
+        showCredits();
+    });
+
+    const credits_overlay = RENDERING.credits_overlay_element;
+    credits_overlay.addEventListener("click", (e) => {
+        if (e.target == credits_overlay) { // Clicking outside the window
+            credits_overlay.classList.add("hidden");
         }
     });
 }
@@ -1832,7 +1852,7 @@ function populateStatsView() {
 
     {
         const close_button = createChildElement(stats_div, "button");
-        close_button.className = "close";
+        close_button.className = "close close-scroll";
         close_button.textContent = "X";
 
         close_button.addEventListener("click", () => {
@@ -1926,7 +1946,7 @@ function showChangelog(since_version = "") {
 
     {
         const close_button = createChildElement(changelog_div, "button");
-        close_button.className = "close";
+        close_button.className = "close close-scroll";
         close_button.textContent = "X";
 
         close_button.addEventListener("click", () => {
@@ -1952,6 +1972,39 @@ function showChangelog(since_version = "") {
         createChildElement(entry_div, "h2").textContent = `${entry.version} (${entry.date})`;
         createChildElement(entry_div, "p").innerHTML = entry.changes;
     }
+}
+
+// MARK: Changelog
+
+function showCredits() {
+    RENDERING.credits_overlay_element.classList.remove("hidden");
+
+    const credits_overlay = RENDERING.credits_overlay_element;
+    const credits_div = credits_overlay.querySelector("#credits-box");
+    if (!credits_div) {
+        console.error("No credits-box");
+        return;
+    }
+
+    credits_div.innerHTML = "";
+
+    const scroll_area = createChildElement(credits_div, "div");
+    scroll_area.className = "scroll-area";
+
+    {
+        const close_button = createChildElement(credits_div, "button");
+        close_button.className = "close";
+        close_button.textContent = "X";
+
+        close_button.addEventListener("click", () => {
+            credits_overlay.classList.add("hidden");
+        });
+
+        setupTooltipStatic(close_button, `Close Credits`, ``);
+    }
+
+    createChildElement(scroll_area, "h1").textContent = "Credits";
+    createChildElement(scroll_area, "p").innerHTML = CREDITS;
 }
 
 // MARK: Rendering
@@ -1982,6 +2035,7 @@ export class Rendering {
     open_stats_element: HTMLElement;
     stats_overlay_element: HTMLElement;
     changelog_overlay_element: HTMLElement;
+    credits_overlay_element: HTMLElement;
 
     energy_reset_count: number = 0;
     current_zone: number = 0;
@@ -2036,6 +2090,7 @@ export class Rendering {
         this.open_stats_element = getElement("open-stats");
         this.stats_overlay_element = getElement("stats-overlay");
         this.changelog_overlay_element = getElement("changelog-overlay");
+        this.credits_overlay_element = getElement("credits-overlay");
     }
 
     public initialize() {
