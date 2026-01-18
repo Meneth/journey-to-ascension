@@ -142,7 +142,7 @@ function initializeSkills() {
     GAMESTATE.skills_at_start_of_reset = [];
     const global_target_level = getPrestigeRepeatableLevel(PrestigeRepeatableType.TranscendantAptitude) * TRANSCENDANT_APTITUDE_MULT;
 
-    for (const skill of SKILLS) {
+    for (let skill = 0; skill < SkillType.Count; ++skill) {
         const target_level = skill == SkillType.Ascension ? global_target_level / 2 : global_target_level;
         GAMESTATE.skills.push(new Skill(skill, target_level));
         GAMESTATE.skills_at_start_of_reset.push(target_level);
