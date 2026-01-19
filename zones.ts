@@ -248,7 +248,7 @@ export const ZONES: Zone[] = [
         tasks: [
             new TaskDefinition({ id: 150, name: "Begin Search for the Next Ritual", type: TaskType.Travel, cost_multiplier: 50, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 151, name: "Apologize for Stealing Reagents", type: TaskType.Mandatory, cost_multiplier: 40, max_reps: 3, skills: [SkillType.Charisma], xp_mult: 0.25 }),
-            new TaskDefinition({ id: 152, name: "Rest for a While", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 5, skills: [SkillType.Fortitude] }),
+            new TaskDefinition({ id: 152, name: "Rest for a While", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 5, xp_mult: 1.25, skills: [SkillType.Fortitude] }),
             new TaskDefinition({ id: 153, name: "Touch the Divine", type: TaskType.Prestige, max_reps: 1, cost_multiplier: 0.025, skills: [SkillType.Ascension], prestige_layer: PrestigeLayer.TouchTheDivine }),
             new TaskDefinition({ id: 154, name: "Infuse Mystic Incense", max_reps: 9, cost_multiplier: 75, skills: [SkillType.Magic], item: ItemType.MysticIncense }),
             new TaskDefinition({ id: 155, name: "Practice Memorization", cost_multiplier: 1200, max_reps: 4, skills: [SkillType.Study, SkillType.Magic], perk: PerkType.EnergeticMemory, xp_mult: 0.5 }),

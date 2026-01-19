@@ -178,7 +178,7 @@ export const ITEMS: ItemDefinition[] = [
         enum: ItemType.MagicalRoots, name: `Magical Root`, name_plural: `Magical Roots`,
         icon: `🌲`,
          skill_modifiers: new ItemSkillModifierList([
-            [SkillType.Fortitude, 0.1],
+            [SkillType.Fortitude, 0.2],
             [SkillType.Magic, 0.1],
         ]),
     }),

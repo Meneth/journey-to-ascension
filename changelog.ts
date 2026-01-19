@@ -10,6 +10,8 @@ export const CHANGELOG: ChangelogEntry[] = [
         date: "2025-01-19",
         changes: "- Clarified a couple of tooltips<br>"
         + "- Reduced the cost of some of the first Prestige upgrades<br>"
+        + "- Made the Fortitude task in Z15 give a bit more XP<br>"
+        + "- Made Magical Roots give twice as much Fortitude<br>"
     },
     {
         version: "0.2.0",
