@@ -145,7 +145,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         name: "Divine Knowledge",
         get_description: () => { return `Increases ${XP_TEXT}${hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned) ? ` and ${ATTUNEMENT_TEXT}` : ""} gain by ${DIVINE_KNOWLEDGE_MULT * 100}%`; },
         initial_cost: 10,
-        scaling_exponent: 1.23
+        scaling_exponent: 1.2
     },
     {
         type: PrestigeRepeatableType.UnlimitedPower,
@@ -169,7 +169,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         name: "Gotta Go Fast",
         get_description: () => { return `Multiplies Task speed by ${GOTTA_GO_FAST_BASE}`; },
         initial_cost: 10,
-        scaling_exponent: 2
+        scaling_exponent: 1.8
     },
 
     {
