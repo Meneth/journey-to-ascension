@@ -221,7 +221,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 130, name: "Enter the Oasis", type: TaskType.Travel, cost_multiplier: 7, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 131, name: "Overcome Mirage", type: TaskType.Mandatory, cost_multiplier: 6, max_reps: 1, skills: [SkillType.Fortitude] }),
             new TaskDefinition({ id: 132, name: "Find the Oasis", type: TaskType.Mandatory, cost_multiplier: 1, max_reps: 1, skills: [SkillType.Search] }),
-            new TaskDefinition({ id: 133, name: "Harvest Cactus", max_reps: 3, cost_multiplier: 0.8, skills: [SkillType.Crafting], item: ItemType.Cactus }),
+            new TaskDefinition({ id: 133, name: "Harvest Cactus", max_reps: 3, cost_multiplier: 0.2, skills: [SkillType.Crafting], item: ItemType.Cactus }),
             new TaskDefinition({ id: 134, name: "Avoid Notice by the Sandworm", cost_multiplier: 1, max_reps: 4, skills: [SkillType.Subterfuge], perk: PerkType.WalkWithoutRhythm }),
             new TaskDefinition({ id: 135, name: "Work on Your Tan", cost_multiplier: 1, max_reps: 3, xp_mult: 15, skills: [SkillType.Fortitude] }),
             new TaskDefinition({ id: 136, name: "Comb the Desert", cost_multiplier: 2, max_reps: 3, xp_mult: 10, skills: [SkillType.Search] }),
@@ -238,7 +238,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 143, name: "Bottle Oasis Water", max_reps: 4, cost_multiplier: 0.2, skills: [SkillType.Crafting], item: ItemType.OasisWater }),
             new TaskDefinition({ id: 144, name: "Reflect on the Journey", cost_multiplier: 25, max_reps: 4, skills: [SkillType.Study], perk: PerkType.ReflectionsOnTheJourney }),
             new TaskDefinition({ id: 145, name: "Prepare for the Journey Ahead", cost_multiplier: 2.5, max_reps: 3, xp_mult: 2, skills: [SkillType.Travel, SkillType.Combat] }),
-            new TaskDefinition({ id: 146, name: "Talk to the Djinn", cost_multiplier: 30, max_reps: 1, xp_mult: 10, skills: [SkillType.Charisma] }),
+            new TaskDefinition({ id: 146, name: "Talk to the Djinn", cost_multiplier: 30, max_reps: 1, xp_mult: 20, skills: [SkillType.Charisma] }),
             new TaskDefinition({ id: 147, name: "Sleepy Djinn", type: TaskType.Boss, cost_multiplier: 2_000_000, xp_mult: 0.3, skills: [SkillType.Combat], item: ItemType.DjinnLamp, unlocks_task: 148 }),
             new TaskDefinition({ id: 148, name: "Find More Lamps", cost_multiplier: 30, max_reps: 3, skills: [SkillType.Search, SkillType.Subterfuge], item: ItemType.DjinnLamp, hidden_by_default: true }),
         ],
@@ -246,8 +246,8 @@ export const ZONES: Zone[] = [
     {
         name: "The Ritual",
         tasks: [
-            new TaskDefinition({ id: 150, name: "Begin Search for the Next Ritual", type: TaskType.Travel, cost_multiplier: 60, skills: [SkillType.Travel] }),
-            new TaskDefinition({ id: 151, name: "Apologize for Stealing Reagents", type: TaskType.Mandatory, cost_multiplier: 150, max_reps: 3, skills: [SkillType.Charisma], xp_mult: 0.25 }),
+            new TaskDefinition({ id: 150, name: "Begin Search for the Next Ritual", type: TaskType.Travel, cost_multiplier: 50, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 151, name: "Apologize for Stealing Reagents", type: TaskType.Mandatory, cost_multiplier: 40, max_reps: 3, skills: [SkillType.Charisma], xp_mult: 0.25 }),
             new TaskDefinition({ id: 152, name: "Rest for a While", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 5, skills: [SkillType.Fortitude] }),
             new TaskDefinition({ id: 153, name: "Touch the Divine", type: TaskType.Prestige, max_reps: 1, cost_multiplier: 0.025, skills: [SkillType.Ascension], prestige_layer: PrestigeLayer.TouchTheDivine }),
             new TaskDefinition({ id: 154, name: "Infuse Mystic Incense", max_reps: 9, cost_multiplier: 75, skills: [SkillType.Magic], item: ItemType.MysticIncense }),

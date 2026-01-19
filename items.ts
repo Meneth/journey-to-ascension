@@ -255,7 +255,9 @@ export const ITEMS: ItemDefinition[] = [
         icon: `🦴`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Search, 0.2],
-            [SkillType.Magic, 0.2]
+            [SkillType.Magic, 0.2],
+            [SkillType.Ascension, 0.1],
+            [SkillType.Travel, 0.1],
         ]),
     }),
     new ItemDefinition({
