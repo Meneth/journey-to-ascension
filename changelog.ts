@@ -7,20 +7,21 @@ export class ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
     {
         version: "0.2.0",
-        date: "2025-01-16",
-        changes: "- Merged the Druid skill into the Magic skill<br>"
+        date: "2025-01-19",
+        changes: "- Rebalanced the game up to Zone 15<br>"
+        + "- Merged the Druid skill into the Magic skill<br>"
         + "- Removed the Survival skill. Replaced with Search, Fortitude, Crafting, or nothing depending on the Task<br>"
+        + "- You no longer keep half your Items on Energy reset; this is unlocked later instead<br>"
+        + "- If you don't have enough Energy to fully complete a Task, it'll now show the Skill Gains as a range (from how much you'd gain using your current Energy, to fully completing)<br>"
+        + "- Increased the Magic Ring boost from 3x to 5x<br>"
+        + "- Rebalanced some Items<br>"
+        + "- Once keeping some Items on reset is unlocked, the Energy reset lets you decide whether to auto-use Items or not<br>"
+        + "- Added Credits section<br>"
         + "- Fixed the Perks Skill bonuses breakdown saying 'Item(s)' rather than 'Perk(s)<br>"
         + "- Fixed the Fully Attuned unlockable referring to the Divine Knowledge unlockable by the wrong name<br>"
-        + "- If you don't have enough Energy to fully complete a Task, it'll now show the Skill Gains as a range (from how much you'd gain using your current Energy, to fully completing)<br>"
         + "- Made the Changelog box wider<br>"
         + "- Fixed the Items Skill bonus breakdown showing all bonuses as 100 percentage points higher than reality<br>"
-        + "- Increased the Magic Ring boost from 3x to 5x<br>"
-        + "- You no longer keep half your Items on Energy reset; this is unlocked later instead<br>"
-        + "- Added Credits section<br>"
         + "- If the player doesn't figure out prep runs themselves, a hint gets shown a while after unlocking keeping some Items on death<br>"
-        + "- Once keeping some Items on reset is unlocked, the Energy reset lets you decide whether to auto-use Items or not<br>"
-        + "- Rebalanced a ton of Tasks<br>"
     },
     {
         version: "0.1.3",
