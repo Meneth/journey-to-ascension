@@ -292,7 +292,7 @@ export const ITEMS: ItemDefinition[] = [
         enum: ItemType.MagicEssence, name: `Magical Essence`, name_plural: `Magical Essences`,
         icon: `🌠`,
         skill_modifiers: new ItemSkillModifierList([
-            [SkillType.Magic, 3]
+            [SkillType.Magic, 4]
         ]),
     }),
     new ItemDefinition({
