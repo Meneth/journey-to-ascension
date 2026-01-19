@@ -13,7 +13,7 @@ const ZONE_SPEEDUP_BASE = 1.05;
 export const BOSS_MAX_ENERGY_DISPARITY = 5;
 const STARTING_ENERGY = 100;
 const DEFAULT_TICK_RATE = 66.6;
-export const SAVE_VERSION = "0.1.2";
+export const SAVE_VERSION = "0.2.0";
 
 // MARK: Skills
 
