@@ -692,6 +692,7 @@ function setupInfoTooltips() {
         let tooltip = `Artifacts are special Items with powerful single-use effects`;
         tooltip += `<br>The effects apply to just a single rep of the next Task started`;
         tooltip += `<br>They otherwise behave identically to other Items`;
+        tooltip += `<br>That includes keeping half after ${ENERGY_TEXT} resets`;
         return tooltip;
     });
 

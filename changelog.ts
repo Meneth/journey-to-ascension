@@ -6,6 +6,12 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "0.2.1",
+        date: "2025-01-19",
+        changes: "- Clarified a couple of tooltips<br>"
+        + "- Reduced the cost of some of the first Prestige upgrades<br>"
+    },
+    {
         version: "0.2.0",
         date: "2025-01-19",
         changes: "- Rebalanced the game up to Zone 15<br>"

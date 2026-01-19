@@ -315,7 +315,7 @@ export const PERKS: PerkDefinition[] = [
     new PerkDefinition({
         enum: PerkType.UnderstandingTheReset,
         name: `Understanding of the Reset`,
-        get_custom_tooltip: () => { return `When you run out of ${ENERGY_TEXT} and reincarnate you keep half your Items (rounded up)<br>This means you can use more Items in a run than just those gained in that specific run`; },
+        get_custom_tooltip: () => { return `When you run out of ${ENERGY_TEXT} and reincarnate you keep half your remaining Items (rounded up)<br>This means you can use more Items in a run than just those gained in that specific run`; },
         icon: `🔁`,
     }),
 ]

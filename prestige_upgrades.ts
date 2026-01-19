@@ -144,7 +144,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         layer: PrestigeLayer.TouchTheDivine,
         name: "Divine Knowledge",
         get_description: () => { return `Increases ${XP_TEXT}${hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned) ? ` and ${ATTUNEMENT_TEXT}` : ""} gain by ${DIVINE_KNOWLEDGE_MULT * 100}%`; },
-        initial_cost: 15,
+        initial_cost: 10,
         scaling_exponent: 1.23
     },
     {
@@ -160,7 +160,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         layer: PrestigeLayer.TouchTheDivine,
         name: "Divine Appetite",
         get_description: () => { return `Increases ${ENERGY_TEXT} gained from Items by ${DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT * 100}%`; },
-        initial_cost: 40,
+        initial_cost: 30,
         scaling_exponent: 2.5
     },
     {
@@ -168,7 +168,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         layer: PrestigeLayer.TouchTheDivine,
         name: "Gotta Go Fast",
         get_description: () => { return `Multiplies Task speed by ${GOTTA_GO_FAST_BASE}`; },
-        initial_cost: 50,
+        initial_cost: 10,
         scaling_exponent: 2
     },
 
