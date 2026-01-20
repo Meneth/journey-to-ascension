@@ -18,6 +18,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Added a Save Reset button in the Settings<br>"
         + "- Fixed running out of Energy while viewing info from the last Run not giving the Run Over screen<br>"
         + "- Boss Task automations now get removed on Prestige, since you generally only want to deal with them later in the Prestige run<br>"
+        + "- Added hotkeys for Automation and Task Repetition<br>"
     },
     {
         version: "0.2.1",

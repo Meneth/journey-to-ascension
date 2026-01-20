@@ -894,6 +894,7 @@ function setupAutoUseItemsControl() {
     setupTooltipStaticHeader(item_control, `${item_control.textContent}`, function () {
         let tooltip = "Toggle between items being used automatically, and only being used manually";
         tooltip += "<br>Won't use Artifacts";
+        tooltip += "<br><br>Hotkey: I";
 
         return tooltip;
     });
@@ -1753,13 +1754,21 @@ function setupRepeatTasksControl() {
     });
 
     setupTooltip(rep_control, function () { return rep_control.textContent; }, function () {
-        return "Toggle between repeating Tasks if they have multiple reps, or only doing a single rep<br>When repeating, the Task tooltip will show the numbers for doing all remaining reps rather than just one";
+        return "Toggle between repeating Tasks if they have multiple reps, or only doing a single rep<br>When repeating, the Task tooltip will show the numbers for doing all remaining reps rather than just one<br><br>Hotkey: R";
     });
 
     RENDERING.controls_list_element.appendChild(rep_control);
 }
 
 // MARK: Controls - Automation
+
+function toggleAutomationMode(mode: AutomationMode) {
+    if (mode == GAMESTATE.automation_mode) {
+        setAutomationMode(AutomationMode.Off);
+    } else {
+        setAutomationMode(mode);
+    }
+}
 
 function setupAutomationControls() {
     if (!hasPerk(PerkType.Amulet)) {
@@ -1779,26 +1788,21 @@ function setupAutomationControls() {
     all_control.textContent = "All";
     zone_control.textContent = "Zone";
 
-    function setAutomationClasses() {
-        all_control.className = GAMESTATE.automation_mode == AutomationMode.All ? "on" : "off";
-        zone_control.className = GAMESTATE.automation_mode == AutomationMode.Zone ? "on" : "off";
-    }
-
-    setAutomationClasses();
+    all_control.className = GAMESTATE.automation_mode == AutomationMode.All ? "on" : "off";
+    zone_control.className = GAMESTATE.automation_mode == AutomationMode.Zone ? "on" : "off";
 
     all_control.addEventListener("click", () => {
-        setAutomationMode(GAMESTATE.automation_mode == AutomationMode.All ? AutomationMode.Off : AutomationMode.All);
-        setAutomationClasses();
+        toggleAutomationMode(AutomationMode.All);
     });
     zone_control.addEventListener("click", () => {
-        setAutomationMode(GAMESTATE.automation_mode == AutomationMode.Zone ? AutomationMode.Off : AutomationMode.Zone);
-        setAutomationClasses();
+        toggleAutomationMode(AutomationMode.Zone);
     });
 
     setupTooltip(all_control, function () { return `Automate ${all_control.textContent}`; }, function () {
         let tooltip = "Toggle between automating Ttasks in all zones, and not automating";
         tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
+        tooltip += "<br><br>Hotkey: A";
 
         return tooltip;
     });
@@ -1807,6 +1811,7 @@ function setupAutomationControls() {
         let tooltip = "Toggle between automating Tasks in the current zone, and not automating";
         tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
+        tooltip += "<br><br>Hotkey: Z";
 
         return tooltip;
     });
@@ -2327,5 +2332,25 @@ export function updateRendering() {
         if (RENDERING.tooltipped_element) {
             showTooltip(RENDERING.tooltipped_element);
         }
+    }
+}
+
+export function handleHotkeys(event: KeyboardEvent) {
+    if (hasPerk(PerkType.Amulet)) {
+        if (event.key == "a") {
+            toggleAutomationMode(AutomationMode.All);
+            setupControls();
+        } else if (event.key == "z") {
+            toggleAutomationMode(AutomationMode.Zone);
+            setupControls();
+        }
+    }
+
+    if (event.key == "i") {
+        GAMESTATE.auto_use_items = !GAMESTATE.auto_use_items;
+        setupControls();
+    } else if (event.key == "r") {
+        GAMESTATE.repeat_tasks = !GAMESTATE.repeat_tasks;
+        setupControls();
     }
 }

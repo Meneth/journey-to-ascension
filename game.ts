@@ -1,4 +1,4 @@
-import { Rendering, updateRendering } from "./rendering.js";
+import { handleHotkeys, Rendering, updateRendering } from "./rendering.js";
 import { Gamestate, saveGame, updateGamestate, resetTasks, calcTickRate } from "./simulation.js";
 
 function gameLoop() {
@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTickRate();
 });
+
+document.addEventListener("keyup", handleHotkeys);
 
 export function resetSave() {
     GAMESTATE = new Gamestate();
