@@ -978,6 +978,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
 
     energy_reset_div.classList.remove("hidden");
     energy_reset_div.innerHTML = "";
+    RENDERING.viewing_last_reset = !GAMESTATE.is_in_energy_reset;
 
     if (GAMESTATE.is_in_energy_reset) {
         energy_reset_div.innerHTML = "<h2>Out of Energy</h2>" +
@@ -1001,6 +1002,8 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
             if (GAMESTATE.is_in_energy_reset) {
                 doEnergyReset();
             }
+
+            RENDERING.viewing_last_reset = false;
         });
         setupTooltipStatic(button, button.textContent, GAMESTATE.is_in_energy_reset ? "Do Energy Reset" : "Return to the game");
     } else {
@@ -1134,7 +1137,7 @@ function populateEndOfContent(end_of_content_div: HTMLElement) {
 }
 
 function updateGameOver() {
-    const showing_energy_reset = !RENDERING.energy_reset_element.classList.contains("hidden");
+    const showing_energy_reset = !RENDERING.energy_reset_element.classList.contains("hidden") && !RENDERING.viewing_last_reset;
     if (!showing_energy_reset && GAMESTATE.is_in_energy_reset) {
         populateEnergyReset(RENDERING.energy_reset_element);
     }
@@ -2130,6 +2133,7 @@ export class Rendering {
     current_zone: number = 0;
     item_order: ItemType[] = [];
     artifact_order: ItemType[] = [];
+    viewing_last_reset: boolean = false;
 
     public createTasks() {
         const tasks_div = document.getElementById("tasks");

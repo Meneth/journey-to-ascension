@@ -16,6 +16,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Fixed the Dream Prism perk stating its effect twice<br>"
         + "- Now showing highest Zone fully completed in the Unified Theory of Magic Perk<br>"
         + "- Added a Save Reset button in the Settings<br>"
+        + "- Fixed running out of Energy while viewing info from the last Run not giving the Run Over screen<br>"
     },
     {
         version: "0.2.1",
