@@ -1,6 +1,7 @@
+import { GAMESTATE } from "./game.js";
 import { PerkSkillModifierList } from "./modifiers.js";
 import { PrestigeUnlockType } from "./prestige_upgrades.js";
-import { formatNumber, getSkillString } from "./rendering.js";
+import { formatNumber } from "./rendering.js";
 import {
     DIVINE_SPARK_TEXT,
     ENERGY_TEXT,
@@ -290,7 +291,7 @@ export const PERKS: PerkDefinition[] = [
     new PerkDefinition({
         enum: PerkType.UnifiedTheoryOfMagic,
         name: `Unified Theory of Magic`,
-        get_custom_tooltip: () => { return `Each Zone fully completed in this Prestige increases Task Speed 2%<br>For instance, having fully completed the 15th Zone would speed up Task speed 1.02^15 = 35%<br>Note that it's based on your highest fully completed, so you can skip fully completing earlier Zones if you want`; },
+        get_custom_tooltip: () => { return `Each Zone fully completed in this Prestige increases Task Speed 2%<br>For instance, having fully completed the 15th Zone would speed up Task speed 1.02^15 = 35%<br>Note that it's based on your highest fully completed, so you can skip fully completing earlier Zones if you want<br><br>Highest Zone fully completed currently: ${GAMESTATE.highest_zone_fully_completed + 1}`; },
         icon: `📜`,
     }),
     new PerkDefinition({
