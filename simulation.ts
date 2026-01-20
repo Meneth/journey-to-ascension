@@ -838,21 +838,30 @@ export enum AutomationMode {
     Off,
 }
 
-export function toggleAutomation(task: Task) {
-    if (!hasPerk(PerkType.Amulet)) {
+function hasAutomatedTask(task: TaskDefinition) {
+    if (!GAMESTATE.automation_prios.has(task.zone_id)) {
+        return false;
+    }
+
+    const prios = GAMESTATE.automation_prios.get(task.zone_id) as number[];
+    return prios.includes(task.id);
+}
+
+export function toggleAutomation(task: TaskDefinition) {
+    if (!hasPerk(PerkType.Amulet) && !hasAutomatedTask(task)) {
         return;
     }
 
-    if (!GAMESTATE.automation_prios.has(task.task_definition.zone_id)) {
-        GAMESTATE.automation_prios.set(task.task_definition.zone_id, []);
+    if (!GAMESTATE.automation_prios.has(task.zone_id)) {
+        GAMESTATE.automation_prios.set(task.zone_id, []);
     }
 
-    const prios = GAMESTATE.automation_prios.get(task.task_definition.zone_id) as number[];
-    if (prios.includes(task.task_definition.id)) {
-        prios.splice(prios.indexOf(task.task_definition.id), 1);
+    const prios = GAMESTATE.automation_prios.get(task.zone_id) as number[];
+    if (prios.includes(task.id)) {
+        prios.splice(prios.indexOf(task.id), 1);
     }
     else {
-        prios.push(task.task_definition.id);
+        prios.push(task.id);
         // Ensure travel always happens last
         prios.sort((a, b) => {
             const task_a = TASK_LOOKUP.get(a) as TaskDefinition;
@@ -1096,6 +1105,12 @@ export function doPrestige() {
     GAMESTATE.prestige_available = false;
     GAMESTATE.auto_use_items = false;
     GAMESTATE.unlocked_new_prestige_this_prestige = false;
+
+    for (const [, task] of TASK_LOOKUP) {
+        if (task.type == TaskType.Boss && hasAutomatedTask(task)) {
+            toggleAutomation(task);
+        }
+    }
 
     // Things not reset:
     // has_unlocked_power - No reason to hide that from the UI

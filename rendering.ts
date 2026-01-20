@@ -36,8 +36,8 @@ function createConfirmationOverlay(header_text: string, description_text: string
     const div = createChildElement(overlay, "div");
     div.className = "overlay-box confirmation";
 
-    createChildElement(div, "h1").textContent = header_text;
-    createChildElement(div, "p").textContent = description_text;
+    createChildElement(div, "h1").innerHTML = header_text;
+    createChildElement(div, "p").innerHTML = description_text;
 
     const confirmation_buttons_div = createChildElement(div, "div");
     confirmation_buttons_div.className = "confirmation-buttons";
@@ -223,7 +223,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             clickTask(task); 
         }
     });
-    task_button.addEventListener("contextmenu", (e) => { e.preventDefault(); toggleAutomation(task); });
+    task_button.addEventListener("contextmenu", (e) => { e.preventDefault(); toggleAutomation(task.task_definition); });
 
     if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_available) {
         task_button.classList.add("prestige-glow");
@@ -1204,7 +1204,7 @@ function populatePrestigeView() {
         });
 
         prestige_button.addEventListener("click", () => {
-            createConfirmationOverlay("Do Prestige", `Will give ${formatNumber(calcDivineSparkGain(), false)} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases`, () => {
+            createConfirmationOverlay("Do Prestige", `Will give ${formatNumber(calcDivineSparkGain(), false)} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases<br>Will also remove all Boss Tasks from automation`, () => {
                 doPrestige();
             populatePrestigeView();
             });
