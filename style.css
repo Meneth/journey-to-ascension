@@ -294,8 +294,8 @@ button:hover:not(.disabled):not(:disabled) {
     color: red;
 }
 
-.perk-unlock {
-    animation: perk-glow 1s infinite alternate;
+.unlock {
+    animation: unlock-glow 1s infinite alternate;
 }
 
 @keyframes prestige-glow {
@@ -308,7 +308,7 @@ button:hover:not(.disabled):not(:disabled) {
     }
 }
 
-@keyframes perk-glow {
+@keyframes unlock-glow {
     from {
         box-shadow: 0 0 8px 2px rgba(52, 219, 66, 0.6);
     }

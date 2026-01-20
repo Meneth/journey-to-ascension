@@ -681,6 +681,10 @@ export function setHasGottenPrepRunHint() {
     GAMESTATE.hint_has_gotten_prep_run_hint = true;
 }
 
+export function knowsItem(item: ItemType) {
+    return GAMESTATE.items.get(item) != null;
+}
+
 // MARK: Perks
 function tryAddPerk(perk: PerkType, show_notification = true) {
     if (hasPerk(perk)) {
