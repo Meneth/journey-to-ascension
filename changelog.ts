@@ -20,6 +20,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Boss Task automations now get removed on Prestige, since you generally only want to deal with them later in the Prestige run<br>"
         + "- Added hotkeys for Automation and Task Repetition<br>"
         + "- Tasks giving an Artifact you've never gotten before now glow<br>"
+        + "- If you get far enough without beating any Bosses, the game now reminds you of their existence<br>"
     },
     {
         version: "0.2.1",

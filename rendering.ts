@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint } from "./simulation.js";
 import { GAMESTATE, RENDERING, resetSave } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
@@ -999,6 +999,18 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
 
     const hasHadItemInheritance = hasPerk(PerkType.UnderstandingTheReset) || GAMESTATE.prestige_count > 0;
 
+    function handleReset() {
+        energy_reset_div.classList.add("hidden");
+        doEnergyReset();
+        if (shouldShowBossHint()) {
+            showHint("You've gotten to Zone 10 now without beating any Bosses.<br>Consider that it might be time to beat one up");
+            setHasGottenBossHint();
+        } else if (shouldShowPrepRunHint()) {
+            showHint("You've used Items for the past several runs.<br>Have you considered doing a run without using any Items, so you'll have more items for the next run?");
+            setHasGottenPrepRunHint();
+        }
+    }
+
     if (!GAMESTATE.is_in_energy_reset || !hasHadItemInheritance) {
         const button = createChildElement(energy_reset_div, "button");
         button.className = "dismiss";
@@ -1007,7 +1019,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
         button.addEventListener("click", () => {
             energy_reset_div.classList.add("hidden");
             if (GAMESTATE.is_in_energy_reset) {
-                doEnergyReset();
+                handleReset();
             }
 
             RENDERING.viewing_last_reset = false;
@@ -1024,20 +1036,12 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
         no_auto_button.textContent = "Reset, Without Auto Use Items";
 
         auto_button.addEventListener("click", () => {
-            energy_reset_div.classList.add("hidden");
             GAMESTATE.auto_use_items = true;
-            doEnergyReset();
-            if (shouldShowPrepRunHint()) {
-                showPrepRunHint();
-            }
+            handleReset();
         });
         no_auto_button.addEventListener("click", () => {
-            energy_reset_div.classList.add("hidden");
             GAMESTATE.auto_use_items = false;
-            doEnergyReset();
-            if (shouldShowPrepRunHint()) {
-                showPrepRunHint();
-            }
+            handleReset();
         });
     }
 
@@ -2088,13 +2092,20 @@ function shouldShowPrepRunHint() {
     return GAMESTATE.hint_prep_runs_done < prep_run_count_to_ignore_hint && GAMESTATE.hint_non_prep_runs_done >= non_prep_run_count_to_trigger_hint;
 }
 
-function showPrepRunHint() {
+function shouldShowBossHint() {
+    if (GAMESTATE.hint_has_gotten_boss_hint) {
+        return false;
+    }
+
+    const zone_for_hint = 10 - 1; // 0-indexing
+    return GAMESTATE.highest_zone >= zone_for_hint && GAMESTATE.power == 0 && GAMESTATE.prestige_count == 0;
+}
+
+function showHint(text: string) {
     const overlay = RENDERING.hints_overlay_element;
     overlay.classList.remove("hidden");
 
     createChildElement(overlay, "h1").textContent = "Hint";
-    const text = "You've used Items for the past several runs.<br>Have you considered doing a run without using any Items, so you'll have more items for the next run?";
-
     createChildElement(overlay, "p").innerHTML = text;
 
     {
@@ -2108,8 +2119,6 @@ function showPrepRunHint() {
 
         setupTooltipStatic(close_button, `Dismiss Hint`, ``);
     }
-
-    setHasGottenPrepRunHint();
 }
 
 // MARK: Rendering

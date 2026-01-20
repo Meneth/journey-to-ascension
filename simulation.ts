@@ -681,6 +681,10 @@ export function setHasGottenPrepRunHint() {
     GAMESTATE.hint_has_gotten_prep_run_hint = true;
 }
 
+export function setHasGottenBossHint() {
+    GAMESTATE.hint_has_gotten_boss_hint = true;
+}
+
 export function knowsItem(item: ItemType) {
     return GAMESTATE.items.get(item) != null;
 }
@@ -1268,6 +1272,7 @@ export class Gamestate {
     hint_prep_runs_done = 0;
     hint_non_prep_runs_done = 0; // Since unlocking prep runs
     hint_has_gotten_prep_run_hint = false;
+    hint_has_gotten_boss_hint = false;
 
     public start() {
         if (!loadGame()) {
