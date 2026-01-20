@@ -26,15 +26,17 @@ document.addEventListener("DOMContentLoaded", () => {
     setTickRate();
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(window as any).getGamestate = GAMESTATE;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(window as any).resetSave = () => {
+export function resetSave() {
     GAMESTATE = new Gamestate();
     GAMESTATE.initialize();
     saveGame();
     location.reload();
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(window as any).getGamestate = GAMESTATE;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(window as any).resetSave = resetSave;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).resetZone = () => {
     resetTasks();

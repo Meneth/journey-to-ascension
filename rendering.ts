@@ -1,6 +1,6 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
 import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone } from "./simulation.js";
-import { GAMESTATE, RENDERING } from "./game.js";
+import { GAMESTATE, RENDERING, resetSave } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
 import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
@@ -1547,6 +1547,21 @@ function setupPersistence(settings_div: HTMLElement) {
     });
 
     setupTooltipStatic(load_button, `Import Save`, `Load the game's progress from disk`);
+
+    const reset_button = settings_div.querySelector<HTMLElement>("#reset-save");
+
+    if (!reset_button) {
+        console.error("No reset-save button");
+        return;
+    }
+
+    reset_button.addEventListener("click", () => {
+        createConfirmationOverlay("Reset Save", `Will reset absolutely all progress. It's highly recommendex you export a Save first`, () => {
+            resetSave();
+        });
+    });
+
+    setupTooltipStatic(reset_button, `Reset Save`, `Resets *everything*`);
 }
 
 // MARK: Events
