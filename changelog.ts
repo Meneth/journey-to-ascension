@@ -12,6 +12,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Rebalanced Divine Spark gain entirely, as well as Prestige upgrade costs<br>"
         + "- Reduced the effect of Major Time Compression on Task real-time speed<br>"
         + "- Rebalanced Tasks past Zone 15<br>"
+        + "- Rebalanced Prestige rewards and upgrade costs<br>"
         + "- Fixed the Dream Prism perk stating its effect twice<br>"
         + "- Now showing highest Zone fully completed in the Unified Theory of Magic Perk<br>"
     },

@@ -98,7 +98,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         layer: PrestigeLayer.TranscendHumanity,
         name: "Transcendant Memory",
         get_description: () => { return `Permanently unlocks the ${getPerkNameWithEmoji(PerkType.EnergeticMemory)} Perk<br>Squares the Max ${ENERGY_TEXT} gain after Zone 10`; },
-        cost: 10
+        cost: 100
     },
     {
         type: PrestigeUnlockType.DivineSpeed,
@@ -119,7 +119,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         layer: PrestigeLayer.TranscendHumanity,
         name: "See Beyond the Veil",
         get_description: () => { return `Unlocks NUMBER new tasks before Zone 20<br>This does nothing yet`; },
-        cost: 2500
+        cost: 25000
     },
 ];
 
@@ -127,13 +127,13 @@ export const DIVINE_KNOWLEDGE_MULT = 0.5;
 export const DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT = 0.2;
 export const GOTTA_GO_FAST_BASE = 1.1;
 export const TRANSCENDANT_APTITUDE_MULT = 100;
-export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.1;
+export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.15;
 export const ENERGIZED_INCREASE = 20;
 
 function calcDivineSparkIncrease(zone: number) {
     const current_exponent = getPrestigeGainExponent();
     const new_exponent = current_exponent + DIVINE_LIGHTNING_EXPONENT_INCREASE;
-    const ratio = Math.pow(zone + 1, new_exponent) / Math.pow(zone + 1, current_exponent);
+    const ratio = Math.pow(new_exponent, zone + 1) / Math.pow(current_exponent, zone + 1);
 
     return ratio - 1;
 }
@@ -176,8 +176,8 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         type: PrestigeRepeatableType.DivineLightning,
         layer: PrestigeLayer.TranscendHumanity,
         name: "Divine Lightning",
-        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by ${DIVINE_LIGHTNING_EXPONENT_INCREASE}<br>One more level would increase ${DIVINE_SPARK_TEXT} gain at Zone 15 by ${(calcDivineSparkIncrease(15) * 100).toFixed(0)}%, and ${(calcDivineSparkIncrease(20) * 100).toFixed(0)}% at Zone 20`; },
-        initial_cost: 50,
+        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by ${DIVINE_LIGHTNING_EXPONENT_INCREASE}<br>One more level would increase ${DIVINE_SPARK_TEXT} gain at Zone 19 by ${(calcDivineSparkIncrease(4) * 100).toFixed(0)}%, and ${(calcDivineSparkIncrease(5) * 100).toFixed(0)}% at Zone 20`; },
+        initial_cost: 1000,
         scaling_exponent: 3
     },
     {
@@ -185,7 +185,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         layer: PrestigeLayer.TranscendHumanity,
         name: "Transcendant Aptitude",
         get_description: () => { return `Increases starting skill levels by ${TRANSCENDANT_APTITUDE_MULT}<br>${getSkillString(SkillType.Ascension)} has its starting level increased by only half`; },
-        initial_cost: 20,
+        initial_cost: 200,
         scaling_exponent: 2
     },
     {
@@ -193,7 +193,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         layer: PrestigeLayer.TranscendHumanity,
         name: "Energized",
         get_description: () => { return `Increases Max ${ENERGY_TEXT} by ${ENERGIZED_INCREASE}`; },
-        initial_cost: 100,
+        initial_cost: 1500,
         scaling_exponent: 1.75
     },
     {
