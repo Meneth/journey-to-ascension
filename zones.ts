@@ -292,7 +292,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 182, name: "Evade the Dragon", type: TaskType.Mandatory, cost_multiplier: 100, max_reps: 5, skills: [SkillType.Subterfuge], xp_mult: 0.2 }),
             new TaskDefinition({ id: 183, name: "Loot Dragon's Victims", max_reps: 4, cost_multiplier: 700, skills: [SkillType.Search], item: ItemType.KnightlyBoots, xp_mult: 0.5 }),
             new TaskDefinition({ id: 184, name: "Hide from the Dragon", cost_multiplier: 1_000, max_reps: 3, skills: [SkillType.Subterfuge], xp_mult: 0.1, perk: PerkType.HideInPlainSight }),
-            new TaskDefinition({ id: 185, name: "Go on a Long Trek", cost_multiplier: 100, max_reps: 5, xp_mult: 5, skills: [SkillType.Travel, SkillType.Fortitude] }),
+            new TaskDefinition({ id: 185, name: "Go on a Long Trek", cost_multiplier: 20000, max_reps: 5, xp_mult: 0.01, skills: [SkillType.Travel, SkillType.Fortitude] }),
             new TaskDefinition({ id: 186, name: "Try to Turn into a Dragon", cost_multiplier: 10000, max_reps: 3, xp_mult: 2, skills: [SkillType.Magic] }),
             new TaskDefinition({ id: 187, name: "Dragon Spawn", type: TaskType.Boss, cost_multiplier: 25_000_000_000, xp_mult: 0.1, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 188 }),
             new TaskDefinition({ id: 188, name: "Gather Dragon Scales", cost_multiplier: 1_000_000, xp_mult: 0.1, max_reps: 3, skills: [SkillType.Search], item: ItemType.DragonScale, hidden_by_default: true }),

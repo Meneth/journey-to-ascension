@@ -236,7 +236,10 @@ function isSingleTickTaskImpl(progress: number, cost: number) {
 }
 
 function isSingleTickTask(task: Task) {
-    const progress = calcTaskProgressPerTick(task);
+    let progress = calcTaskProgressPerTick(task);
+    if (hasPerk(PerkType.MajorTimeCompression)) {
+        progress /= MAJOR_TIME_COMPRESSION_EFFECT; // Don't want it kicking in at 2 real ticks
+    }
     const cost = calcTaskCost(task);
 
     return isSingleTickTaskImpl(progress, cost);
@@ -955,38 +958,26 @@ export function hasUnlockedPrestige() {
     return GAMESTATE.prestige_available || GAMESTATE.prestige_count > 0;
 }
 
-export const PRESTIGE_GAIN_EXPONENT = 3;
-export const PRESTIGE_FULLY_COMPLETED_MULT = 3;
-export const PRESTIGE_GAIN_DIVISOR = 100;
+export const PRESTIGE_GAIN_EXPONENT = 2.0;
+export const BASE_PRESTIGE_GAIN = 100;
 
 export function getPrestigeGainExponent() {
-    return 3 + DIVINE_LIGHTNING_EXPONENT_INCREASE * getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineLightning);
-}
-
-export function calcDivineSparkDivisor() {
-    let divisor = PRESTIGE_GAIN_DIVISOR;
-    if (hasPerk(PerkType.Awakening)) {
-        divisor /= 1 + AWAKENING_DIVINE_SPARK_MULT;
-    }
-
-    return divisor;
+    return PRESTIGE_GAIN_EXPONENT + DIVINE_LIGHTNING_EXPONENT_INCREASE * getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineLightning);
 }
 
 export function calcDivineSparkGainFromHighestZone(zone: number) {
-    return Math.pow(zone + 1, getPrestigeGainExponent()) / calcDivineSparkDivisor();
-}
+    const prestige_zone = 15 - 1; // Due to 0-indexing
+    const effective_zone = Math.max(0, zone - prestige_zone);
+    let gain_mult = Math.pow(getPrestigeGainExponent(), effective_zone);
+    if (hasPerk(PerkType.Awakening)) {
+        gain_mult *= 1 + AWAKENING_DIVINE_SPARK_MULT;
+    }
 
-export function calcDivineSparkGainFromHighestZoneFullyCompleted(zone: number) {
-    return Math.pow(zone + 1, getPrestigeGainExponent()) * PRESTIGE_FULLY_COMPLETED_MULT / calcDivineSparkDivisor();
+    return Math.ceil(gain_mult * BASE_PRESTIGE_GAIN);
 }
 
 export function calcDivineSparkGain() {
-    let gain = 0;
-
-    gain += calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone);
-    gain += calcDivineSparkGainFromHighestZoneFullyCompleted(GAMESTATE.highest_zone_fully_completed);
-
-    return Math.ceil(gain);
+    return calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone)
 }
 
 export function hasPrestigeUnlock(unlock: PrestigeUnlockType) {
@@ -1029,7 +1020,7 @@ export function calcPrestigeRepeatableCost(repeatable: PrestigeRepeatableType) {
     const current_level = getPrestigeRepeatableLevel(repeatable);
     const base_cost = definition.initial_cost;
 
-    return Math.floor(base_cost * Math.pow(definition.scaling_exponent, current_level));
+    return Math.ceil(base_cost * Math.pow(definition.scaling_exponent, current_level));
 }
 
 export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableType) {

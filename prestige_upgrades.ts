@@ -83,14 +83,14 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         layer: PrestigeLayer.TouchTheDivine,
         name: "Look in the Mirror",
         get_description: () => { return `Permanently unlocks the ${getPerkNameWithEmoji(PerkType.ReflectionsOnTheJourney)} Perk<br>Boosts its base from ${REFLECTIONS_ON_THE_JOURNEY_BASE} to ${REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE}`; },
-        cost: 80
+        cost: 101
     },
     {
         type: PrestigeUnlockType.FullyAttuned,
         layer: PrestigeLayer.TouchTheDivine,
         name: "Fully Attuned",
         get_description: () => { return `Permanently unlocks the ${ATTUNEMENT_EMOJI}Attunement Perk<br>Makes the Divine Knowledge Prestige upgrade apply to ${ATTUNEMENT_TEXT}<br>Makes ${ATTUNEMENT_TEXT} apply to ${getSkillString(SkillType.Search)}`; },
-        cost: 400
+        cost: 800
     },
 
     {
@@ -145,7 +145,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         name: "Divine Knowledge",
         get_description: () => { return `Increases ${XP_TEXT}${hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned) ? ` and ${ATTUNEMENT_TEXT}` : ""} gain by ${DIVINE_KNOWLEDGE_MULT * 100}%`; },
         initial_cost: 10,
-        scaling_exponent: 1.2
+        scaling_exponent: 1.23
     },
     {
         type: PrestigeRepeatableType.UnlimitedPower,
@@ -153,7 +153,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         name: "Unlimited Power",
         get_description: () => { return "Doubles 💪Power gain"; },
         initial_cost: 10,
-        scaling_exponent: 3
+        scaling_exponent: 2.5
     },
     {
         type: PrestigeRepeatableType.DivineAppetite,
@@ -168,8 +168,8 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         layer: PrestigeLayer.TouchTheDivine,
         name: "Gotta Go Fast",
         get_description: () => { return `Multiplies Task speed by ${GOTTA_GO_FAST_BASE}`; },
-        initial_cost: 10,
-        scaling_exponent: 1.8
+        initial_cost: 20,
+        scaling_exponent: 1.75
     },
 
     {

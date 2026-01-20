@@ -9,6 +9,9 @@ export const CHANGELOG: ChangelogEntry[] = [
         version: "0.2.2",
         date: "2025-01-19",
         changes: "- Buffed Magical Essence a bit<br>"
+        + "- Rebalanced Divine Spark gain entirely, as well as Prestige upgrade costs<br>"
+        + "- Reduced the effect of Major Time Compression on Task real-time speed<br>"
+        + "- Rebalanced Tasks past Zone 15<br>"
     },
     {
         version: "0.2.1",
