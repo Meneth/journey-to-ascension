@@ -1501,7 +1501,11 @@ function setupPersistence(settings_div: HTMLElement) {
             return;
         }
 
-        const file_name = `Incremental_save_Reset_${GAMESTATE.energy_reset_count}_energy_${GAMESTATE.current_energy.toFixed(0)}.json`;
+        let file_name = "JourneyToAscension";
+        if (GAMESTATE.prestige_count > 0) {
+            file_name += "_Prestige" + GAMESTATE.prestige_count;
+        }
+        file_name += `_Reset_${GAMESTATE.energy_reset_count}_energy_${GAMESTATE.current_energy.toFixed(0)}`;
 
         const blob = new Blob([save_data], { type: "application/json" });
         const url = URL.createObjectURL(blob);
