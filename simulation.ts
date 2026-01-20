@@ -1213,6 +1213,10 @@ function loadGameFromData(data: any) {
 
     // Get rid of any skills that no longer exist
     GAMESTATE.unlocked_skills = GAMESTATE.unlocked_skills.filter((skill) => SKILLS.includes(skill));
+
+    for (const task of GAMESTATE.tasks) {
+        task.reps = Math.min(task.reps, task.task_definition.max_reps);
+    }
 }
 
 // MARK: Gamestate
