@@ -13,7 +13,7 @@ const ZONE_SPEEDUP_BASE = 1.05;
 export const BOSS_MAX_ENERGY_DISPARITY = 5;
 const STARTING_ENERGY = 100;
 const DEFAULT_TICK_RATE = 66.6;
-export const SAVE_VERSION = "0.3.0";
+export const SAVE_VERSION = "0.3.2";
 
 // MARK: Skills
 
@@ -1236,6 +1236,7 @@ export class Gamestate {
     automation_prios: Map<number, number[]> = new Map();
     auto_use_items = false;
     undo_item: [ItemType, amount: number] = [ItemType.Count, 0];
+    manual_tooltips = false;
 
     skills_at_start_of_reset: number[] = [];
     power_at_start_of_reset = 0;

@@ -627,11 +627,15 @@ interface ElementWithTooltip extends HTMLElement {
 function setupTooltip(element: ElementWithTooltip, header_callback: tooltipLambda, body_callback: tooltipLambda) {
     element.generateTooltipHeader = header_callback;
     element.generateTooltipBody = body_callback;
-    element.addEventListener("pointerenter", () => {
-        showTooltip(element);
+    element.addEventListener("pointerenter", (event) => {
+        RENDERING.potential_tooltipped_element = element;
+        if (!GAMESTATE.manual_tooltips || event.ctrlKey) {
+            showTooltip(element);
+        }
     });
     element.addEventListener("pointerleave", () => {
         hideTooltip();
+        RENDERING.potential_tooltipped_element = null;
     });
 }
 
@@ -1495,6 +1499,36 @@ function setupSettings() {
             credits_overlay.classList.add("hidden");
         }
     });
+
+    const manual_tooltips_button = settings_div.querySelector<HTMLElement>("#manual-tooltips");
+    if (!manual_tooltips_button) {
+        console.error("No manual-tooltips button");
+        return;
+    }
+
+    manual_tooltips_button.addEventListener("click", () => {
+        GAMESTATE.manual_tooltips = !GAMESTATE.manual_tooltips;
+        updateSettingsDisplay();
+        queueUpdateTooltip();
+    });
+
+    setupTooltip(manual_tooltips_button, function () { return GAMESTATE.manual_tooltips ? "Switch to Manual Tooltips" : "Switch to Automatic Tooltips"; }, function () {
+        return "With Manual Tooltips enabled, tooltips only show up while CTRL is held";
+    });
+
+    updateSettingsDisplay();
+}
+
+function updateSettingsDisplay() {
+    const settings_div = RENDERING.settings_element;
+
+    const manual_tooltips_button = settings_div.querySelector<HTMLElement>("#manual-tooltips");
+    if (!manual_tooltips_button) {
+        console.error("No manual-tooltips button");
+        return;
+    }
+
+    manual_tooltips_button.textContent = GAMESTATE.manual_tooltips ? "Manual Tooltips" : "Auto Tooltips";
 }
 
 // MARK: Settings: Saves
@@ -2127,6 +2161,7 @@ function showHint(text: string) {
 
 export class Rendering {
     tooltipped_element: ElementWithTooltip | null = null;
+    potential_tooltipped_element: ElementWithTooltip | null = null;
     queued_update_tooltip = false;
     tooltip_element: HTMLElement;
     energy_reset_element: HTMLElement;
@@ -2355,7 +2390,7 @@ export function updateRendering() {
     }
 }
 
-export function handleHotkeys(event: KeyboardEvent) {
+export function handleHotkeyReleased(event: KeyboardEvent) {
     if (hasPerk(PerkType.Amulet)) {
         if (event.key == "a") {
             toggleAutomationMode(AutomationMode.All);
@@ -2370,5 +2405,15 @@ export function handleHotkeys(event: KeyboardEvent) {
     } else if (event.key == "r") {
         GAMESTATE.repeat_tasks = !GAMESTATE.repeat_tasks;
         setupControls();
+    } else if (GAMESTATE.manual_tooltips && event.key == "Control") {
+        hideTooltip();
+    }
+}
+
+export function handleHotkeyPressed(event: KeyboardEvent) {
+    if (GAMESTATE.manual_tooltips && event.key == "Control") {
+        if (RENDERING.potential_tooltipped_element) {
+            showTooltip(RENDERING.potential_tooltipped_element);
+        }
     }
 }
