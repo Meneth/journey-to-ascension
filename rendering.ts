@@ -1781,6 +1781,8 @@ function toggleAutomationMode(mode: AutomationMode) {
     } else {
         setAutomationMode(mode);
     }
+
+    setupControls();
 }
 
 function setupAutomationControls() {
@@ -2357,10 +2359,8 @@ export function handleHotkeys(event: KeyboardEvent) {
     if (hasPerk(PerkType.Amulet)) {
         if (event.key == "a") {
             toggleAutomationMode(AutomationMode.All);
-            setupControls();
         } else if (event.key == "z") {
             toggleAutomationMode(AutomationMode.Zone);
-            setupControls();
         }
     }
 
