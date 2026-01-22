@@ -893,6 +893,7 @@ function setupAutoUseItemsControl() {
 
     function setItemControlName() {
         item_control.textContent = GAMESTATE.auto_use_items ? "Auto Use Items" : "Manual Use Items";
+        queueUpdateTooltip();
     }
     setItemControlName();
 
@@ -901,7 +902,7 @@ function setupAutoUseItemsControl() {
         setItemControlName();
     });
 
-    setupTooltipStaticHeader(item_control, `${item_control.textContent}`, function () {
+    setupTooltip(item_control, () => { return `${item_control.textContent}` }, function () {
         let tooltip = "Toggle between items being used automatically, and only being used manually";
         tooltip += "<br>Won't use Artifacts";
         tooltip += "<br><br>Hotkey: I";
@@ -1792,6 +1793,7 @@ function setupRepeatTasksControl() {
 
     function setRepControlName() {
         rep_control.textContent = GAMESTATE.repeat_tasks ? "Repeat Tasks" : "Don't Repeat Tasks";
+        queueUpdateTooltip();
     }
     setRepControlName();
 
