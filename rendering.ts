@@ -2067,6 +2067,12 @@ function showChangelog(since_version = "") {
 
     createChildElement(scroll_area, "h1").textContent = "Changelog";
 
+    if (SAVE_VERSION != CHANGELOG[0]?.version) {
+        const error = createChildElement(scroll_area, "h2");
+        error.textContent = "Save version and changelog doesn't match";
+        error.className = "error";
+    }
+
     const end_index = since_version.length == 0
         ? CHANGELOG.length
         : CHANGELOG.findIndex((entry) => { return entry.version == since_version });
@@ -2272,7 +2278,7 @@ export class Rendering {
         // Unhide the game now that it's ready
         (document.getElementById("game-area") as HTMLElement).classList.remove("hidden");
 
-        if (GAMESTATE.save_version != SAVE_VERSION) {
+        if (GAMESTATE.save_version != SAVE_VERSION || SAVE_VERSION != CHANGELOG[0]?.version) {
             showChangelog(GAMESTATE.save_version);
         }
     }

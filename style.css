@@ -795,6 +795,10 @@ div.prestige-purchase {
     text-align: left;
 }
 
+.error {
+    color: red;
+}
+
 /* MARK: Credits
 */
 
