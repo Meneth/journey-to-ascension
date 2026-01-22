@@ -9,10 +9,11 @@ export const CHANGELOG: ChangelogEntry[] = [
         version: "0.3.1",
         date: "2026-01-22",
         changes: "- Fixed the Automation mode not getting highlighted any more<br>"
+        + "- Fixed the 2026 changelog entries saying 2025<br>"
     },
     {
         version: "0.3.0",
-        date: "2025-01-20",
+        date: "2026-01-20",
         changes: "- Buffed Magical Essence a bit<br>"
         + "- Rebalanced Divine Spark gain entirely, as well as Prestige upgrade costs<br>"
         + "- Reduced the effect of Major Time Compression on Task real-time speed<br>"
@@ -29,7 +30,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     },
     {
         version: "0.2.1",
-        date: "2025-01-19",
+        date: "2026-01-19",
         changes: "- Clarified a couple of tooltips<br>"
         + "- Reduced the cost of some of the first Prestige upgrades<br>"
         + "- Made the Fortitude task in Z15 give a bit more XP<br>"
@@ -37,7 +38,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     },
     {
         version: "0.2.0",
-        date: "2025-01-19",
+        date: "2026-01-19",
         changes: "- Rebalanced the game up to Zone 15<br>"
         + "- Merged the Druid skill into the Magic skill<br>"
         + "- Removed the Survival skill. Replaced with Search, Fortitude, Crafting, or nothing depending on the Task<br>"
