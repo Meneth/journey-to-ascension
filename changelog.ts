@@ -9,6 +9,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         version: "0.3.3",
         date: "2026-01-25",
         changes: "- Fixed the Unified Theory of Magic not always updating the Highest Zone fully completed<br>"
+        + "- Made it extra clear that Minor Time Compression's Zone skipping gives all the benefits manually doing the Zone would've<br>"
     },
     {
         version: "0.3.2",
