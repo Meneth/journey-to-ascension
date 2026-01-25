@@ -6,6 +6,11 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "0.3.3",
+        date: "2026-01-25",
+        changes: "- Fixed the Unified Theory of Magic not always updating the Highest Zone fully completed<br>"
+    },
+    {
         version: "0.3.2",
         date: "2026-01-22",
         changes: "- Added a setting that makes tooltips only show while CTRL is held (off by default)<br>"
