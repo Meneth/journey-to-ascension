@@ -2427,7 +2427,10 @@ export class Rendering {
         this.energy_element = getElement("energy");
 
         setupTooltip(this.energy_element, function () { return `${ENERGY_TEXT} - ${GAMESTATE.current_energy.toFixed(0)}/${GAMESTATE.max_energy.toFixed(0)}`; }, function () {
-            return `${ENERGY_TEXT} goes down over time while you have a Task active`;
+            let tooltip = `${ENERGY_TEXT} goes down over time while you have a Task active`;
+            tooltip += `<br>Drain is proportional to the time spent on a Task. The drain per unit time increases slightly per Zone`;
+
+            return tooltip;
         });
 
         this.tooltip_element = getElement("tooltip");
