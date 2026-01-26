@@ -432,7 +432,7 @@ button:hover:not(.disabled):not(:disabled) {
     flex-direction: column;
 }
 
-#controls .automation button {
+#controls .automation button:not(.numeric-input-button) {
     width: 68px;
     height: 44px;
 }
@@ -441,31 +441,100 @@ button:hover:not(.disabled):not(:disabled) {
     background-color: rgb(49, 221, 72);
 }
 
-.automation-input {
-    width: 30px;
-    height: 30px;
-    margin: 5px;
-    margin-left: 0px;
+/* MARK: Numeric Input
+*/
 
+.numeric-input-wrapper {
+    display: inline-flex;
+    position: relative;
+    width: 44px;
+    height: 30px;
+    margin: 5px 5px 5px 0;
+    flex-shrink: 0;
+}
+
+.numeric-input {
+    width: 100%;
+    height: 100%;
     border-radius: var(--default-border-radius);
     background: var(--element-foreground-color-brighter);
     border: 1px solid #222;
-    padding: 4px;
+    padding: 4px 16px 4px 4px;
     text-align: center;
     outline: none;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3); /* Subtle inset shadow for depth */
-
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3);
+    transition: background 0.15s ease;
+    box-sizing: border-box;
     -moz-appearance: textfield;
 }
 
-.automation-input:focus {
-    outline: 1px solid var(--element-foreground-color-brighter);
+.numeric-input:focus {
+    background: var(--element-foreground-color);
 }
 
-.automation-input::-webkit-outer-spin-button,
-.automation-input::-webkit-inner-spin-button {
+.numeric-input::-webkit-outer-spin-button,
+.numeric-input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+.numeric-input-buttons {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 2px;
+}
+
+.numeric-input-button {
+    width: 10px;
+    height: 8px;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    min-height: 0;
+    background: var(--element-foreground-color);
+    border: none;
+    border-radius: 1px;
+    cursor: pointer;
+    font-size: 0;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.numeric-input-button:hover:not(.disabled) {
+    background: var(--element-foreground-color-brighter);
+}
+
+.numeric-input-button:active:not(.disabled) {
+    background: var(--element-background-color);
+}
+
+.numeric-input-button.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.numeric-input-increment::after,
+.numeric-input-decrement::after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 2.5px solid transparent;
+    border-right: 2.5px solid transparent;
+}
+
+.numeric-input-increment::after {
+    border-bottom: 3px solid var(--text-color, #000);
+}
+
+.numeric-input-decrement::after {
+    border-top: 3px solid var(--text-color, #000);
 }
 
 /* MARK: Items
