@@ -26,6 +26,7 @@ interface NumericInputOptions {
     largeStep?: number;
     initialValue: number;
     onChange: (value: number) => void;
+    ariaLabel?: string;
 }
 
 interface NumericInputResult {
@@ -34,7 +35,7 @@ interface NumericInputResult {
 }
 
 function createNumericInput(parent: Element, options: NumericInputOptions): NumericInputResult {
-    const { min = 1, max = 99, step = 1, largeStep = 10, initialValue, onChange } = options;
+    const { min = 1, max = 99, step = 1, largeStep = 10, initialValue, onChange, ariaLabel } = options;
 
     const wrapper = createChildElement(parent, "div");
     wrapper.className = "numeric-input-wrapper";
@@ -45,6 +46,9 @@ function createNumericInput(parent: Element, options: NumericInputOptions): Nume
     input.value = `${initialValue}`;
     input.min = `${min}`;
     input.max = `${max}`;
+    if (ariaLabel) {
+        input.setAttribute("aria-label", ariaLabel);
+    }
 
     const buttonsContainer = createChildElement(wrapper, "div");
     buttonsContainer.className = "numeric-input-buttons";
@@ -1050,7 +1054,7 @@ function sortItems(items: [type: ItemType, amount: number][]) {
     });
 }
 
-function setupAutoUseItemsControl() {
+function setupAutoUseItemsControl(parent: Element) {
     if (!hasPerk(PerkType.Amulet)) {
         return;
     }
@@ -1077,7 +1081,7 @@ function setupAutoUseItemsControl() {
         return tooltip;
     });
 
-    RENDERING.controls_list_element.appendChild(item_control);
+    parent.appendChild(item_control);
 }
 
 function updateItems() {
@@ -1949,12 +1953,18 @@ function handleEvents() {
 function setupControls() {
     RENDERING.controls_list_element.innerHTML = "";
 
-    setupRepeatTasksControl();
+    // First row: toggle buttons
+    const toggles_row = createChildElement(RENDERING.controls_list_element, "div");
+    toggles_row.className = "controls-row";
+
+    setupRepeatTasksControl(toggles_row);
+    setupAutoUseItemsControl(toggles_row);
+
+    // Second row: automation (with border)
     setupAutomationControls();
-    setupAutoUseItemsControl();
 }
 
-function setupRepeatTasksControl() {
+function setupRepeatTasksControl(parent: Element) {
     const rep_control = document.createElement("button");
     rep_control.className = "element";
 
@@ -1973,7 +1983,7 @@ function setupRepeatTasksControl() {
         return "Toggle between repeating Tasks if they have multiple reps, or only doing a single rep<br>When repeating, the Task tooltip will show the numbers for doing all remaining reps rather than just one<br><br>Hotkey: R";
     });
 
-    RENDERING.controls_list_element.appendChild(rep_control);
+    parent.appendChild(rep_control);
 }
 
 // MARK: Controls - Automation
@@ -2017,7 +2027,8 @@ function setupAutomationControls() {
         onChange: (value) => {
             GAMESTATE.automation_end = value;
             updateZoneButtonText();
-        }
+        },
+        ariaLabel: "Target zone for automation"
     });
 
     automation_controls_div.appendChild(all_control);

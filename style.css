@@ -415,10 +415,20 @@ button:hover:not(.disabled):not(:disabled) {
     height: 64px;
 }
 
+.controls-row {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
 .automation {
     text-align: center;
     display: flex;
     flex-direction: column;
+    border: 2px solid #222;
+    border-radius: var(--default-border-radius);
+    padding: 6px;
 }
 
 .automation-controls {
