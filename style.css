@@ -451,6 +451,7 @@ button:hover:not(.disabled):not(:disabled) {
     height: 30px;
     margin: 5px 5px 5px 0;
     flex-shrink: 0;
+    cursor: ns-resize;
 }
 
 .numeric-input {
@@ -513,6 +514,11 @@ button:hover:not(.disabled):not(:disabled) {
 
 .numeric-input-button:active:not(.disabled) {
     background: var(--element-background-color);
+}
+
+.numeric-input-button:focus-visible {
+    outline: 2px solid var(--element-foreground-color-brighter);
+    outline-offset: 1px;
 }
 
 .numeric-input-button.disabled {

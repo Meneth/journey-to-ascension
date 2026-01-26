@@ -26,11 +26,15 @@ interface NumericInputOptions {
     largeStep?: number;
     initialValue: number;
     onChange: (value: number) => void;
-    onCommit?: (value: number) => void;
 }
 
-function createNumericInput(parent: Element, options: NumericInputOptions): HTMLInputElement {
-    const { min = 1, max = 99, step = 1, largeStep = 10, initialValue, onChange, onCommit } = options;
+interface NumericInputResult {
+    input: HTMLInputElement;
+    destroy: () => void;
+}
+
+function createNumericInput(parent: Element, options: NumericInputOptions): NumericInputResult {
+    const { min = 1, max = 99, step = 1, largeStep = 10, initialValue, onChange } = options;
 
     const wrapper = createChildElement(parent, "div");
     wrapper.className = "numeric-input-wrapper";
@@ -48,10 +52,12 @@ function createNumericInput(parent: Element, options: NumericInputOptions): HTML
     const incrementBtn = createChildElement(buttonsContainer, "button") as HTMLButtonElement;
     incrementBtn.className = "numeric-input-button numeric-input-increment";
     incrementBtn.type = "button";
+    incrementBtn.setAttribute("aria-label", "Increment");
 
     const decrementBtn = createChildElement(buttonsContainer, "button") as HTMLButtonElement;
     decrementBtn.className = "numeric-input-button numeric-input-decrement";
     decrementBtn.type = "button";
+    decrementBtn.setAttribute("aria-label", "Decrement");
 
     function clampValue(value: number): number {
         if (isNaN(value)) return min;
@@ -71,12 +77,6 @@ function createNumericInput(parent: Element, options: NumericInputOptions): HTML
         onChange(clamped);
     }
 
-    function commitValue() {
-        if (onCommit) {
-            onCommit(getCurrentValue());
-        }
-    }
-
     function getCurrentValue(): number {
         return parseInt(input.value) || min;
     }
@@ -91,6 +91,7 @@ function createNumericInput(parent: Element, options: NumericInputOptions): HTML
         updateValue(getCurrentValue() + step);
     });
 
+    // Hold-to-repeat functionality
     let holdTimeout: number | null = null;
     let holdInterval: number | null = null;
     const HOLD_DELAY = 400;
@@ -116,13 +117,13 @@ function createNumericInput(parent: Element, options: NumericInputOptions): HTML
         }
     }
 
-    // Click events, but also respond to holding down the mouse
     decrementBtn.addEventListener("mousedown", () => startHold(-step));
     incrementBtn.addEventListener("mousedown", () => startHold(step));
 
+    // Document-level mouseup to catch releases anywhere
     document.addEventListener("mouseup", stopHold);
 
-    // Keyboard events! Up/down increment/decrement by a small step (1), Page up, Page down by a large step (10)
+    // Keyboard support
     input.addEventListener("keydown", (event: KeyboardEvent) => {
         if (event.key === "ArrowUp") {
             event.preventDefault();
@@ -152,8 +153,7 @@ function createNumericInput(parent: Element, options: NumericInputOptions): HTML
 
     // Wheel handler for when hovering (works on the wrapper)
     function handleWheelHover(event: WheelEvent) {
-        // Don't double-handle if already focused
-        if (document.activeElement === input) return;
+        if (document.activeElement === input) return; // Don't double-handle if focused
         event.preventDefault();
         const delta = event.deltaY < 0 ? step : -step;
         updateValue(getCurrentValue() + delta);
@@ -163,19 +163,27 @@ function createNumericInput(parent: Element, options: NumericInputOptions): HTML
     wrapper.addEventListener("wheel", handleWheelHover, { passive: false });
 
     // Focus-to-scroll: works anywhere when input is focused
-    input.addEventListener("focus", () => {
+    function handleFocus() {
         input.select();
         document.addEventListener("wheel", handleWheelFocused, { passive: false });
-    });
+    }
 
-    // Remove Focus-to-scroll listener when focus is lost
-    input.addEventListener("focusout", () => {
+    function handleFocusOut() {
         updateValue(getCurrentValue());
         document.removeEventListener("wheel", handleWheelFocused);
-        commitValue();
-    });
+    }
 
-    return input;
+    input.addEventListener("focus", handleFocus);
+    input.addEventListener("focusout", handleFocusOut);
+
+    // Cleanup function to remove all document-level listeners
+    function destroy() {
+        document.removeEventListener("mouseup", stopHold);
+        document.removeEventListener("wheel", handleWheelFocused);
+        stopHold();
+    }
+
+    return { input, destroy };
 }
 
 export function joinWithCommasAndAnd(strings: string[]): string {
@@ -2002,7 +2010,7 @@ function setupAutomationControls() {
     }
     updateZoneButtonText();
 
-    const until_zone_input = createNumericInput(automation_controls_div, {
+    const { input: until_zone_input } = createNumericInput(automation_controls_div, {
         min: 1,
         max: 99,
         initialValue: GAMESTATE.automation_end,
