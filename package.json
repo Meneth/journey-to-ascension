@@ -4,8 +4,16 @@
     "eslint": "^9.33.0",
     "globals": "^16.3.0",
     "jiti": "^2.5.1",
+    "sass": "^1.97.3",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.40.0"
+  },
+  "scripts": {
+    "build:css": "sass style.scss style.css",
+    "build:ts": "tsc",
+    "build": "npm run build:css && npm run build:ts",
+    "watch:css": "sass --watch style.scss style.css",
+    "lint": "eslint ."
   },
   "type": "module"
 }
