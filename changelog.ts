@@ -6,6 +6,11 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "0.3.4",
+        date: "2026-01-26",
+        changes: "- Renamed the 'All' task automation mode to 'Until Zone'. You can now specify a Zone that it'll stop when you get to. If you're already in or past that Zone when enabling Until Zone, it'll just do whatever Zone you're in, like Current Zone automation<br>"
+    },
+    {
         version: "0.3.3",
         date: "2026-01-25",
         changes: "- Fixed the Unified Theory of Magic not always updating the Highest Zone fully completed<br>"

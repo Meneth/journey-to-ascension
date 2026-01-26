@@ -13,7 +13,7 @@ const ZONE_SPEEDUP_BASE = 1.05;
 export const BOSS_MAX_ENERGY_DISPARITY = 5;
 const STARTING_ENERGY = 100;
 const DEFAULT_TICK_RATE = 66.6;
-export const SAVE_VERSION = "0.3.3";
+export const SAVE_VERSION = "0.3.4";
 
 // MARK: Skills
 
@@ -1234,6 +1234,7 @@ export class Gamestate {
     repeat_tasks = true;
     automation_mode = AutomationMode.Off;
     automation_prios: Map<number, number[]> = new Map();
+    automation_end = 99;
     auto_use_items = false;
     undo_item: [ItemType, amount: number] = [ItemType.Count, 0];
     manual_tooltips = false;
@@ -1303,6 +1304,8 @@ export class Gamestate {
 }
 
 function advanceZone() {
+    const new_zone = GAMESTATE.current_zone + 1;
+
     if (GAMESTATE.current_zone > GAMESTATE.highest_zone_fully_completed 
         && GAMESTATE.tasks.every((task: Task) => { return isTaskFullyCompleted(task); })) {
         GAMESTATE.highest_zone_fully_completed = GAMESTATE.current_zone;
@@ -1313,22 +1316,24 @@ function advanceZone() {
 
 
     if (GAMESTATE.current_zone >= GAMESTATE.highest_zone) {
-        GAMESTATE.highest_zone = GAMESTATE.current_zone + 1;
+        GAMESTATE.highest_zone = new_zone;
         const context: HighestZoneContext = { zone: GAMESTATE.current_zone + 1 };
         const event = new RenderEvent(EventType.NewHighestZone, context);
         GAMESTATE.queueRenderEvent(event);
     }
     if (GAMESTATE.automation_mode == AutomationMode.Zone) {
         GAMESTATE.automation_mode = AutomationMode.Off;
+    } else if (GAMESTATE.automation_mode == AutomationMode.All && (new_zone + 1) >= GAMESTATE.automation_end) {
+        GAMESTATE.automation_mode = AutomationMode.Off;
     }
     
     // Happens after the highest zone stuff, since we do want the user to get those effects at the end of content
-    if ((GAMESTATE.current_zone + 1) >= ZONES.length) {
+    if (new_zone >= ZONES.length) {
         GAMESTATE.is_at_end_of_content = true;
         return;
     }
     
-    GAMESTATE.current_zone += 1;
+    GAMESTATE.current_zone = new_zone;
     resetTasks();
 }
 

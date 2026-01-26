@@ -1826,18 +1826,44 @@ function setupAutomationControls() {
         return;
     }
 
-    const automation = document.createElement("div");
-    automation.className = "automation";
+    const automation_div = createChildElement(RENDERING.controls_list_element, "div");
+    automation_div.className = "automation";
 
-    const automation_text = document.createElement("div");
+    const automation_text = createChildElement(automation_div, "div");
     automation_text.className = "automation-text";
-    automation.textContent = "Automation";
+    automation_text.textContent = "Task Automation";
 
-    const all_control = document.createElement("button");
-    const zone_control = document.createElement("button");
+    const automation_controls_div = createChildElement(automation_div, "div");
+    automation_controls_div.className = "automation-controls";
+    
+    
+    const until_zone_input = createChildElement(automation_controls_div, "input") as HTMLInputElement;
+    until_zone_input.classList = "automation-input";
+    until_zone_input.value = `${GAMESTATE.automation_end}`;
+    until_zone_input.type = "number";
 
-    all_control.textContent = "All";
-    zone_control.textContent = "Zone";
+    function setMaxZone() {
+        let value = parseInt(until_zone_input.value);
+        if (isNaN(value) || value < 1 || value >= 100) {
+            value = 99;
+        }
+
+        GAMESTATE.automation_end = value;
+        setupControls();
+    }
+
+    until_zone_input.addEventListener("focusout", setMaxZone);
+    until_zone_input.addEventListener("keydown", (event: KeyboardEvent) => {
+        if (event.key == "Enter") {
+            setMaxZone();
+        }
+    });
+    
+    const all_control = createChildElement(automation_controls_div, "button");
+    const zone_control = createChildElement(automation_controls_div, "button");
+
+    all_control.innerHTML = `To<br>Zone ${GAMESTATE.automation_end}`;
+    zone_control.textContent = "Current Zone";
 
     all_control.className = GAMESTATE.automation_mode == AutomationMode.All ? "on" : "off";
     zone_control.className = GAMESTATE.automation_mode == AutomationMode.Zone ? "on" : "off";
@@ -1849,8 +1875,8 @@ function setupAutomationControls() {
         toggleAutomationMode(AutomationMode.Zone);
     });
 
-    setupTooltip(all_control, function () { return `Automate ${all_control.textContent}`; }, function () {
-        let tooltip = "Toggle between automating Ttasks in all zones, and not automating";
+    setupTooltip(all_control, function () { return `Automate To Zone ${GAMESTATE.automation_end}`; }, function () {
+        let tooltip = `Toggle between no automation, and automating Tasks until the specified Zone (${GAMESTATE.automation_end}) is reached`;
         tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
         tooltip += "<br><br>Hotkey: A";
@@ -1859,7 +1885,7 @@ function setupAutomationControls() {
     });
 
     setupTooltip(zone_control, function () { return `Automate ${zone_control.textContent}`; }, function () {
-        let tooltip = "Toggle between automating Tasks in the current zone, and not automating";
+        let tooltip = "Toggle between no automation, automating Tasks in the current zone";
         tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
         tooltip += "<br><br>Hotkey: Z";
@@ -1867,10 +1893,11 @@ function setupAutomationControls() {
         return tooltip;
     });
 
-    automation.appendChild(automation_text);
-    automation.appendChild(all_control);
-    automation.appendChild(zone_control);
-    RENDERING.controls_list_element.appendChild(automation);
+    setupTooltip(until_zone_input, function () { return `Specify Target Zone`; }, function () {
+        const tooltip = "The Zone you specify here will be used by the 'To Zone' automation";
+
+        return tooltip;
+    });
 }
 
 // MARK: Extra stats
@@ -2398,7 +2425,28 @@ export function updateRendering() {
     }
 }
 
+function inputIsBeingHandled() {
+    const activeElement = document.activeElement;
+    if (!activeElement) {
+        return false;
+    }
+
+    const isInputField = activeElement.tagName === "INPUT" ||
+        activeElement.tagName === "TEXTAREA" ||
+        activeElement.getAttribute("contenteditable") === "true";
+    return isInputField;
+}
+
 export function handleHotkeyReleased(event: KeyboardEvent) {
+    // Checked before input handling, since you might be looking at tooltips still
+    if (GAMESTATE.manual_tooltips && event.key == "Control") {
+        hideTooltip();
+    }
+    
+    if (inputIsBeingHandled()) {
+        return;
+    }
+
     if (hasPerk(PerkType.Amulet)) {
         if (event.key == "a") {
             toggleAutomationMode(AutomationMode.All);
@@ -2413,8 +2461,6 @@ export function handleHotkeyReleased(event: KeyboardEvent) {
     } else if (event.key == "r") {
         GAMESTATE.repeat_tasks = !GAMESTATE.repeat_tasks;
         setupControls();
-    } else if (GAMESTATE.manual_tooltips && event.key == "Control") {
-        hideTooltip();
     }
 }
 
