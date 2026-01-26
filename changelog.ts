@@ -10,6 +10,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         date: "2026-01-26",
         changes: "- Renamed the 'All' task automation mode to 'Until Zone'. You can now specify a Zone that it'll stop when you get to. If you're already in or past that Zone when enabling Until Zone, it'll just do whatever Zone you're in, like Current Zone automation<br>"
         + "- Added a mention to the Energy tooltip that drain is proportional to the time spent on a Task, and goes up a little with each Zone<br>"
+        + "- The Reflections on the Journey Perk's tooltip now states the highest Zone reached, and the effect in the current Zone<br>"
     },
     {
         version: "0.3.3",

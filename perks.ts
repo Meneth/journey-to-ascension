@@ -7,7 +7,7 @@ import {
     ENERGY_TEXT,
     XP_TEXT
 } from "./rendering_constants.js";
-import { hasPrestigeUnlock } from "./simulation.js";
+import { calcReflectionsOnTheJourneyMult, hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_BASE, AWAKENING_DIVINE_SPARK_MULT } from "./simulation_constants.js";
 import { SkillType } from "./skills.js";
 
@@ -78,7 +78,7 @@ export class PerkDefinition {
 
 
 
-function getReflectionsOnTheJourneyExponent() {
+export function getReflectionsOnTheJourneyExponent() {
     return hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror) ? REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE : REFLECTIONS_ON_THE_JOURNEY_BASE;
 }
 
@@ -207,7 +207,19 @@ export const PERKS: PerkDefinition[] = [
     new PerkDefinition({
         enum: PerkType.ReflectionsOnTheJourney,
         name: `Reflections on the Journey`,
-        get_custom_tooltip: () => { return `Reduce ${ENERGY_TEXT} drain based on the highest Zone reached<br>In each Zone ${ENERGY_TEXT} consumption is reduced ${((1 - getReflectionsOnTheJourneyExponent()) * 100).toFixed(0)}% compounding for each Zone you've reached past it<br>So Zone 12 has ${ENERGY_TEXT} cost multiplied by ${getReflectionsOnTheJourneyExponent()}^2 if the highest Zone reached is 14`; },
+        get_custom_tooltip: () => { 
+            const reduction_per_zone = 1 - getReflectionsOnTheJourneyExponent();
+            const current_reduction = 1 - calcReflectionsOnTheJourneyMult(GAMESTATE.current_zone);
+
+            let tooltip = `Reduce ${ENERGY_TEXT} drain based on the highest Zone reached`;
+            tooltip += `<br>In each Zone ${ENERGY_TEXT} consumption is reduced ${(reduction_per_zone * 100).toFixed(0)}% compounding for each Zone you've reached past it`
+            tooltip += `<br>So Zone 12 has ${ENERGY_TEXT} cost multiplied by ${getReflectionsOnTheJourneyExponent()}^2 if the highest Zone reached is 14`;
+
+            tooltip += `<br><br>Highest Zone reached: ${GAMESTATE.highest_zone + 1}`
+            tooltip += `<br>Effect in current Zone: ${(current_reduction * 100).toFixed()}% reduction`
+
+            return tooltip;
+        },
         icon: `🕰️`,
     }),
     new PerkDefinition({

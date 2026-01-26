@@ -1,11 +1,11 @@
 import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE, setTickRate } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ARTIFACTS, ItemType, MAGIC_RING_MULT } from "./items.js";
-import { PerkDefinition, PERKS, PerkType } from "./perks.js";
+import { getReflectionsOnTheJourneyExponent, PerkDefinition, PERKS, PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT } from "./prestige_upgrades.js";
-import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
+import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT } from "./simulation_constants.js";
 
 // MARK: Constants
 let task_progress_mult = 1;
@@ -496,6 +496,12 @@ function modifyMaxEnergy(delta: number) {
     setTickRate();
 }
 
+export function calcReflectionsOnTheJourneyMult(zone: number) {
+    const zone_diff = GAMESTATE.highest_zone - zone;
+    const base = getReflectionsOnTheJourneyExponent();
+    return Math.pow(base, zone_diff);
+}
+
 export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): number {
     let drain = 1;
 
@@ -508,9 +514,7 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
     }
 
     if (hasPerk(PerkType.ReflectionsOnTheJourney)) {
-        const zone_diff = GAMESTATE.highest_zone - task.task_definition.zone_id;
-        const base = hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror) ? REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE : REFLECTIONS_ON_THE_JOURNEY_BASE;
-        drain *= Math.pow(base, zone_diff);
+        drain *= calcReflectionsOnTheJourneyMult(task.task_definition.zone_id);
     }
 
     drain *= Math.pow(ZONE_SPEEDUP_BASE, task.task_definition.zone_id);
