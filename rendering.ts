@@ -50,18 +50,18 @@ function createNumericInput(parent: Element, options: NumericInputOptions): Nume
         input.setAttribute("aria-label", ariaLabel);
     }
 
-    const buttonsContainer = createChildElement(wrapper, "div");
-    buttonsContainer.className = "numeric-input-buttons";
+    const buttons_container = createChildElement(wrapper, "div");
+    buttons_container.className = "numeric-input-buttons";
 
-    const incrementBtn = createChildElement(buttonsContainer, "button") as HTMLButtonElement;
-    incrementBtn.className = "numeric-input-button numeric-input-increment";
-    incrementBtn.type = "button";
-    incrementBtn.setAttribute("aria-label", "Increment");
+    const increment_button = createChildElement(buttons_container, "button") as HTMLButtonElement;
+    increment_button.className = "numeric-input-button numeric-input-increment";
+    increment_button.type = "button";
+    increment_button.setAttribute("aria-label", "Increment");
 
-    const decrementBtn = createChildElement(buttonsContainer, "button") as HTMLButtonElement;
-    decrementBtn.className = "numeric-input-button numeric-input-decrement";
-    decrementBtn.type = "button";
-    decrementBtn.setAttribute("aria-label", "Decrement");
+    const decrement_button = createChildElement(buttons_container, "button") as HTMLButtonElement;
+    decrement_button.className = "numeric-input-button numeric-input-decrement";
+    decrement_button.type = "button";
+    decrement_button.setAttribute("aria-label", "Decrement");
 
     function clampValue(value: number): number {
         if (isNaN(value)) return min;
@@ -70,8 +70,8 @@ function createNumericInput(parent: Element, options: NumericInputOptions): Nume
 
     function updateButtonStates() {
         const current = getCurrentValue();
-        decrementBtn.classList.toggle("disabled", current <= min);
-        incrementBtn.classList.toggle("disabled", current >= max);
+        decrement_button.classList.toggle("disabled", current <= min);
+        increment_button.classList.toggle("disabled", current >= max);
     }
 
     function updateValue(newValue: number) {
@@ -87,42 +87,42 @@ function createNumericInput(parent: Element, options: NumericInputOptions): Nume
 
     updateButtonStates();
 
-    decrementBtn.addEventListener("click", () => {
+    decrement_button.addEventListener("click", () => {
         updateValue(getCurrentValue() - step);
     });
 
-    incrementBtn.addEventListener("click", () => {
+    increment_button.addEventListener("click", () => {
         updateValue(getCurrentValue() + step);
     });
 
     // Hold-to-repeat functionality
-    let holdTimeout: number | null = null;
-    let holdInterval: number | null = null;
+    let hold_timeout: number | null = null;
+    let hold_interval: number | null = null;
     const HOLD_DELAY = 400;
     const HOLD_REPEAT = 80;
 
     function startHold(delta: number) {
         stopHold();
-        holdTimeout = window.setTimeout(() => {
-            holdInterval = window.setInterval(() => {
+        hold_timeout = window.setTimeout(() => {
+            hold_interval = window.setInterval(() => {
                 updateValue(getCurrentValue() + delta);
             }, HOLD_REPEAT);
         }, HOLD_DELAY);
     }
 
     function stopHold() {
-        if (holdTimeout) {
-            clearTimeout(holdTimeout);
-            holdTimeout = null;
+        if (hold_timeout) {
+            clearTimeout(hold_timeout);
+            hold_timeout = null;
         }
-        if (holdInterval) {
-            clearInterval(holdInterval);
-            holdInterval = null;
+        if (hold_interval) {
+            clearInterval(hold_interval);
+            hold_interval = null;
         }
     }
 
-    decrementBtn.addEventListener("mousedown", () => startHold(-step));
-    incrementBtn.addEventListener("mousedown", () => startHold(step));
+    decrement_button.addEventListener("mousedown", () => startHold(-step));
+    increment_button.addEventListener("mousedown", () => startHold(step));
 
     // Document-level mouseup to catch releases anywhere
     document.addEventListener("mouseup", stopHold);
@@ -2013,7 +2013,7 @@ function setupAutomationControls() {
     const automation_controls_div = createChildElement(automation_div, "div");
     automation_controls_div.className = "automation-controls";
 
-    const all_control = document.createElement("button");
+    const all_control = createChildElement(automation_controls_div, "button");
 
     function updateZoneButtonText() {
         all_control.innerHTML = `To<br>Zone ${GAMESTATE.automation_end}`;
@@ -2031,7 +2031,6 @@ function setupAutomationControls() {
         ariaLabel: "Target zone for automation"
     });
 
-    automation_controls_div.appendChild(all_control);
     const zone_control = createChildElement(automation_controls_div, "button");
     zone_control.textContent = "Current Zone";
 
