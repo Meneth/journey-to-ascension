@@ -19,6 +19,177 @@ function createChildElement(parent: Element, child_type: string): HTMLElement {
     return child;
 }
 
+interface NumericInputOptions {
+    min?: number;
+    max?: number;
+    step?: number;
+    largeStep?: number;
+    initialValue: number;
+    onChange: (value: number) => void;
+    ariaLabel?: string;
+}
+
+interface NumericInputResult {
+    input: HTMLInputElement;
+    destroy: () => void;
+}
+
+function createNumericInput(parent: Element, options: NumericInputOptions): NumericInputResult {
+    const { min = 1, max = 99, step = 1, largeStep = 10, initialValue, onChange, ariaLabel } = options;
+
+    const wrapper = createChildElement(parent, "div");
+    wrapper.className = "numeric-input-wrapper";
+
+    const input = createChildElement(wrapper, "input") as HTMLInputElement;
+    input.className = "numeric-input";
+    input.type = "number";
+    input.value = `${initialValue}`;
+    input.min = `${min}`;
+    input.max = `${max}`;
+    if (ariaLabel) {
+        input.setAttribute("aria-label", ariaLabel);
+    }
+
+    const buttonsContainer = createChildElement(wrapper, "div");
+    buttonsContainer.className = "numeric-input-buttons";
+
+    const incrementBtn = createChildElement(buttonsContainer, "button") as HTMLButtonElement;
+    incrementBtn.className = "numeric-input-button numeric-input-increment";
+    incrementBtn.type = "button";
+    incrementBtn.setAttribute("aria-label", "Increment");
+
+    const decrementBtn = createChildElement(buttonsContainer, "button") as HTMLButtonElement;
+    decrementBtn.className = "numeric-input-button numeric-input-decrement";
+    decrementBtn.type = "button";
+    decrementBtn.setAttribute("aria-label", "Decrement");
+
+    function clampValue(value: number): number {
+        if (isNaN(value)) return min;
+        return Math.max(min, Math.min(max, value));
+    }
+
+    function updateButtonStates() {
+        const current = getCurrentValue();
+        decrementBtn.classList.toggle("disabled", current <= min);
+        incrementBtn.classList.toggle("disabled", current >= max);
+    }
+
+    function updateValue(newValue: number) {
+        const clamped = clampValue(newValue);
+        input.value = `${clamped}`;
+        updateButtonStates();
+        onChange(clamped);
+    }
+
+    function getCurrentValue(): number {
+        return parseInt(input.value) || min;
+    }
+
+    updateButtonStates();
+
+    decrementBtn.addEventListener("click", () => {
+        updateValue(getCurrentValue() - step);
+    });
+
+    incrementBtn.addEventListener("click", () => {
+        updateValue(getCurrentValue() + step);
+    });
+
+    // Hold-to-repeat functionality
+    let holdTimeout: number | null = null;
+    let holdInterval: number | null = null;
+    const HOLD_DELAY = 400;
+    const HOLD_REPEAT = 80;
+
+    function startHold(delta: number) {
+        stopHold();
+        holdTimeout = window.setTimeout(() => {
+            holdInterval = window.setInterval(() => {
+                updateValue(getCurrentValue() + delta);
+            }, HOLD_REPEAT);
+        }, HOLD_DELAY);
+    }
+
+    function stopHold() {
+        if (holdTimeout) {
+            clearTimeout(holdTimeout);
+            holdTimeout = null;
+        }
+        if (holdInterval) {
+            clearInterval(holdInterval);
+            holdInterval = null;
+        }
+    }
+
+    decrementBtn.addEventListener("mousedown", () => startHold(-step));
+    incrementBtn.addEventListener("mousedown", () => startHold(step));
+
+    // Document-level mouseup to catch releases anywhere
+    document.addEventListener("mouseup", stopHold);
+
+    // Keyboard support
+    input.addEventListener("keydown", (event: KeyboardEvent) => {
+        if (event.key === "ArrowUp") {
+            event.preventDefault();
+            updateValue(getCurrentValue() + step);
+        } else if (event.key === "ArrowDown") {
+            event.preventDefault();
+            updateValue(getCurrentValue() - step);
+        } else if (event.key === "PageUp") {
+            event.preventDefault();
+            updateValue(getCurrentValue() + largeStep);
+        } else if (event.key === "PageDown") {
+            event.preventDefault();
+            updateValue(getCurrentValue() - largeStep);
+        } else if (event.key === "Enter") {
+            updateValue(getCurrentValue());
+            input.blur();
+        }
+    });
+
+    // Wheel handler for when focused (works anywhere on page)
+    function handleWheelFocused(event: WheelEvent) {
+        if (document.activeElement !== input) return;
+        event.preventDefault();
+        const delta = event.deltaY < 0 ? step : -step;
+        updateValue(getCurrentValue() + delta);
+    }
+
+    // Wheel handler for when hovering (works on the wrapper)
+    function handleWheelHover(event: WheelEvent) {
+        if (document.activeElement === input) return; // Don't double-handle if focused
+        event.preventDefault();
+        const delta = event.deltaY < 0 ? step : -step;
+        updateValue(getCurrentValue() + delta);
+    }
+
+    // Hover-to-scroll: works when hovering over the input
+    wrapper.addEventListener("wheel", handleWheelHover, { passive: false });
+
+    // Focus-to-scroll: works anywhere when input is focused
+    function handleFocus() {
+        input.select();
+        document.addEventListener("wheel", handleWheelFocused, { passive: false });
+    }
+
+    function handleFocusOut() {
+        updateValue(getCurrentValue());
+        document.removeEventListener("wheel", handleWheelFocused);
+    }
+
+    input.addEventListener("focus", handleFocus);
+    input.addEventListener("focusout", handleFocusOut);
+
+    // Cleanup function to remove all document-level listeners
+    function destroy() {
+        document.removeEventListener("mouseup", stopHold);
+        document.removeEventListener("wheel", handleWheelFocused);
+        stopHold();
+    }
+
+    return { input, destroy };
+}
+
 export function joinWithCommasAndAnd(strings: string[]): string {
     if (strings.length === 0) return "";
     if (strings.length === 1) return strings[0] as string;
@@ -883,7 +1054,7 @@ function sortItems(items: [type: ItemType, amount: number][]) {
     });
 }
 
-function setupAutoUseItemsControl() {
+function setupAutoUseItemsControl(parent: Element) {
     if (!hasPerk(PerkType.Amulet)) {
         return;
     }
@@ -910,7 +1081,7 @@ function setupAutoUseItemsControl() {
         return tooltip;
     });
 
-    RENDERING.controls_list_element.appendChild(item_control);
+    parent.appendChild(item_control);
 }
 
 function updateItems() {
@@ -1782,12 +1953,18 @@ function handleEvents() {
 function setupControls() {
     RENDERING.controls_list_element.innerHTML = "";
 
-    setupRepeatTasksControl();
+    // First row: toggle buttons
+    const toggles_row = createChildElement(RENDERING.controls_list_element, "div");
+    toggles_row.className = "controls-row";
+
+    setupRepeatTasksControl(toggles_row);
+    setupAutoUseItemsControl(toggles_row);
+
+    // Second row: automation (with border)
     setupAutomationControls();
-    setupAutoUseItemsControl();
 }
 
-function setupRepeatTasksControl() {
+function setupRepeatTasksControl(parent: Element) {
     const rep_control = document.createElement("button");
     rep_control.className = "element";
 
@@ -1806,7 +1983,7 @@ function setupRepeatTasksControl() {
         return "Toggle between repeating Tasks if they have multiple reps, or only doing a single rep<br>When repeating, the Task tooltip will show the numbers for doing all remaining reps rather than just one<br><br>Hotkey: R";
     });
 
-    RENDERING.controls_list_element.appendChild(rep_control);
+    parent.appendChild(rep_control);
 }
 
 // MARK: Controls - Automation
@@ -1835,34 +2012,27 @@ function setupAutomationControls() {
 
     const automation_controls_div = createChildElement(automation_div, "div");
     automation_controls_div.className = "automation-controls";
-    
-    
-    const until_zone_input = createChildElement(automation_controls_div, "input") as HTMLInputElement;
-    until_zone_input.classList = "automation-input";
-    until_zone_input.value = `${GAMESTATE.automation_end}`;
-    until_zone_input.type = "number";
 
-    function setMaxZone() {
-        let value = parseInt(until_zone_input.value);
-        if (isNaN(value) || value < 1 || value >= 100) {
-            value = 99;
-        }
+    const all_control = document.createElement("button");
 
-        GAMESTATE.automation_end = value;
-        setupControls();
+    function updateZoneButtonText() {
+        all_control.innerHTML = `To<br>Zone ${GAMESTATE.automation_end}`;
     }
+    updateZoneButtonText();
 
-    until_zone_input.addEventListener("focusout", setMaxZone);
-    until_zone_input.addEventListener("keydown", (event: KeyboardEvent) => {
-        if (event.key == "Enter") {
-            setMaxZone();
-        }
+    const { input: until_zone_input } = createNumericInput(automation_controls_div, {
+        min: 1,
+        max: 99,
+        initialValue: GAMESTATE.automation_end,
+        onChange: (value) => {
+            GAMESTATE.automation_end = value;
+            updateZoneButtonText();
+        },
+        ariaLabel: "Target zone for automation"
     });
-    
-    const all_control = createChildElement(automation_controls_div, "button");
-    const zone_control = createChildElement(automation_controls_div, "button");
 
-    all_control.innerHTML = `To<br>Zone ${GAMESTATE.automation_end}`;
+    automation_controls_div.appendChild(all_control);
+    const zone_control = createChildElement(automation_controls_div, "button");
     zone_control.textContent = "Current Zone";
 
     all_control.className = GAMESTATE.automation_mode == AutomationMode.All ? "on" : "off";
