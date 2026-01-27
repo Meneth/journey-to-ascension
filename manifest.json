@@ -1,0 +1,16 @@
+{
+  "name": "Journey to Ascension",
+  "short_name": "Ascension",
+  "description": "Learn, die, repeat; an active incremental game to Journey to Ascension - made by Magne 'Meneth' Skjæran",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#102661",
+  "theme_color": "#8c386d",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
