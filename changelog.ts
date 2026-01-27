@@ -7,10 +7,13 @@ export class ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
     {
         version: "0.3.4",
-        date: "2026-01-26",
+        date: "2026-01-27",
         changes: "- Renamed the 'All' task automation mode to 'Until Zone'. You can now specify a Zone that it'll stop when you get to. If you're already in or past that Zone when enabling Until Zone, it'll just do whatever Zone you're in, like Current Zone automation<br>"
         + "- Added a mention to the Energy tooltip that drain is proportional to the time spent on a Task, and goes up a little with each Zone<br>"
         + "- The Reflections on the Journey Perk's tooltip now states the highest Zone reached, and the effect in the current Zone<br>"
+        + "- The stats screen now shows your Highest Zone reached, and fully completed. If you've Prestiged, it also shows the highest in any Prestige. Note that this number will initially be wrong in saves before this update, since this info was not tracked until now<br>"
+        + "- The Prestige button no longer shows Divine Spark gain if you can't Prestige yet, instead showing just your current amount. Still clickable<br>"
+        + "- The Prestige button now glows when you reach a new highest Zone, since that at least doubles the Divine Spark gain<br>"
     },
     {
         version: "0.3.3",

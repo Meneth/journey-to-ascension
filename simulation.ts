@@ -1092,12 +1092,13 @@ function applyGameStartPrestigeEffects() {
 export function doPrestige() {
     doAnyReset();
     GAMESTATE.prestige_count++;
+    GAMESTATE.highest_prestige_zone = Math.max(GAMESTATE.highest_zone, GAMESTATE.highest_prestige_zone);
     GAMESTATE.divine_spark += calcDivineSparkGain();
 
     // Reset most game state
     GAMESTATE.unlocked_tasks = [];
     GAMESTATE.highest_zone = 0;
-    GAMESTATE.highest_zone_fully_completed = 0;
+    GAMESTATE.highest_zone_fully_completed = -1;
     initializeSkills();
 
     // We set these to false/zero rather than clearing it, so the player can still see everything they've unlocked in the past
@@ -1221,6 +1222,15 @@ function loadGameFromData(data: any) {
     for (const task of GAMESTATE.tasks) {
         task.reps = Math.min(task.reps, task.task_definition.max_reps);
     }
+
+    // At least not as inaccurate as shwoing these as 1/0
+    GAMESTATE.highest_zone_ever = Math.max(GAMESTATE.highest_zone, GAMESTATE.highest_zone_ever);
+    GAMESTATE.highest_zone_fully_completed_ever = Math.max(GAMESTATE.highest_zone_fully_completed, GAMESTATE.highest_zone_fully_completed_ever);
+
+    // We didn't use to track this, so let's get as close as we can
+    if (GAMESTATE.highest_prestige_zone == 0 && GAMESTATE.prestige_count > 0) {
+        GAMESTATE.highest_prestige_zone = GAMESTATE.highest_zone_ever;
+    }
 }
 
 // MARK: Gamestate
@@ -1234,6 +1244,8 @@ export class Gamestate {
     current_zone: number = 0;
     highest_zone: number = 0;
     highest_zone_fully_completed: number = -1;
+    highest_zone_ever: number = 0;
+    highest_zone_fully_completed_ever: number = -1;
 
     repeat_tasks = true;
     automation_mode = AutomationMode.Off;
@@ -1271,6 +1283,7 @@ export class Gamestate {
 
     prestige_available = false;
     prestige_count = 0;
+    highest_prestige_zone = 0;
     unlocked_new_prestige_this_prestige = false;
     divine_spark = 0;
     prestige_unlocks: PrestigeUnlockType[] = [];
@@ -1313,14 +1326,15 @@ function advanceZone() {
     if (GAMESTATE.current_zone > GAMESTATE.highest_zone_fully_completed 
         && GAMESTATE.tasks.every((task: Task) => { return isTaskFullyCompleted(task); })) {
         GAMESTATE.highest_zone_fully_completed = GAMESTATE.current_zone;
+        GAMESTATE.highest_zone_fully_completed_ever = Math.max(GAMESTATE.highest_zone_fully_completed, GAMESTATE.highest_zone_fully_completed_ever);
         const context: HighestZoneContext = { zone: GAMESTATE.current_zone };
         const event = new RenderEvent(EventType.NewHighestZoneFullyCompleted, context);
         GAMESTATE.queueRenderEvent(event);
     }
 
-
     if (GAMESTATE.current_zone >= GAMESTATE.highest_zone) {
         GAMESTATE.highest_zone = new_zone;
+        GAMESTATE.highest_zone_ever = Math.max(GAMESTATE.highest_zone, GAMESTATE.highest_zone_ever);
         const context: HighestZoneContext = { zone: GAMESTATE.current_zone + 1 };
         const event = new RenderEvent(EventType.NewHighestZone, context);
         GAMESTATE.queueRenderEvent(event);

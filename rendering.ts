@@ -1393,7 +1393,7 @@ function populatePrestigeView() {
         prestige_button.addEventListener("click", () => {
             createConfirmationOverlay("Do Prestige", `Will give ${formatNumber(calcDivineSparkGain(), false)} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases<br>Will also remove all Boss Tasks from automation`, () => {
                 doPrestige();
-            populatePrestigeView();
+                populatePrestigeView();
             });
         });
 
@@ -2110,12 +2110,13 @@ function updateExtraStats() {
         RENDERING.open_prestige_element.classList.remove("hidden");
     }
 
-    const prestige_text = `<h2>${DIVINE_SPARK_TEXT}<br>${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})</h2>`;
+    const prestige_text = GAMESTATE.prestige_available ? `<h2>${DIVINE_SPARK_TEXT}<br>${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})</h2>` : `<h2>${DIVINE_SPARK_TEXT}<br>${formatNumber(GAMESTATE.divine_spark, false)}</h2>`;
     if (RENDERING.open_prestige_element.innerHTML != prestige_text) {
         RENDERING.open_prestige_element.innerHTML = prestige_text;
     }
 
-    RENDERING.open_prestige_element.classList.toggle("prestige-glow", GAMESTATE.unlocked_new_prestige_this_prestige);
+    const prestige_glow = GAMESTATE.unlocked_new_prestige_this_prestige || GAMESTATE.highest_zone > GAMESTATE.highest_prestige_zone;
+    RENDERING.open_prestige_element.classList.toggle("prestige-glow", prestige_glow);
 }
 
 // MARK: Stats
@@ -2168,6 +2169,15 @@ function populateStatsView() {
     }
 
     createChildElement(scroll_area, "h1").textContent = "Stats";
+
+    createChildElement(scroll_area, "span").textContent = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
+    createChildElement(scroll_area, "span").textContent = `Highest Zone fully completed: ${GAMESTATE.highest_zone_fully_completed + 1}`;
+
+    if (GAMESTATE.prestige_count > 0) {
+        createChildElement(scroll_area, "span").textContent = `Highest Zone reached (any Prestige): ${GAMESTATE.highest_zone_ever + 1}`;
+        createChildElement(scroll_area, "span").textContent = `Highest Zone fully completed (any Prestige): ${GAMESTATE.highest_zone_fully_completed_ever + 1}`;
+    }
+
     const attunement_skills = calcAttunementSkills();
     const power_skills = getPowerSkills();
 
