@@ -11,6 +11,91 @@ import { CHANGELOG } from "./changelog.js";
 import { CREDITS } from "./credits.js";
 import { AWAKENING_DIVINE_SPARK_MULT } from "./simulation_constants.js";
 
+// MARK: Mobile & Touch Support
+
+let isTouchDevice = false;
+let mobileSidebarState = {
+    left_open: false,
+    right_open: false
+};
+
+function detectTouchDevice(): void {
+    isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+}
+
+function setupMobileSidebars(): void {
+    const leftToggle = document.getElementById("toggle-left-sidebar");
+    const rightToggle = document.getElementById("toggle-right-sidebar");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const rightSidebar = document.getElementById("right-column");
+
+    if (!leftToggle || !rightToggle || !backdrop || !leftSidebar || !rightSidebar) {
+        return;
+    }
+
+    leftToggle.addEventListener("click", () => toggleMobileSidebar("left"));
+    rightToggle.addEventListener("click", () => toggleMobileSidebar("right"));
+    backdrop.addEventListener("click", closeMobileSidebars);
+}
+
+function toggleMobileSidebar(side: "left" | "right"): void {
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const rightSidebar = document.getElementById("right-column");
+
+    if (!backdrop || !leftSidebar || !rightSidebar) {
+        return;
+    }
+
+    if (side === "left") {
+        mobileSidebarState.left_open = !mobileSidebarState.left_open;
+        mobileSidebarState.right_open = false;
+        leftSidebar.classList.toggle("open", mobileSidebarState.left_open);
+        rightSidebar.classList.remove("open");
+    } else {
+        mobileSidebarState.right_open = !mobileSidebarState.right_open;
+        mobileSidebarState.left_open = false;
+        rightSidebar.classList.toggle("open", mobileSidebarState.right_open);
+        leftSidebar.classList.remove("open");
+    }
+
+    const anyOpen = mobileSidebarState.left_open || mobileSidebarState.right_open;
+    backdrop.classList.toggle("visible", anyOpen);
+}
+
+function closeMobileSidebars(): void {
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const rightSidebar = document.getElementById("right-column");
+
+    if (!backdrop || !leftSidebar || !rightSidebar) {
+        return;
+    }
+
+    mobileSidebarState.left_open = false;
+    mobileSidebarState.right_open = false;
+    leftSidebar.classList.remove("open");
+    rightSidebar.classList.remove("open");
+    backdrop.classList.remove("visible");
+}
+
+function setupGlobalTooltipDismiss(): void {
+    document.addEventListener("click", (event) => {
+        if (!isTouchDevice) return;
+
+        const tooltip = RENDERING.tooltip_element;
+        if (!tooltip || tooltip.classList.contains("hidden")) return;
+
+        const target = event.target as HTMLElement;
+        if (tooltip.contains(target)) return;
+
+        if (target.closest("[data-has-tooltip]")) return;
+
+        hideTooltip();
+    });
+}
+
 // MARK: Helpers
 
 function createChildElement(parent: Element, child_type: string): HTMLElement {
@@ -798,15 +883,37 @@ interface ElementWithTooltip extends HTMLElement {
 function setupTooltip(element: ElementWithTooltip, header_callback: tooltipLambda, body_callback: tooltipLambda) {
     element.generateTooltipHeader = header_callback;
     element.generateTooltipBody = body_callback;
+    element.setAttribute("data-has-tooltip", "true");
+
     element.addEventListener("pointerenter", (event) => {
         RENDERING.potential_tooltipped_element = element;
+        // On touch devices, don't auto-show on hover (pointerenter can fire on touch)
+        if (isTouchDevice) return;
+
         if (!GAMESTATE.manual_tooltips || event.ctrlKey) {
             showTooltip(element);
         }
     });
+
     element.addEventListener("pointerleave", () => {
+        // On touch devices, don't auto-hide (user taps elsewhere to dismiss)
+        if (isTouchDevice) return;
+
         hideTooltip();
         RENDERING.potential_tooltipped_element = null;
+    });
+
+    // Touch: tap to toggle tooltip
+    element.addEventListener("click", (event) => {
+        if (!isTouchDevice) return;
+
+        // If tooltip is already showing for this element, hide it
+        if (RENDERING.tooltipped_element === element) {
+            hideTooltip();
+        } else {
+            showTooltip(element);
+        }
+        event.stopPropagation();
     });
 }
 
@@ -2465,6 +2572,9 @@ export class Rendering {
     }
 
     public initialize() {
+        detectTouchDevice();
+        setupMobileSidebars();
+        setupGlobalTooltipDismiss();
         setupEnergyReset(this.energy_reset_element);
         setupSettings();
         setupControls();
@@ -2546,43 +2656,63 @@ function showTooltip(element: ElementWithTooltip) {
     tooltip_element.classList.add("hidden");
     tooltip_element.innerHTML = "";
     RENDERING.tooltipped_element = element;
-    
+
     tooltip_element.innerHTML = `<h3>${element.generateTooltipHeader()}</h3>`;
     const body_text = element.generateTooltipBody();
     if (body_text != ``) {
         tooltip_element.innerHTML += `<hr />`;
         tooltip_element.innerHTML += body_text;
     }
-    
+
     tooltip_element.style.top = "";
     tooltip_element.style.bottom = "";
     tooltip_element.style.left = "";
     tooltip_element.style.right = "";
-    
-    const elementRect = element.getBoundingClientRect();
-    const beyondVerticalCenter = elementRect.top > (window.innerHeight / 2);
-    const beyondHorizontalCenter = elementRect.left > (window.innerWidth / 2);
-    let x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
-    let y = (beyondVerticalCenter ? elementRect.bottom : elementRect.top) + window.scrollY;
 
-    // Energy element covers basically full width so needs its own logic to look good
-    if (element.id == "energy") {
-        x = elementRect.left + window.scrollX;
-        tooltip_element.style.left = x + "px";
-        y = elementRect.bottom + scrollY + 5;
-        tooltip_element.style.top = y + "px";
-    } else {
-        if (beyondHorizontalCenter) {
-            x = document.documentElement.clientWidth - x;
-            tooltip_element.style.right = x + "px";
+    const isMobile = window.innerWidth <= 768;
+    const elementRect = element.getBoundingClientRect();
+
+    if (isMobile) {
+        // Mobile: center horizontally, position above or below element
+        tooltip_element.style.left = "10px";
+        tooltip_element.style.right = "10px";
+
+        const spaceAbove = elementRect.top;
+        const spaceBelow = window.innerHeight - elementRect.bottom;
+
+        if (spaceBelow >= spaceAbove || spaceBelow > 150) {
+            // Position below
+            tooltip_element.style.top = (elementRect.bottom + window.scrollY + 8) + "px";
         } else {
-            tooltip_element.style.left = x + "px";
+            // Position above
+            tooltip_element.style.bottom = (window.innerHeight - elementRect.top + 8) + "px";
         }
-        if (beyondVerticalCenter) {
-            y = document.documentElement.clientHeight - y;
-            tooltip_element.style.bottom = y + "px";
-        } else {
+    } else {
+        // Desktop positioning
+        const beyondVerticalCenter = elementRect.top > (window.innerHeight / 2);
+        const beyondHorizontalCenter = elementRect.left > (window.innerWidth / 2);
+        let x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
+        let y = (beyondVerticalCenter ? elementRect.bottom : elementRect.top) + window.scrollY;
+
+        // Energy element covers basically full width so needs its own logic to look good
+        if (element.id == "energy") {
+            x = elementRect.left + window.scrollX;
+            tooltip_element.style.left = x + "px";
+            y = elementRect.bottom + scrollY + 5;
             tooltip_element.style.top = y + "px";
+        } else {
+            if (beyondHorizontalCenter) {
+                x = document.documentElement.clientWidth - x;
+                tooltip_element.style.right = x + "px";
+            } else {
+                tooltip_element.style.left = x + "px";
+            }
+            if (beyondVerticalCenter) {
+                y = document.documentElement.clientHeight - y;
+                tooltip_element.style.bottom = y + "px";
+            } else {
+                tooltip_element.style.top = y + "px";
+            }
         }
     }
 
