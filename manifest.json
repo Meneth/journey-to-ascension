@@ -1,0 +1,16 @@
+{
+  "name": "Journey to Ascension",
+  "short_name": "Ascension",
+  "description": "Manage your energy, unlock perks, and discover artifacts in this idle incremental game on your Journey to Ascension",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#102661",
+  "theme_color": "#8c386d",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

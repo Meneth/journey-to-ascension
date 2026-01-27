@@ -8,4 +8,6 @@ export const CREDITS =
  + "Mister_Kipper, for feedback<br>"
  + "Zwemvest, for feedback, playtesting, and code review<br>"
  + "Everyone else who has given feedback<br>"
+    + "<h2>Art</h2>"
+    + "\"Spell book painting\" by <a href=\"https://www.deviantart.com/elylbroong/art/Spell-book-painting-956688032\" target=\"_blank\">elylbroong</a> - CC BY-NC-ND 3.0<br><br>"
 ;
