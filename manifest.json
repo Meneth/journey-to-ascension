@@ -1,7 +1,7 @@
 {
   "name": "Journey to Ascension",
   "short_name": "Ascension",
-  "description": "Manage your energy, unlock perks, and discover artifacts in this idle incremental game on your Journey to Ascension",
+  "description": "Learn, die, repeat; an active incremental game to Journey to Ascension - made by Meneth",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#102661",

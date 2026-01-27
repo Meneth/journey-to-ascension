@@ -1,5 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <path d="M50 5 L56 40 L95 50 L56 60 L50 95 L44 60 L5 50 L44 40 Z" fill="#FFD700"/>
-  <path d="M75 15 L78 25 L88 28 L78 31 L75 41 L72 31 L62 28 L72 25 Z" fill="#FFD700"/>
-  <path d="M25 59 L28 69 L38 72 L28 75 L25 85 L22 75 L12 72 L22 69 Z" fill="#FFD700"/>
+  <!-- Main yellow star -->
+  <path d="M65 8 C65 8 70 35 70 40 C75 40 97 45 97 50 C97 55 75 60 70 60 C70 65 65 92 60 92 C55 92 50 65 50 60 C45 60 23 55 23 50 C23 45 45 40 50 40 C50 35 55 8 60 8 C62 8 65 8 65 8 Z" fill="#FFEB3B" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- Top-left cyan star -->
+  <path d="M22 5 C22 5 25 18 25 22 C28 22 40 25 40 28 C40 31 28 34 25 34 C25 37 22 50 19 50 C16 50 13 37 13 34 C10 34 0 31 0 28 C0 25 10 22 13 22 C13 18 16 5 19 5 C20 5 22 5 22 5 Z" fill="#00BCD4" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- Bottom-left pink star -->
+  <path d="M25 55 C25 55 28 68 28 72 C31 72 43 75 43 78 C43 81 31 84 28 84 C28 87 25 100 22 100 C19 100 16 87 16 84 C13 84 3 81 3 78 C3 75 13 72 16 72 C16 68 19 55 22 55 C23 55 25 55 25 55 Z" fill="#E91E63" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
 </svg>
