@@ -565,7 +565,7 @@ export function doEnergyReset() {
 }
 
 export function calcItemEnergyGain(base_energy: number) {
-    return base_energy * (1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineAppetite) * DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT);
+    return Math.floor(base_energy * (1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineAppetite) * DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT));
 }
 
 // MARK: Items
