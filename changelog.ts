@@ -6,6 +6,11 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "0.3.5",
+        date: "2026-01-27",
+        changes: "- Fixed the tooltip of Energy Items not updating immediately when you upgrade Divine Appetite<br>"
+    },
+    {
         version: "0.3.4",
         date: "2026-01-27",
         changes: "- Renamed the 'All' task automation mode to 'Until Zone'. You can now specify a Zone that it'll stop when you get to. If you're already in or past that Zone when enabling Until Zone, it'll just do whatever Zone you're in, like Current Zone automation<br>"

@@ -945,7 +945,7 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     button.addEventListener("click", () => { clickItem(item, false); });
     button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
 
-    setupTooltipStatic(button, `${item_definition.name}`, `${item_definition.getTooltip()}`);
+    setupTooltipStaticHeader(button, `${item_definition.name}`, () => `${item_definition.getTooltip()}`);
 
     RENDERING.item_elements.set(item, button);
 }
