@@ -197,7 +197,7 @@ button:hover:not(.disabled):not(:disabled) {
     flex-direction: column-reverse;
 }
 
-.task button {
+.task .task-button {
     position: relative;
     width: 50%;
     height: 32px;
@@ -1043,10 +1043,76 @@ footer {
     }
 }
 
+/* MARK: Mobile Info Buttons
+*/
+
+.mobile-info-btn {
+    display: none;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1.2em;
+    background: var(--element-background-color);
+    color: #fff;
+    border: 1px solid var(--element-foreground-color);
+    cursor: pointer;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-info-btn:active {
+    background: var(--element-foreground-color);
+}
+
+.item-wrapper,
+.perk-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.item-wrapper .mobile-info-btn,
+.perk-wrapper .mobile-info-btn {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    font-size: 0.5em;
+    z-index: 1;
+}
+
+/* Task info button - appears at end of task-upper row */
+.task-upper {
+    position: relative;
+}
+
+.task-upper > .mobile-info-btn {
+    margin-left: 8px;
+}
+
+/* Skill info button - inline at end */
+.skill {
+    position: relative;
+}
+
+.skill > .mobile-info-btn {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 /* MARK: Responsive - Mobile (≤768px)
 */
 
 @media (max-width: 768px) {
+    .mobile-info-btn {
+        display: inline-flex;
+    }
     body {
         margin: 4px;
     }
@@ -1173,7 +1239,7 @@ footer {
     }
 
     /* Larger touch targets */
-    button, .element, .task button {
+    button, .element, .task .task-button {
         touch-action: manipulation;
     }
 
@@ -1188,7 +1254,7 @@ footer {
     }
 
     /* Task button adjustments */
-    .task button {
+    .task .task-button {
         min-height: 44px;
     }
 

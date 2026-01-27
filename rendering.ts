@@ -82,15 +82,14 @@ function closeMobileSidebars(): void {
 
 function setupGlobalTooltipDismiss(): void {
     document.addEventListener("click", (event) => {
-        if (!isTouchDevice) return;
-
         const tooltip = RENDERING.tooltip_element;
         if (!tooltip || tooltip.classList.contains("hidden")) return;
 
         const target = event.target as HTMLElement;
+
         if (tooltip.contains(target)) return;
 
-        if (target.closest("[data-has-tooltip]")) return;
+        if (target.closest(".mobile-info-btn")) return;
 
         hideTooltip();
     });
@@ -374,6 +373,8 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
         tooltip += `<br>Bonuses not from levels (E.G., from Items and Perks) are not scaled down this way`;
         return tooltip;
     });
+
+    addMobileInfoButton(skill_div, skill_div);
 
     skills_div.appendChild(skill_div);
     RENDERING.skill_elements.set(skill.type, skill_div);
@@ -744,6 +745,9 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         return tooltip;
     });
 
+    // Mobile info button for tooltip
+    addMobileInfoButton(task_upper_div, task_div);
+
     tasks_div.appendChild(task_div);
     rendering.task_elements.set(task.task_definition, task_div);
 }
@@ -883,38 +887,36 @@ interface ElementWithTooltip extends HTMLElement {
 function setupTooltip(element: ElementWithTooltip, header_callback: tooltipLambda, body_callback: tooltipLambda) {
     element.generateTooltipHeader = header_callback;
     element.generateTooltipBody = body_callback;
-    element.setAttribute("data-has-tooltip", "true");
 
     element.addEventListener("pointerenter", (event) => {
         RENDERING.potential_tooltipped_element = element;
-        // On touch devices, don't auto-show on hover (pointerenter can fire on touch)
-        if (isTouchDevice) return;
-
         if (!GAMESTATE.manual_tooltips || event.ctrlKey) {
             showTooltip(element);
         }
     });
-
     element.addEventListener("pointerleave", () => {
-        // On touch devices, don't auto-hide (user taps elsewhere to dismiss)
-        if (isTouchDevice) return;
-
         hideTooltip();
         RENDERING.potential_tooltipped_element = null;
     });
+}
 
-    // Touch: tap to toggle tooltip
-    element.addEventListener("click", (event) => {
-        if (!isTouchDevice) return;
+function addMobileInfoButton(parent: ElementWithTooltip, element: ElementWithTooltip): HTMLButtonElement {
+    const infoBtn = document.createElement("button");
+    infoBtn.className = "mobile-info-btn";
+    infoBtn.textContent = "ℹ";
+    infoBtn.setAttribute("aria-label", "Show info");
 
-        // If tooltip is already showing for this element, hide it
+    infoBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
         if (RENDERING.tooltipped_element === element) {
             hideTooltip();
         } else {
             showTooltip(element);
         }
-        event.stopPropagation();
     });
+
+    parent.appendChild(infoBtn);
+    return infoBtn;
 }
 
 function setupTooltipStaticHeader(element: ElementWithTooltip, header: string, body_callback: tooltipLambda) {
@@ -1039,7 +1041,10 @@ function queueUpdateTooltip() {
 // MARK: Items
 
 function createItemDiv(item: ItemType, items_div: HTMLElement) {
-    const button = createChildElement(items_div, "button") as HTMLButtonElement;
+    const wrapper = createChildElement(items_div, "div");
+    wrapper.className = "item-wrapper";
+
+    const button = createChildElement(wrapper, "button") as HTMLButtonElement;
     button.className = "item-button";
     button.classList.add("element");
 
@@ -1053,6 +1058,9 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
 
     setupTooltipStatic(button, `${item_definition.name}`, `${item_definition.getTooltip()}`);
+
+    // Mobile info button for tooltip
+    addMobileInfoButton(wrapper, button);
 
     RENDERING.item_elements.set(item, button);
 }
@@ -1208,6 +1216,9 @@ function updateItems() {
 // MARK: Perks
 
 function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "perk-wrapper";
+
     const perk_div = document.createElement("div");
     perk_div.className = "perk";
     perk_div.classList.add("element");
@@ -1228,7 +1239,12 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean)
     setupTooltip(perk_div, () => `${perk_definition.name}`, () => `${perk_definition.getTooltip()}<br><br>Unlocked in Zone ${zone + 1}`);
 
     perk_div.appendChild(perk_text);
-    perks_div.appendChild(perk_div);
+    wrapper.appendChild(perk_div);
+
+    // Mobile info button for tooltip
+    addMobileInfoButton(wrapper, perk_div);
+
+    perks_div.appendChild(wrapper);
     RENDERING.perk_elements.set(perk, perk_div);
 }
 
