@@ -315,14 +315,29 @@ export const ZONES: Zone[] = [
     {
         name: "The Place of Power",
         tasks: [
-            new TaskDefinition({ id: 200, name: "Journey Beyond", type: TaskType.Travel, cost_multiplier: 10000, skills: [SkillType.Travel] }),
-            new TaskDefinition({ id: 201, name: "Gather Your Thoughts", type: TaskType.Mandatory, cost_multiplier: 5_000_000, max_reps: 5, skills: [SkillType.Study], xp_mult: 0.01 }),
-            new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 7_000_000, max_reps: 2, skills: [SkillType.Ascension, SkillType.Fortitude], xp_mult: 0 }),
+            new TaskDefinition({ id: 200, name: "Venture Forth", type: TaskType.Travel, cost_multiplier: 10000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 201, name: "Design Next Ritual", type: TaskType.Mandatory, cost_multiplier: 5_000_000, max_reps: 5, skills: [SkillType.Study], xp_mult: 0.01 }),
+            new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 15_000_000, max_reps: 1, skills: [SkillType.Ascension, SkillType.Fortitude], xp_mult: 0 }),
+            new TaskDefinition({ id: 208, name: "Build Airship", type: TaskType.Mandatory, cost_multiplier: 20_000, max_reps: 1, skills: [SkillType.Crafting], xp_mult: 1 }),
             new TaskDefinition({ id: 203, name: "Transcend Humanity", type: TaskType.Prestige, max_reps: 3, cost_multiplier: 2, skills: [SkillType.Ascension], xp_mult: 0.25, prestige_layer: PrestigeLayer.TranscendHumanity }),
             new TaskDefinition({ id: 204, name: "Imbue Magical Vessel", max_reps: 9, cost_multiplier: 10_000_000, skills: [SkillType.Magic, SkillType.Crafting], xp_mult: 0.001, item: ItemType.MagicalVessel }),
             new TaskDefinition({ id: 205, name: "Invent a New Spell", cost_multiplier: 300_000_000, max_reps: 3, skills: [SkillType.Magic], xp_mult: 0.01, perk: PerkType.UnifiedTheoryOfMagic }),
             new TaskDefinition({ id: 206, name: "Reflect on Past Obstacles", cost_multiplier: 300_000, max_reps: 5, xp_mult: 1, skills: [SkillType.Subterfuge, SkillType.Study] }),
             new TaskDefinition({ id: 207, name: "Prepare for a Greater Journey", cost_multiplier: 1_000_000, max_reps: 1, xp_mult: 0.01, skills: [SkillType.Travel, SkillType.Fortitude] }),
+        ],
+    },
+    {
+        name: "The Sky",
+        tasks: [
+            new TaskDefinition({ id: 210, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 300, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 211, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 2_750_000, max_reps: 3, skills: [SkillType.Search, SkillType.Subterfuge], xp_mult: 0.001 }),
+            new TaskDefinition({ id: 212, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 1, skills: [SkillType.Crafting], xp_mult: 0.2 }),
+            new TaskDefinition({ id: 213, name: "PLACEHOLDER", max_reps: 9, cost_multiplier: 2100, skills: [SkillType.Search], item: ItemType.CaveInsects }),
+            new TaskDefinition({ id: 214, name: "PLACEHOLDER", cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 0.1, perk: PerkType.DragonKillingPlan }),
+            new TaskDefinition({ id: 215, name: "PLACEHOLDER", cost_multiplier: 5_000, max_reps: 3, xp_mult: 5, skills: [SkillType.Subterfuge] }),
+            new TaskDefinition({ id: 216, name: "PLACEHOLDER", cost_multiplier: 5_000_000, max_reps: 3, xp_mult: 1.5, skills: [SkillType.Magic] }),
+            new TaskDefinition({ id: 217, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 200_000_000_000, xp_mult: 0.02, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 218 }),
+            new TaskDefinition({ id: 218, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
 ]

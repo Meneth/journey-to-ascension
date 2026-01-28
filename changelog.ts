@@ -9,6 +9,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         version: "0.4.0",
         date: "2026-01-28",
         changes: "- Added a new Prestige repeatable upgrade<br>"
+        + "- Added a 3rd mandatory Task to Zone 20<br>"
     },
     {
         version: "0.3.7",
