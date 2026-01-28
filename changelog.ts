@@ -6,6 +6,11 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "0.4.0",
+        date: "2026-01-28",
+        changes: "- Added a new Prestige repeatable upgrade<br>"
+    },
+    {
         version: "0.3.7",
         date: "2026-01-28",
         changes: "- Fixed buttons getting highlighted in some cases when selected<br>"

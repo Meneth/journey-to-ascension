@@ -37,7 +37,7 @@ export enum PrestigeRepeatableType {
     DivineLightning,
     TranscendantAptitude,
     Energized,
-    TranscendHumanityPlaceholder4,
+    Deenergized,
 
     Count
 }
@@ -129,6 +129,7 @@ export const GOTTA_GO_FAST_BASE = 1.1;
 export const TRANSCENDANT_APTITUDE_MULT = 100;
 export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.15;
 export const ENERGIZED_INCREASE = 20;
+export const DEENERGIZED_BASE = 0.9;
 
 function calcDivineSparkIncrease(zone: number) {
     const current_exponent = getPrestigeGainExponent();
@@ -197,11 +198,11 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         scaling_exponent: 1.75
     },
     {
-        type: PrestigeRepeatableType.TranscendHumanityPlaceholder4,
+        type: PrestigeRepeatableType.Deenergized,
         layer: PrestigeLayer.TranscendHumanity,
-        name: "Placeholder",
-        get_description: () => { return `Placeholder`; },
-        initial_cost: 50000,
-        scaling_exponent: 2
+        name: "Deenergized",
+        get_description: () => { return `Reduces ${ENERGY_TEXT} drain by ${((1 - DEENERGIZED_BASE) * 100).toFixed(0)}%`; },
+        initial_cost: 10000,
+        scaling_exponent: 2.5
     },
 ];
