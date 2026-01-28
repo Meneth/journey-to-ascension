@@ -7,10 +7,11 @@ export class ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
     {
         version: "0.3.5",
-        date: "2026-01-27",
+        date: "2026-01-28",
         changes: "- Fixed the tooltip of Energy Items not updating immediately when you upgrade Divine Appetite<br>"
         + "- Fixed Energy Items energy gain not being truncated at and above Divine Appetite level 7 (showing E.G., 12.00000000002)<br>"
         + "- Added favicon (browser tab icon)<br>"
+        + "- Made Transcendant Aptitude cheaper, but made the cost scale up faster<br>"
     },
     {
         version: "0.3.4",
