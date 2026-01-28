@@ -6,6 +6,11 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "0.3.7",
+        date: "2026-01-28",
+        changes: "- Fixed buttons getting highlighted in some cases when selected<br>"
+    },
+    {
         version: "0.3.6",
         date: "2026-01-28",
         changes: "- Minor Time Compression's tooltip now does the math for how big the effect currently is<br>"

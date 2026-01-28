@@ -124,6 +124,7 @@ body {
 button {
     border-radius: var(--default-border-radius);
     background: var(--element-foreground-color);
+    outline: none;
 
     border-top: 2px solid #545454;
     border-left: 2px solid #545454;
