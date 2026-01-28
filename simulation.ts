@@ -5,7 +5,7 @@ import { getReflectionsOnTheJourneyExponent, PerkDefinition, PERKS, PerkType } f
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT } from "./prestige_upgrades.js";
-import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT } from "./simulation_constants.js";
+import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
 
 // MARK: Constants
 let task_progress_mult = 1;
@@ -13,7 +13,7 @@ const ZONE_SPEEDUP_BASE = 1.05;
 export const BOSS_MAX_ENERGY_DISPARITY = 5;
 const STARTING_ENERGY = 100;
 const DEFAULT_TICK_RATE = 66.6;
-export const SAVE_VERSION = "0.3.5";
+export const SAVE_VERSION = "0.3.6";
 
 // MARK: Skills
 
@@ -208,7 +208,7 @@ export function calcTaskProgressMultiplier(task: Task, override_haste: boolean |
     }
 
     if (hasPerk(PerkType.UnifiedTheoryOfMagic)) {
-        mult *= Math.pow(1.02, GAMESTATE.highest_zone_fully_completed + 1);
+        mult *= Math.pow(1 + UNIFIED_THEORY_OF_MAGIC_EFFECT, GAMESTATE.highest_zone_fully_completed + 1);
     }
 
     return mult * task_progress_mult;
