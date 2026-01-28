@@ -926,6 +926,13 @@ export function setAutomationMode(mode: AutomationMode) {
     GAMESTATE.automation_mode = mode;
 }
 
+export function setAutomationEndZone(zone: number) {
+    GAMESTATE.automation_end = zone;
+    if (GAMESTATE.automation_mode == AutomationMode.All && GAMESTATE.current_zone >= zone) {
+        setAutomationMode(AutomationMode.Off);
+    }
+}
+
 // MARK: Energy Reset
 
 export class EnergyResetInfo {

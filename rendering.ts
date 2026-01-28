@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint, setAutomationEndZone } from "./simulation.js";
 import { GAMESTATE, RENDERING, resetSave } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
@@ -2013,7 +2013,9 @@ function setupAutomationControls() {
     const automation_controls_div = createChildElement(automation_div, "div");
     automation_controls_div.className = "automation-controls";
 
-    const all_control = createChildElement(automation_controls_div, "button");
+    const all_control = createChildElement(automation_controls_div, "button") as HTMLButtonElement;
+    const to_zone_disabled = GAMESTATE.automation_mode != AutomationMode.All && GAMESTATE.current_zone >= GAMESTATE.automation_end;
+    all_control.disabled = to_zone_disabled;
 
     function updateZoneButtonText() {
         all_control.innerHTML = `To<br>Zone ${GAMESTATE.automation_end}`;
@@ -2025,8 +2027,8 @@ function setupAutomationControls() {
         max: 99,
         initialValue: GAMESTATE.automation_end,
         onChange: (value) => {
-            GAMESTATE.automation_end = value;
-            updateZoneButtonText();
+            setAutomationEndZone(value);
+            setupControls();
         },
         ariaLabel: "Target zone for automation"
     });
@@ -2045,7 +2047,11 @@ function setupAutomationControls() {
     });
 
     setupTooltip(all_control, function () { return `Automate To Zone ${GAMESTATE.automation_end}`; }, function () {
-        let tooltip = `Toggle between no automation, and automating Tasks until the specified Zone (${GAMESTATE.automation_end}) is reached`;
+        let tooltip = ``;
+        if (to_zone_disabled) {
+            tooltip += `<p class="disable-reason">Disabled due to the target Zone (${GAMESTATE.automation_end + 1}) not being higher than the current Zone (${GAMESTATE.current_zone + 1})</p>`;
+        }
+        tooltip += `Toggle between no automation, and automating Tasks until the specified Zone (${GAMESTATE.automation_end}) is reached`;
         tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
         tooltip += "<br><br>Hotkey: A";

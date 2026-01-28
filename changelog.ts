@@ -12,6 +12,8 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Fixed Energy Items energy gain not being truncated at and above Divine Appetite level 7 (showing E.G., 12.00000000002)<br>"
         + "- Added favicon (browser tab icon)<br>"
         + "- Made Transcendant Aptitude cheaper, but made the cost scale up faster<br>"
+        + "- Setting the automation target Zone to the current Zone or lower now stops ongoing automation<br>"
+        + "- The To Zone automation button is now disabled if the target Zone isn't higher than the current Zone<br>"
     },
     {
         version: "0.3.4",
