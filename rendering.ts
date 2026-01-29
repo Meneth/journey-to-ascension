@@ -1222,8 +1222,6 @@ function recreateItemsIfNeeded() {
 
         artifacts_container.classList.remove("hidden");
     }
-
-    recreateMobileItemBar();
 }
 
 function sortItems(items: [type: ItemType, amount: number][]) {
@@ -1281,102 +1279,6 @@ function updateItems() {
         count_text.textContent = `${item_count}`;
     }
 
-    // Sync mobile item bar
-    for (const [item, button] of RENDERING.mobile_item_buttons) {
-        const item_count = GAMESTATE.items.get(item);
-        button.disabled = item_count == 0;
-        button.classList.toggle("disabled", button.disabled);
-
-        const count_text = button.querySelector<HTMLElement>(".item-count") as HTMLElement;
-        count_text.textContent = `${item_count}`;
-    }
-
-    if (RENDERING.mobile_auto_use_button) {
-        RENDERING.mobile_auto_use_button.textContent = GAMESTATE.auto_use_items ? "Auto" : "Manual";
-        RENDERING.mobile_auto_use_button.classList.toggle("on", GAMESTATE.auto_use_items);
-    }
-}
-
-function recreateMobileItemBar() {
-    const bar = RENDERING.mobile_item_bar_element;
-    const bar_container = bar.parentElement;
-    bar.innerHTML = "";
-    RENDERING.mobile_item_buttons.clear();
-    RENDERING.mobile_auto_use_button = null;
-
-    // Collect non-artifact items (same logic as recreateItemsIfNeeded)
-    const items: [type: ItemType, amount: number][] = [];
-    for (const item of ITEMS_BY_ZONE) {
-        const amount = GAMESTATE.items.get(item);
-        if (amount !== undefined && !ARTIFACTS.includes(item)) {
-            items.push([item, amount]);
-        }
-    }
-    sortItems(items);
-
-    const item_order: ItemType[] = [];
-    for (const [item,] of items) {
-        item_order.push(item);
-    }
-
-    if (areArraysEqual(item_order, RENDERING.mobile_item_order) && item_order.length > 0) {
-        return; // No change needed
-    }
-
-    RENDERING.mobile_item_order = item_order;
-
-    if (item_order.length === 0) {
-        bar_container?.classList.add("hidden");
-        return;
-    }
-
-    bar_container?.classList.remove("hidden");
-
-    // Auto-use toggle (if unlocked)
-    if (hasPerk(PerkType.Amulet)) {
-        const auto_btn = createChildElement(bar, "button") as HTMLButtonElement;
-        auto_btn.className = "mobile-bar-auto-use";
-        auto_btn.textContent = GAMESTATE.auto_use_items ? "Auto" : "Manual";
-        auto_btn.classList.toggle("on", GAMESTATE.auto_use_items);
-
-        auto_btn.addEventListener("click", () => {
-            GAMESTATE.auto_use_items = !GAMESTATE.auto_use_items;
-            auto_btn.textContent = GAMESTATE.auto_use_items ? "Auto" : "Manual";
-            auto_btn.classList.toggle("on", GAMESTATE.auto_use_items);
-            setupControls();
-        });
-
-        setupTooltipStatic(auto_btn, "Auto-Use Items", "Toggle automatic item usage");
-
-        RENDERING.mobile_auto_use_button = auto_btn;
-
-        const sep = createChildElement(bar, "div");
-        sep.className = "mobile-bar-separator";
-    }
-
-    // Item buttons
-    for (const item of item_order) {
-        const button = createChildElement(bar, "button") as HTMLButtonElement;
-        button.className = "item-button element";
-
-        const item_definition = ITEMS[item] as ItemDefinition;
-        button.innerHTML = `<span class="text">${item_definition.icon}</span>`;
-
-        const count_text = createChildElement(button, "p");
-        count_text.className = "item-count";
-
-        const item_count = GAMESTATE.items.get(item);
-        count_text.textContent = `${item_count ?? 0}`;
-        button.disabled = item_count == 0;
-        button.classList.toggle("disabled", button.disabled);
-
-        button.addEventListener("click", () => { clickItem(item, false); });
-        button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
-
-        setupTooltipStaticHeader(button, `${item_definition.name}`, () => `${item_definition.getTooltip()}`);
-
-        RENDERING.mobile_item_buttons.set(item, button);
-    }
 }
 
 // MARK: Perks
@@ -2890,10 +2792,6 @@ export class Rendering {
     credits_overlay_element: HTMLElement;
     hints_overlay_element: HTMLElement;
     harrow_overlay_element: HTMLElement;
-    mobile_item_bar_element: HTMLElement;
-    mobile_item_buttons: Map<ItemType, HTMLButtonElement> = new Map();
-    mobile_item_order: ItemType[] = [];
-    mobile_auto_use_button: HTMLButtonElement | null = null;
 
     energy_reset_count: number = 0;
     current_zone: number = 0;
@@ -2955,7 +2853,6 @@ export class Rendering {
         this.credits_overlay_element = getElement("credits-overlay");
         this.hints_overlay_element = getElement("hints-overlay");
         this.harrow_overlay_element = getElement("harrow-overlay");
-        this.mobile_item_bar_element = getElement("mobile-item-bar-inner");
     }
 
     public initialize() {
