@@ -1759,7 +1759,10 @@ function populatePrestigeView() {
 }
 
 function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned: boolean, isToggleMode: boolean): HTMLElement {
-    const wrapper = createChildElement(parent, "div") as HTMLElement;
+    const outer = createChildElement(parent, "div") as HTMLElement;
+    outer.className = "harrow-card-outer";
+
+    const wrapper = createChildElement(outer, "div") as HTMLElement;
     wrapper.className = "harrow-card-wrapper";
 
     if (owned) {
@@ -1774,11 +1777,11 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
         wrapper.classList.add("harrow-forfeited");
     }
 
-    if (!owned && !isToggleMode) {
-        if (GAMESTATE.divine_spark < cardDef.cost) {
-            wrapper.classList.add("harrow-unaffordable");
-        }
+    if (isToggleMode) {
+        wrapper.classList.add("harrow-toggle-mode");
     }
+
+    const can_afford = GAMESTATE.divine_spark >= cardDef.cost;
 
     const inner = createChildElement(wrapper, "div");
     inner.className = "harrow-card-inner";
@@ -1786,6 +1789,12 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
     // Front face
     const front = createChildElement(inner, "div");
     front.className = "harrow-card-front";
+
+    if (owned && !isToggleMode) {
+        const owned_badge = createChildElement(front, "div");
+        owned_badge.className = "harrow-card-owned-badge";
+        owned_badge.textContent = "OWNED";
+    }
 
     const emoji = createChildElement(front, "div");
     emoji.className = "harrow-card-emoji";
@@ -1795,45 +1804,62 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
     name.className = "harrow-card-name";
     name.textContent = cardDef.name;
 
-    if (!isToggleMode && !owned) {
-        const cost = createChildElement(front, "div");
-        cost.className = "harrow-card-cost";
-        cost.textContent = `Cost: ${cardDef.cost} ${DIVINE_SPARK_TEXT}`;
+    if (isToggleMode) {
+        const front_effect = createChildElement(front, "div");
+        front_effect.className = "harrow-card-effect";
+        front_effect.textContent = cardDef.effect_description;
     }
 
-    // Back face
+    // Back face (mirrors front for 3D parallax)
     const back = createChildElement(inner, "div");
     back.className = "harrow-card-back";
 
-    const effect = createChildElement(back, "div");
-    effect.className = "harrow-card-effect";
-    effect.textContent = cardDef.effect_description;
+    const back_emoji = createChildElement(back, "div");
+    back_emoji.className = "harrow-card-emoji";
+    back_emoji.textContent = cardDef.emoji;
+
+    if (!isToggleMode) {
+        const effect = createChildElement(back, "div");
+        effect.className = "harrow-card-effect";
+        effect.textContent = cardDef.effect_description;
+    }
 
     const back_name = createChildElement(back, "div");
     back_name.className = "harrow-card-name";
     back_name.textContent = cardDef.name;
 
+    if (isToggleMode) {
+        const back_effect = createChildElement(back, "div");
+        back_effect.className = "harrow-card-effect";
+        back_effect.textContent = cardDef.effect_description;
+    }
+
     // Click behavior
-    if (isToggleMode && owned) {
-        wrapper.addEventListener("click", () => {
+    wrapper.addEventListener("click", (e) => {
+        if (isToggleMode && owned) {
+            // Toggle active/inactive directly — no flip
             toggleHarrowCard(cardDef.type);
             populateHarrowTogglePopup();
-        });
-    } else if (!owned && !isToggleMode) {
-        // Flip on first click, purchase on second
-        wrapper.addEventListener("click", () => {
-            if (wrapper.classList.contains("harrow-flipped")) {
-                if (purchaseHarrowCard(cardDef.type)) {
-                    populatePrestigeView();
-                }
-            } else {
-                wrapper.classList.add("harrow-flipped");
+            return;
+        }
+        // Don't flip if the buy button was clicked
+        if ((e.target as HTMLElement).closest(".harrow-card-buy-btn")) {
+            return;
+        }
+        wrapper.classList.toggle("harrow-flipped");
+    });
+
+    // Purchase button below the card (only in prestige view, unowned)
+    if (!isToggleMode && !owned) {
+        const buy_btn = createChildElement(outer, "button") as HTMLButtonElement;
+        buy_btn.className = "harrow-card-buy-btn";
+        buy_btn.innerHTML = `${cardDef.cost} ${DIVINE_SPARK_TEXT}`;
+        buy_btn.disabled = !can_afford;
+
+        buy_btn.addEventListener("click", () => {
+            if (purchaseHarrowCard(cardDef.type)) {
+                populatePrestigeView();
             }
-        });
-    } else {
-        // Already owned in purchase mode - just flip to view
-        wrapper.addEventListener("click", () => {
-            wrapper.classList.toggle("harrow-flipped");
         });
     }
 
@@ -1860,7 +1886,7 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
             : "";
     });
 
-    return wrapper;
+    return outer;
 }
 
 function populateHarrowTogglePopup() {

@@ -1011,6 +1011,12 @@ div.prestige-purchase {
     border: 2px solid #333;
     background: linear-gradient(145deg, #1a1a2e, #16213e);
     color: #ddd;
+    box-sizing: border-box;
+}
+
+.harrow-card-front {
+    position: absolute;
+    overflow: hidden;
 }
 
 .harrow-card-back {
@@ -1030,14 +1036,68 @@ div.prestige-purchase {
     margin-bottom: 4px;
 }
 
-.harrow-card-cost {
+.harrow-card-outer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.harrow-card-buy-btn {
+    width: 130px;
+    padding: 4px 0;
     font-size: 0.75em;
-    color: #aaa;
+    text-align: center;
+    border-radius: var(--default-border-radius);
+    background: linear-gradient(5deg, var(--prestige-color), var(--prestige-color-brighter));
+    color: #fff;
+    cursor: pointer;
+}
+
+.harrow-card-buy-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
 }
 
 .harrow-card-effect {
     font-size: 0.75em;
     padding: 4px;
+}
+
+/* Toggle mode: inactive = lighter bg */
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-front,
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-back {
+    background: linear-gradient(145deg, #2a2a4e, #263a5e);
+    border-color: #444;
+}
+
+/* Toggle mode: active = darker bg + glow */
+.harrow-card-wrapper.harrow-toggle-mode.harrow-active .harrow-card-front,
+.harrow-card-wrapper.harrow-toggle-mode.harrow-active .harrow-card-back {
+    background: linear-gradient(145deg, #0d0d1a, #0a1020);
+    border-color: #ffcc00;
+    box-shadow: 0 0 12px 4px rgba(255, 204, 0, 0.5);
+}
+
+/* Toggle mode: card needs more space for effect text */
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-emoji {
+    font-size: 1.8em;
+    margin-bottom: 2px;
+}
+
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-name {
+    font-size: 0.75em;
+    margin-bottom: 2px;
+}
+
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-effect {
+    font-size: 0.6em;
+    color: #bbb;
+    line-height: 1.2;
+}
+
+.harrow-card-wrapper.harrow-toggle-mode {
+    cursor: pointer;
 }
 
 .harrow-card-back .harrow-card-name {
@@ -1046,10 +1106,27 @@ div.prestige-purchase {
     color: #aaa;
 }
 
+.harrow-card-owned-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(46, 204, 113, 0.85);
+    color: #fff;
+    font-size: 0.65em;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    text-align: center;
+    padding: 2px 0;
+    border-radius: var(--default-border-radius) var(--default-border-radius) 0 0;
+    z-index: 1;
+}
+
 /* State: owned */
 .harrow-card-wrapper.harrow-owned .harrow-card-front,
 .harrow-card-wrapper.harrow-owned .harrow-card-back {
     border-color: #2ecc71;
+    background: linear-gradient(145deg, #1a2e1a, #162e26);
 }
 
 /* State: active */
@@ -1412,6 +1489,12 @@ footer {
         height: 140px;
     }
 
+    .harrow-card-buy-btn {
+        width: 100px;
+        font-size: 0.7em;
+        padding: 4px 6px;
+    }
+
     .harrow-card-emoji {
         font-size: 1.8em;
     }
@@ -1426,6 +1509,14 @@ footer {
 
     .harrow-card-effect {
         font-size: 0.65em;
+    }
+
+    .harrow-card-wrapper.harrow-toggle-mode .harrow-card-emoji {
+        font-size: 1.4em;
+    }
+
+    .harrow-card-wrapper.harrow-toggle-mode .harrow-card-effect {
+        font-size: 0.5em;
     }
 
     .confirmation {
