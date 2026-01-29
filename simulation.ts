@@ -2,7 +2,7 @@ import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE, setTickRate } from "./game.js";
 import { HASTE_MULT, ItemDefinition, ITEMS, ARTIFACTS, ItemType, MAGIC_RING_MULT, BOTTLED_LIGHTNING_MULT } from "./items.js";
 import { getReflectionsOnTheJourneyExponent, PerkDefinition, PERKS, PerkType } from "./perks.js";
-import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext } from "./events.js";
+import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext, SkippedTasksContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
@@ -240,10 +240,7 @@ function isSingleTickTaskImpl(progress: number, cost: number) {
 }
 
 function isSingleTickTask(task: Task) {
-    let progress = calcTaskProgressPerTick(task);
-    if (hasPerk(PerkType.MajorTimeCompression)) {
-        progress /= MAJOR_TIME_COMPRESSION_EFFECT; // Don't want it kicking in at 2 real ticks
-    }
+    const progress = calcTaskProgressPerTick(task);
     const cost = calcTaskCost(task);
 
     return isSingleTickTaskImpl(progress, cost);
@@ -290,7 +287,7 @@ function progressTask(task: Task, progress: number, consume_energy = true) {
 
     const fully_finished = task.reps == task.task_definition.max_reps;
     if (fully_finished) {
-        fullyFinishTask(task);
+        onFullyFinishTask(task);
     }
 
     updateEnabledTasks();
@@ -322,13 +319,13 @@ function updateActiveTask() {
     if (!GAMESTATE.repeat_tasks || fully_finished) {
         GAMESTATE.active_task = null;
     } else if (!fully_finished) {
-        tryApplySingleRepEffects(active_task);
+        applyTaskRepStartEffects(active_task);
     }
 
     saveGame();
 }
 
-export function tryApplySingleRepEffects(task: Task) {
+export function applyTaskRepStartEffects(task: Task) {
     if (GAMESTATE.queued_scrolls_of_haste > 0) {
         task.hasted = true;
         GAMESTATE.queued_scrolls_of_haste--;
@@ -349,11 +346,11 @@ export function clickTask(task: Task) {
     }
     else {
         GAMESTATE.active_task = task;
-        tryApplySingleRepEffects(task);
+        applyTaskRepStartEffects(task);
     }
 }
 
-function fullyFinishTask(task: Task) {
+function onFullyFinishTask(task: Task) {
     if (task.task_definition.perk != PerkType.Count) {
         tryAddPerk(task.task_definition.perk);
     }
@@ -377,6 +374,13 @@ function fullyFinishTask(task: Task) {
         GAMESTATE.prestige_available = true;
         const event = new RenderEvent(EventType.PrestigeAvailable, {});
         GAMESTATE.queueRenderEvent(event);
+    }
+}
+
+function doAllTaskRepsForFree(task: Task) {
+    const consume_energy = false;
+    while (task.reps < task.task_definition.max_reps) {
+        progressTask(task, calcTaskCost(task), consume_energy);
     }
 }
 
@@ -494,6 +498,39 @@ function isTaskFullyCompleted(task: Task): boolean {
     return task.reps >= task.task_definition.max_reps;
 }
 
+function doMasteryOfTimeTaskCompletion() {
+    if (!hasPrestigeUnlock(PrestigeUnlockType.MasteryOfTime)) {
+        return;
+    }
+
+    let num_complete = 0;
+
+    for (const task of GAMESTATE.tasks) {
+        if (isTaskFullyCompleted(task)) {
+            continue;
+        }
+
+        // TODO - Ignore artifacts
+        if (!isSingleTickTask(task)) {
+            continue;
+        }
+
+        if (task.task_definition.type == TaskType.Travel) {
+            continue;
+        }
+
+        doAllTaskRepsForFree(task);
+        ++num_complete;
+    }
+
+    if (num_complete > 0) {
+        autoUseItems(); // Before the render event so the event's at the top
+        const context: SkippedTasksContext = { tasks: num_complete };
+        const event = new RenderEvent(EventType.SkippedTasks, context);
+        GAMESTATE.queueRenderEvent(event);
+    }
+}
+
 // MARK: Energy
 
 function modifyEnergy(delta: number) {
@@ -513,6 +550,10 @@ export function calcReflectionsOnTheJourneyMult(zone: number) {
 
 export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): number {
     let drain = 1;
+
+    if (is_single_tick && hasPrestigeUnlock(PrestigeUnlockType.MasteryOfTime)) {
+        return 0;
+    }
 
     if (is_single_tick && hasPerk(PerkType.MinorTimeCompression)) {
         drain *= 0.2;
@@ -737,13 +778,9 @@ function skipCurrentZoneIfFree() : boolean {
         return false;
     }
 
-    const consume_energy = false;
-
     // In reverse so travel happens last
     for (const task of GAMESTATE.tasks.slice().reverse()) {
-        while (task.reps < task.task_definition.max_reps) {
-            progressTask(task, calcTaskCost(task), consume_energy);
-        }
+        doAllTaskRepsForFree(task);
     }
 
     return true;
@@ -1049,6 +1086,10 @@ export function addPrestigeUnlock(unlock: PrestigeUnlockType) {
         tryAddPerk(PerkType.Attunement);
     } else if (unlock == PrestigeUnlockType.TranscendantMemory) {
         tryAddPerk(PerkType.EnergeticMemory);
+    } else if (unlock == PrestigeUnlockType.MasteryOfTime) {
+        tryAddPerk(PerkType.MinorTimeCompression);
+        tryAddPerk(PerkType.MajorTimeCompression);
+        doMasteryOfTimeTaskCompletion();
     }
 }
 
@@ -1370,6 +1411,7 @@ function advanceZone() {
     
     GAMESTATE.current_zone = new_zone;
     resetTasks();
+    doMasteryOfTimeTaskCompletion();
 }
 
 export function calcTickRate() {

@@ -18,6 +18,7 @@ export enum EventType {
     NewHighestZoneFullyCompleted,
     NewPrestigeLayer,
     SkippedZones,
+    SkippedTasks,
 
     Count
 }
@@ -59,4 +60,8 @@ export class UnlockedSkillContext extends EventContext {
 
 export class HighestZoneContext extends EventContext {
     zone: number = 0;
+}
+
+export class SkippedTasksContext extends EventContext {
+    tasks: number = 0;
 }

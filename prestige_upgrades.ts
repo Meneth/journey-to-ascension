@@ -22,7 +22,7 @@ export enum PrestigeUnlockType {
 
     TranscendantMemory,
     DivineSpeed,
-    TranscendHumanityPlaceholder3,
+    MasteryOfTime,
     SeeBeyondTheVeil,
     
     Count
@@ -108,18 +108,18 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         cost: 500
     },
     {
-        type: PrestigeUnlockType.TranscendHumanityPlaceholder3,
+        type: PrestigeUnlockType.MasteryOfTime,
         layer: PrestigeLayer.TranscendHumanity,
-        name: "Placheolder",
-        get_description: () => { return `Placeholder`; },
-        cost: 10000
+        name: "Mastery of Time",
+        get_description: () => { return `Permanently unlocks the ${getPerkNameWithEmoji(PerkType.MinorTimeCompression)} and ${getPerkNameWithEmoji(PerkType.MajorTimeCompression)} Perks<br>1-tick Tasks are now free<br>1-tick Tasks (except Travel) are now automatically completed when you enter a Zone`; },
+        cost: 40000
     },
     {
         type: PrestigeUnlockType.SeeBeyondTheVeil,
         layer: PrestigeLayer.TranscendHumanity,
         name: "See Beyond the Veil",
         get_description: () => { return `Unlocks NUMBER new tasks before Zone 20<br>This does nothing yet`; },
-        cost: 25000
+        cost: 250000
     },
 ];
 
