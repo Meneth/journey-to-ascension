@@ -1104,6 +1104,18 @@ function setupInfoTooltips() {
 
         return tooltip;
     });
+
+    const harrow_info = document.querySelector<HTMLElement>("#harrow-cards .section-info");
+
+    if (harrow_info) {
+        setupTooltipStaticHeader(harrow_info, `Harrow Cards`, function () {
+            let tooltip = `These are your active Harrow Cards for the current run`;
+            tooltip += `<br>Each active card imposes a penalty but grants a ${DIVINE_SPARK_TEXT} bonus`;
+            tooltip += `<br><br>Click a card to forfeit it — this removes the penalty but you lose the ${DIVINE_SPARK_TEXT} bonus from that card`;
+            tooltip += `<br>Forfeiting is permanent for the rest of the run`;
+            return tooltip;
+        });
+    }
 }
 
 function queueUpdateTooltip() {
@@ -1347,6 +1359,102 @@ function recreatePerks() {
 
     for (const perk of perks) {
         createPerkDiv(perk, perks_div, hasPerk(perk));
+    }
+}
+
+// MARK: Harrow Sidebar Cards
+
+function createHarrowSidebarCardDiv(card: HarrowCardType, container: HTMLElement) {
+    const cardDef = HARROW_CARDS[card] as HarrowCardDefinition;
+    const is_forfeited = GAMESTATE.harrow_forfeited.includes(card);
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "perk-wrapper";
+
+    const card_div = document.createElement("div");
+    card_div.className = "harrow-sidebar-card element";
+    if (is_forfeited) {
+        card_div.classList.add("harrow-sidebar-forfeited");
+    }
+
+    const text_span = document.createElement("span");
+    text_span.className = "text";
+    text_span.textContent = cardDef.emoji;
+    card_div.appendChild(text_span);
+
+    if (!is_forfeited) {
+        card_div.addEventListener("click", () => {
+            createConfirmationOverlay(
+                "Forfeit Harrow Card",
+                `Forfeit <b>${cardDef.name}</b>?<br><br>This removes its penalty but you lose the ${DIVINE_SPARK_TEXT} bonus from this card for the rest of the run.`,
+                () => {
+                    toggleHarrowCard(card);
+                    recreateHarrowSidebarCards();
+                }
+            );
+        });
+    }
+
+    const tooltip_body = () => {
+        let tooltip = `${cardDef.effect_description}`;
+        if (is_forfeited) {
+            tooltip += `<br><br><span class="disable-reason">Forfeited</span>`;
+        } else {
+            tooltip += `<br><br>Click to forfeit`;
+        }
+        return tooltip;
+    };
+
+    setupTooltipStaticHeader(card_div, cardDef.name, tooltip_body);
+
+    // Mobile info button for tooltip
+    addMobileInfoButton(wrapper, card_div);
+
+    wrapper.appendChild(card_div);
+    container.appendChild(wrapper);
+    RENDERING.harrow_card_elements.set(card, card_div);
+}
+
+function recreateHarrowSidebarCards() {
+    const container = document.getElementById("harrow-cards-list");
+    if (!container) {
+        console.error("The element with ID 'harrow-cards-list' was not found.");
+        return;
+    }
+
+    const section = document.getElementById("harrow-cards");
+    if (!section) {
+        return;
+    }
+
+    const cards: HarrowCardType[] = [];
+    for (const card of GAMESTATE.harrow_active) {
+        cards.push(card);
+    }
+    for (const card of GAMESTATE.harrow_forfeited) {
+        if (!cards.includes(card)) {
+            cards.push(card);
+        }
+    }
+
+    const should_show = GAMESTATE.harrow_run_started && cards.length > 0;
+    section.classList.toggle("hidden", !should_show);
+
+    if (!should_show) {
+        RENDERING.harrow_card_order = [];
+        return;
+    }
+
+    if (areArraysEqual(cards, RENDERING.harrow_card_order)) {
+        return;
+    }
+
+    RENDERING.harrow_card_order = [...cards];
+    container.innerHTML = "";
+    RENDERING.harrow_card_elements.clear();
+
+    for (const card of cards) {
+        createHarrowSidebarCardDiv(card, container);
     }
 }
 
@@ -1731,8 +1839,10 @@ function populatePrestigeView() {
 
     // MARK: Harrow section in prestige view
     if (isHarrowUnlocked()) {
-        const harrow_div = createChildElement(scroll_area, "div");
+        const harrow_div = createChildElement(scroll_area, "div") as HTMLElement;
         harrow_div.className = "harrow-section";
+        harrow_div.setAttribute("role", "region");
+        harrow_div.setAttribute("aria-label", "Harrow Deck");
 
         const harrow_header = createChildElement(harrow_div, "h2");
         harrow_header.textContent = "Harrow Deck";
@@ -1764,12 +1874,15 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
 
     const wrapper = createChildElement(outer, "div") as HTMLElement;
     wrapper.className = "harrow-card-wrapper";
+    wrapper.setAttribute("tabindex", "0");
+    wrapper.setAttribute("role", "button");
 
     if (owned) {
         wrapper.classList.add("harrow-owned");
     }
 
-    if (isHarrowCardActive(cardDef.type)) {
+    const is_active = isHarrowCardActive(cardDef.type);
+    if (is_active) {
         wrapper.classList.add("harrow-active");
     }
 
@@ -1779,6 +1892,13 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
 
     if (isToggleMode) {
         wrapper.classList.add("harrow-toggle-mode");
+        wrapper.setAttribute("aria-pressed", is_active ? "true" : "false");
+        wrapper.setAttribute("aria-label", `${cardDef.name} card. ${cardDef.effect_description}.`);
+    } else {
+        const label = owned
+            ? `${cardDef.name} card. ${cardDef.effect_description}. Owned.`
+            : `${cardDef.name} card. ${cardDef.effect_description}. Cost: ${cardDef.cost} Divine Spark.`;
+        wrapper.setAttribute("aria-label", label);
     }
 
     const can_afford = GAMESTATE.divine_spark >= cardDef.cost;
@@ -1835,7 +1955,7 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
     }
 
     // Click behavior
-    wrapper.addEventListener("click", (e) => {
+    const handleCardAction = (e?: Event) => {
         if (isToggleMode && owned) {
             // Flip animation, then toggle state and rebuild
             wrapper.classList.add("harrow-flipped");
@@ -1846,10 +1966,19 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
             return;
         }
         // Don't flip if the buy button was clicked
-        if ((e.target as HTMLElement).closest(".harrow-card-buy-btn")) {
+        if (e && (e.target as HTMLElement).closest(".harrow-card-buy-btn")) {
             return;
         }
         wrapper.classList.toggle("harrow-flipped");
+    };
+
+    wrapper.addEventListener("click", handleCardAction);
+
+    wrapper.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleCardAction();
+        }
     });
 
     // Purchase button below the card (only in prestige view, unowned)
@@ -1858,6 +1987,7 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
         buy_btn.className = "harrow-card-buy-btn";
         buy_btn.innerHTML = `${cardDef.cost} ${DIVINE_SPARK_TEXT}`;
         buy_btn.disabled = !can_afford;
+        buy_btn.setAttribute("aria-label", `Buy ${cardDef.name} for ${cardDef.cost} Divine Spark`);
 
         buy_btn.addEventListener("click", () => {
             if (purchaseHarrowCard(cardDef.type)) {
@@ -1894,12 +2024,15 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
 
 function populateHarrowTogglePopup() {
     const harrow_overlay = RENDERING.harrow_overlay_element;
-    const harrow_div = harrow_overlay.querySelector("#harrow-box");
+    const harrow_div = harrow_overlay.querySelector("#harrow-box") as HTMLElement;
     if (!harrow_div) {
         return;
     }
 
     harrow_div.innerHTML = "";
+    harrow_div.setAttribute("role", "dialog");
+    harrow_div.setAttribute("aria-modal", "true");
+    harrow_div.setAttribute("aria-label", "Harrow Deck card selection");
 
     const scroll_area = createChildElement(harrow_div, "div");
     scroll_area.className = "scroll-area";
@@ -1915,6 +2048,7 @@ function populateHarrowTogglePopup() {
     const harrow_bonus_popup = calcHarrowSparkBonusForPrestige();
     const bonus_display = createChildElement(scroll_area, "p");
     bonus_display.className = "harrow-bonus-display";
+    bonus_display.setAttribute("aria-live", "polite");
     bonus_display.textContent = harrow_bonus_popup > 0
         ? `Current bonus: ${(harrow_bonus_popup * 100 + 100).toFixed(0)}% ${DIVINE_SPARK_TEXT}`
         : `No cards active`;
@@ -1947,6 +2081,9 @@ function populateHarrowTogglePopup() {
     });
 
     harrow_overlay.classList.remove("hidden");
+
+    // Auto-focus the Begin Run button when popup opens
+    requestAnimationFrame(() => begin_button.focus());
 }
 
 function setupOpenPrestige() {
@@ -2821,6 +2958,7 @@ export class Rendering {
     skill_elements: Map<SkillType, HTMLElement> = new Map();
     item_elements: Map<ItemType, HTMLButtonElement> = new Map();
     perk_elements: Map<PerkType, HTMLElement> = new Map();
+    harrow_card_elements: Map<HarrowCardType, HTMLElement> = new Map();
     controls_list_element: HTMLElement;
     open_stats_element: HTMLElement;
     stats_overlay_element: HTMLElement;
@@ -2834,6 +2972,7 @@ export class Rendering {
     item_order: ItemType[] = [];
     artifact_order: ItemType[] = [];
     viewing_last_reset: boolean = false;
+    harrow_card_order: HarrowCardType[] = [];
 
     public createTasks() {
         const tasks_div = document.getElementById("tasks");
@@ -2920,6 +3059,7 @@ export class Rendering {
         setupZone();
         recreatePerks();
         recreateItemsIfNeeded();
+        recreateHarrowSidebarCards();
 
         updateRendering();
 
@@ -2945,6 +3085,7 @@ function checkForZoneAndReset() {
     if (was_reset) {
         recreateItemsIfNeeded();
         recreatePerks();
+        recreateHarrowSidebarCards();
     }
     setupControls();
     setupZone();
@@ -3056,6 +3197,7 @@ export function updateRendering() {
     updateEnergyRendering();
     updateExtraStats();
     updateItems();
+    recreateHarrowSidebarCards();
     updateGameOver();
 
     // Harrow: show toggle popup after prestige if player owns cards

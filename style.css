@@ -185,6 +185,18 @@ button:hover:not(.disabled):not(:disabled) {
     display: none !important;
 }
 
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* MARK: Tasks
 */
 
@@ -981,6 +993,18 @@ div.prestige-purchase {
     height: 180px;
     perspective: 600px;
     cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.harrow-card-wrapper:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.harrow-card-wrapper:focus-visible {
+    outline: 2px solid #ffcc00;
+    outline-offset: 3px;
+    border-radius: var(--default-border-radius);
 }
 
 .harrow-card-inner {
@@ -1012,6 +1036,7 @@ div.prestige-purchase {
     background: linear-gradient(145deg, #1a1a2e, #16213e);
     color: #ddd;
     box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .harrow-card-front {
@@ -1052,6 +1077,15 @@ div.prestige-purchase {
     background: linear-gradient(5deg, var(--prestige-color), var(--prestige-color-brighter));
     color: #fff;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.harrow-card-buy-btn:hover:not(:disabled) {
+    filter: brightness(1.15);
+}
+
+.harrow-card-buy-btn:active:not(:disabled) {
+    transform: scale(0.96);
 }
 
 .harrow-card-buy-btn:disabled {
@@ -1076,7 +1110,7 @@ div.prestige-purchase {
 .harrow-card-wrapper.harrow-toggle-mode.harrow-active .harrow-card-back {
     background: linear-gradient(145deg, #0d0d1a, #0a1020);
     border-color: #ffcc00;
-    box-shadow: 0 0 12px 4px rgba(255, 204, 0, 0.5);
+    animation: harrow-active-glow 2s ease-in-out infinite alternate;
 }
 
 /* Toggle mode: card needs more space for effect text */
@@ -1133,7 +1167,12 @@ div.prestige-purchase {
 .harrow-card-wrapper.harrow-active .harrow-card-front,
 .harrow-card-wrapper.harrow-active .harrow-card-back {
     border-color: #ffcc00;
-    box-shadow: 0 0 10px 3px rgba(255, 204, 0, 0.4);
+    animation: harrow-active-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes harrow-active-glow {
+    from { box-shadow: 0 0 10px 3px rgba(255, 204, 0, 0.3); }
+    to   { box-shadow: 0 0 14px 5px rgba(255, 204, 0, 0.6); }
 }
 
 /* State: unaffordable or locked */
@@ -1182,6 +1221,27 @@ button.harrow-begin-run {
     font-size: 0.9em;
     color: #e67e22;
     margin: 8px 0;
+}
+
+/* MARK: Harrow Sidebar Cards
+*/
+
+.harrow-sidebar-card {
+    font-size: 1.5em;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    cursor: pointer;
+    border-color: #ffcc00;
+    animation: harrow-active-glow 2s ease-in-out infinite alternate;
+}
+
+.harrow-sidebar-card.harrow-sidebar-forfeited {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+    animation: none;
+    border-color: #666;
 }
 
 /* MARK: Messages
