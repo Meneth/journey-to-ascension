@@ -318,7 +318,7 @@ export const ZONES: Zone[] = [
         tasks: [
             new TaskDefinition({ id: 200, name: "Venture Forth", type: TaskType.Travel, cost_multiplier: 10000, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 201, name: "Design Next Ritual", type: TaskType.Mandatory, cost_multiplier: 5_000_000, max_reps: 5, skills: [SkillType.Study], xp_mult: 0.01 }),
-            new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 15_000_000, max_reps: 1, skills: [SkillType.Ascension, SkillType.Fortitude], xp_mult: 0 }),
+            new TaskDefinition({ id: 202, name: "Apotheosize", type: TaskType.Mandatory, cost_multiplier: 20_000_000, max_reps: 1, skills: [SkillType.Ascension, SkillType.Fortitude], xp_mult: 0 }),
             new TaskDefinition({ id: 208, name: "Build Airship", type: TaskType.Mandatory, cost_multiplier: 20_000, max_reps: 1, skills: [SkillType.Crafting], xp_mult: 1 }),
             new TaskDefinition({ id: 203, name: "Transcend Humanity", type: TaskType.Prestige, max_reps: 3, cost_multiplier: 2, skills: [SkillType.Ascension], xp_mult: 0.25, prestige_layer: PrestigeLayer.TranscendHumanity }),
             new TaskDefinition({ id: 204, name: "Imbue Magical Vessel", max_reps: 9, cost_multiplier: 10_000_000, skills: [SkillType.Magic, SkillType.Crafting], xp_mult: 0.001, item: ItemType.MagicalVessel }),
@@ -330,13 +330,13 @@ export const ZONES: Zone[] = [
     {
         name: "The Sky",
         tasks: [
-            new TaskDefinition({ id: 210, name: "Fly to the Volcano", type: TaskType.Travel, cost_multiplier: 3000, skills: [SkillType.Travel] }),
-            new TaskDefinition({ id: 211, name: "Plot the Course", type: TaskType.Mandatory, cost_multiplier: 150_000_000, max_reps: 2, skills: [SkillType.Search], xp_mult: 0.1 }),
-            new TaskDefinition({ id: 212, name: "Conduct Emergency Repairs", type: TaskType.Mandatory, cost_multiplier: 1000, max_reps: 3, skills: [SkillType.Crafting], xp_mult: 1 }),
+            new TaskDefinition({ id: 210, name: "Fly to the Volcano", type: TaskType.Travel, cost_multiplier: 5000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 211, name: "Plot the Course", type: TaskType.Mandatory, cost_multiplier: 500_000_000, max_reps: 2, skills: [SkillType.Search, SkillType.Study], xp_mult: 0.02 }),
+            new TaskDefinition({ id: 212, name: "Conduct Emergency Repairs", type: TaskType.Mandatory, cost_multiplier: 1200, max_reps: 3, skills: [SkillType.Crafting], xp_mult: 1 }),
             new TaskDefinition({ id: 213, name: "Harness Lightning", max_reps: 1, cost_multiplier: 5_000_000_000, skills: [SkillType.Magic], item: ItemType.BottledLightning, xp_mult: 0.01 },),
-            new TaskDefinition({ id: 214, name: "PLACEHOLDER", cost_multiplier: 1_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 0.1, perk: PerkType.DragonKillingPlan }),
-            new TaskDefinition({ id: 215, name: "PLACEHOLDER", cost_multiplier: 5_000, max_reps: 3, xp_mult: 5, skills: [SkillType.Subterfuge] }),
-            new TaskDefinition({ id: 216, name: "PLACEHOLDER", cost_multiplier: 5_000_000, max_reps: 3, xp_mult: 1.5, skills: [SkillType.Magic] }),
+            new TaskDefinition({ id: 214, name: "Watch the Clouds Go By", cost_multiplier: 10_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 1 }),
+            new TaskDefinition({ id: 215, name: "Chat with the Crew", cost_multiplier: 100_000, max_reps: 4, xp_mult: 200, skills: [SkillType.Charisma] }),
+            new TaskDefinition({ id: 216, name: "Go Skydiving", cost_multiplier: 5_000_000, max_reps: 3, xp_mult: 0.1, skills: [SkillType.Fortitude] }),
             new TaskDefinition({ id: 217, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 20_000_000_000_000, xp_mult: 0.002, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 218 }),
             new TaskDefinition({ id: 218, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
