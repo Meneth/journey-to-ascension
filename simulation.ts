@@ -1084,7 +1084,7 @@ export function calcDivineSparkGainFromHighestZone(zone: number) {
 export function calcDivineSparkGain() {
     let gain = calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone);
 
-    // Harrow: +25% Divine Spark per active non-forfeited card
+    // Harrow: x1.25 Divine Spark per active non-forfeited card (compounding)
     const harrow_bonus = calcHarrowSparkBonusForPrestige();
     if (harrow_bonus > 0) {
         gain = Math.ceil(gain * (1 + harrow_bonus));

@@ -43,52 +43,52 @@ export const HARROW_CARDS: HarrowCardDefinition[] = [
     new HarrowCardDefinition(
         HarrowCardType.TheGrave, "The Grave", "\u{1FAA6}",
         "Items retained on Energy Reset are quartered instead of halved",
-        125
+        125000
     ),
     new HarrowCardDefinition(
         HarrowCardType.TheEclipse, "The Eclipse", "\u{1F312}",
         "Lose 10% of current energy when advancing to a new zone",
-        150
+        150000
     ),
     new HarrowCardDefinition(
         HarrowCardType.TheSerpent, "The Serpent", "\u{1F40D}",
         "Boss tasks cost 2x energy",
-        175
+        175000
     ),
     new HarrowCardDefinition(
         HarrowCardType.TheHourglass, "The Hourglass", "\u{231B}",
         "Energy drain is tripled",
-        200
+        200000
     ),
     new HarrowCardDefinition(
         HarrowCardType.TheBrittle, "The Brittle", "\u{1F9B4}",
         "Energy gained from items is halved",
-        225
+        225000
     ),
     new HarrowCardDefinition(
         HarrowCardType.TheTempest, "The Tempest", "\u{26A1}",
         "Minimum energy drain per task tick is 10",
-        250
+        250000
     ),
     new HarrowCardDefinition(
         HarrowCardType.TheReaper, "The Reaper", "\u{1F480}",
         "Energy drain is doubled when above max energy",
-        275
+        275000
     ),
     new HarrowCardDefinition(
         HarrowCardType.TheFrost, "The Frost", "\u{2744}\u{FE0F}",
         "XP gain is reduced by 80%",
-        300
+        300000
     ),
     new HarrowCardDefinition(
         HarrowCardType.TheShackled, "The Shackled", "\u{1F517}",
         "No skill can exceed 110% of the second-highest skill level",
-        400
+        400000
     ),
     new HarrowCardDefinition(
         HarrowCardType.TheFool, "The Fool", "\u{1F0CF}",
         "Randomly applies the penalty of another card in addition to its own",
-        500
+        500000
     ),
 ];
 
@@ -203,5 +203,5 @@ export function calcHarrowSparkBonusForPrestige(): number {
         }
     }
 
-    return active_non_forfeited * HARROW_SPARK_BONUS_PER_CARD;
+    return Math.pow(1 + HARROW_SPARK_BONUS_PER_CARD, active_non_forfeited) - 1;
 }

@@ -1615,7 +1615,7 @@ function populatePrestigeView() {
 
             const harrow_bonus = calcHarrowSparkBonusForPrestige();
             if (harrow_bonus > 0) {
-                divine_spark_gain.innerHTML += `<br>Harrow Deck bonus: +${(harrow_bonus * 100).toFixed(0)}%`;
+                divine_spark_gain.innerHTML += `<br>Harrow Deck bonus: ${(harrow_bonus * 100 + 100).toFixed(0)}%`;
             }
 
             const divine_spark_gain_stats = createChildElement(dummy_div, "p");
@@ -1738,13 +1738,13 @@ function populatePrestigeView() {
         harrow_header.textContent = "Harrow Deck";
 
         const harrow_desc = createChildElement(harrow_div, "p");
-        harrow_desc.innerHTML = `Challenge cards that grant <b>+${HARROW_SPARK_BONUS_PER_CARD * 100}%</b> ${DIVINE_SPARK_TEXT} gain each`;
+        harrow_desc.innerHTML = `Challenge cards that multiply ${DIVINE_SPARK_TEXT} gain by <b>x${1 + HARROW_SPARK_BONUS_PER_CARD}</b> each`;
 
-        const active_count = GAMESTATE.harrow_active.filter(c => !GAMESTATE.harrow_forfeited.includes(c)).length;
-        if (active_count > 0) {
+        const harrow_bonus_prestige = calcHarrowSparkBonusForPrestige();
+        if (harrow_bonus_prestige > 0) {
             const bonus_display = createChildElement(harrow_div, "p");
             bonus_display.className = "harrow-bonus-display";
-            bonus_display.textContent = `Active bonus: +${(active_count * HARROW_SPARK_BONUS_PER_CARD * 100).toFixed(0)}% ${DIVINE_SPARK_TEXT}`;
+            bonus_display.textContent = `Active bonus: ${(harrow_bonus_prestige * 100 + 100).toFixed(0)}% ${DIVINE_SPARK_TEXT}`;
         }
 
         const cards_container = createChildElement(harrow_div, "div");
@@ -1837,9 +1837,12 @@ function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned:
     // Click behavior
     wrapper.addEventListener("click", (e) => {
         if (isToggleMode && owned) {
-            // Toggle active/inactive directly — no flip
+            // Flip animation, then toggle state and rebuild
+            wrapper.classList.add("harrow-flipped");
             toggleHarrowCard(cardDef.type);
-            populateHarrowTogglePopup();
+            setTimeout(() => {
+                populateHarrowTogglePopup();
+            }, 600);
             return;
         }
         // Don't flip if the buy button was clicked
@@ -1907,13 +1910,13 @@ function populateHarrowTogglePopup() {
 
     const desc = createChildElement(scroll_area, "p");
     desc.className = "harrow-popup-desc";
-    desc.innerHTML = `Activate cards to increase difficulty. Each active card grants <b>+${HARROW_SPARK_BONUS_PER_CARD * 100}%</b> ${DIVINE_SPARK_TEXT} on Prestige.`;
+    desc.innerHTML = `Activate cards to increase difficulty. Each active card multiplies ${DIVINE_SPARK_TEXT} gain by <b>x${1 + HARROW_SPARK_BONUS_PER_CARD}</b>.`;
 
-    const active_count = GAMESTATE.harrow_active.length;
+    const harrow_bonus_popup = calcHarrowSparkBonusForPrestige();
     const bonus_display = createChildElement(scroll_area, "p");
     bonus_display.className = "harrow-bonus-display";
-    bonus_display.textContent = active_count > 0
-        ? `Current bonus: +${(active_count * HARROW_SPARK_BONUS_PER_CARD * 100).toFixed(0)}% ${DIVINE_SPARK_TEXT}`
+    bonus_display.textContent = harrow_bonus_popup > 0
+        ? `Current bonus: ${(harrow_bonus_popup * 100 + 100).toFixed(0)}% ${DIVINE_SPARK_TEXT}`
         : `No cards active`;
 
     const cards_container = createChildElement(scroll_area, "div");
