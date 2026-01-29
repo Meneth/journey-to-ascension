@@ -37,6 +37,7 @@ export enum ItemType {
     CaveInsects,
     MagicalVessel,
     MagicRing,
+    BottledLightning,
 
     Count
 }
@@ -89,6 +90,7 @@ export class ItemDefinition {
 
 export const HASTE_MULT = 5;
 export const MAGIC_RING_MULT = 5;
+export const BOTTLED_LIGHTNING_MULT = 2;
 
 export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
@@ -148,7 +150,7 @@ export const ITEMS: ItemDefinition[] = [
     new ItemDefinition({
         enum: ItemType.ScrollOfHaste, name: `Scroll of Haste`, name_plural: `Scrolls of Haste`,
         icon: HASTE_EMOJI,
-        get_custom_tooltip: () => { return `The next Task rep you start is ${HASTE_MULT}x as fast<br><br>Sure would be handy to have more than one of these`; },
+        get_custom_tooltip: () => { return `The next Task rep you start is ${HASTE_MULT}x as fast`; },
         get_custom_effect_text: (amount) => { return `Next ${amount} Task reps are ${HASTE_MULT}x as fast`; },
         on_consume: (amount) => { GAMESTATE.queued_scrolls_of_haste += amount; },
     }),
@@ -339,6 +341,13 @@ export const ITEMS: ItemDefinition[] = [
         get_custom_effect_text: (amount) => { return `Next ${amount} Task reps give ${MAGIC_RING_MULT}x as much XP`; },
         on_consume: (amount) => { GAMESTATE.queued_magic_rings += amount; },
     }),
+    new ItemDefinition({
+        enum: ItemType.BottledLightning, name: `Bottled Lightning`, name_plural: `Bottled Lightning`,
+        icon: `⚡`,
+        get_custom_tooltip: () => { return `The next Boss Task you start is ${BOTTLED_LIGHTNING_MULT}x as fast<br>This stacks with Scroll of Haste`; },
+        get_custom_effect_text: (amount) => { return `Next ${amount} Boss Tasks are ${BOTTLED_LIGHTNING_MULT}x as fast`; },
+        on_consume: (amount) => { GAMESTATE.queued_lightning += amount; },
+    }),
 ]
 
-export const ARTIFACTS = [ItemType.ScrollOfHaste, ItemType.Dreamcatcher, ItemType.MagicRing];
+export const ARTIFACTS = [ItemType.ScrollOfHaste, ItemType.Dreamcatcher, ItemType.MagicRing, ItemType.BottledLightning];

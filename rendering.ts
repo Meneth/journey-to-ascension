@@ -1,11 +1,11 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
 import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint, setAutomationEndZone } from "./simulation.js";
 import { GAMESTATE, RENDERING, resetSave } from "./game.js";
-import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT } from "./items.js";
+import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT, BOTTLED_LIGHTNING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
 import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
-import { ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, TRAVEL_EMOJI, XP_TEXT } from "./rendering_constants.js";
+import { ATTUNEMENT_TEXT, BOTTLED_LIGHTNING_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, TRAVEL_EMOJI, XP_TEXT } from "./rendering_constants.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DEENERGIZED_BASE } from "./prestige_upgrades.js";
 import { CHANGELOG } from "./changelog.js";
 import { CREDITS } from "./credits.js";
@@ -499,6 +499,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         const expected_completions = calcExpectedCompletions(task, completions);
         const haste_stacks = task.hasted ? GAMESTATE.queued_scrolls_of_haste + 1 : GAMESTATE.queued_scrolls_of_haste;
         const magic_ring_stacks = task.xp_boosted ? GAMESTATE.queued_magic_rings + 1 : GAMESTATE.queued_magic_rings;
+        const lightning_stacks = task.lightning ? GAMESTATE.queued_lightning + 1 : GAMESTATE.queued_lightning;
 
         if (task.task_definition.max_reps > 1) {
             const table = createTableSection(task_table, "Completions");
@@ -632,6 +633,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 createTwoElementRow(getOrCreateTable(), `${HASTE_TEXT}${needs_asterisk ? "*".repeat(haste_asterisk_index) : ""}`, `<span class="good">x${HASTE_MULT}</span>`);
             }
 
+            if (lightning_stacks > 0) {
+                createTwoElementRow(getOrCreateTable(), BOTTLED_LIGHTNING_TEXT, `<span class="good">x${BOTTLED_LIGHTNING_MULT}</span>`);
+            }
+
             if (magic_ring_stacks > 0) {
                 const needs_asterisk = magic_ring_stacks < completions && !single_rep_for_all_ticks;
                 if (needs_asterisk) {
@@ -738,7 +743,8 @@ function calcSplitTotalTaskTicks(task: Task, completions: number) {
         return {normal: 1, haste: 0, haste_completions: 0}; // Major Time Compression combines all single-tick reps
     }
 
-    let progress_mult = calcTaskProgressMultiplier(task, false);
+    const lightning = task.lightning || (GAMESTATE.queued_lightning > 0 && task.task_definition.type == TaskType.Boss);
+    let progress_mult = calcTaskProgressMultiplier(task, false, lightning);
     let haste_stacks = GAMESTATE.queued_scrolls_of_haste;
     if (task.hasted) {
         haste_stacks += 1;

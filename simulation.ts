@@ -1,6 +1,6 @@
 import { Task, ZONES, TaskType, TASK_LOOKUP, TaskDefinition } from "./zones.js";
 import { GAMESTATE, setTickRate } from "./game.js";
-import { HASTE_MULT, ItemDefinition, ITEMS, ARTIFACTS, ItemType, MAGIC_RING_MULT } from "./items.js";
+import { HASTE_MULT, ItemDefinition, ITEMS, ARTIFACTS, ItemType, MAGIC_RING_MULT, BOTTLED_LIGHTNING_MULT } from "./items.js";
 import { getReflectionsOnTheJourneyExponent, PerkDefinition, PERKS, PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
@@ -169,7 +169,7 @@ export function calcTaskCost(task: Task): number {
     return base_cost * task.task_definition.cost_multiplier * zone_mult;
 }
 
-export function calcTaskProgressMultiplier(task: Task, override_haste: boolean | null = null): number {
+export function calcTaskProgressMultiplier(task: Task, override_haste: boolean | null = null, override_lightning: boolean | null = null): number {
     let mult = 1;
 
     let skill_level_mult = 1;
@@ -201,6 +201,10 @@ export function calcTaskProgressMultiplier(task: Task, override_haste: boolean |
         mult *= HASTE_MULT;
     }
 
+    if ((override_lightning === null && task.lightning) || override_lightning === true) {
+        mult *= BOTTLED_LIGHTNING_MULT;
+    }
+
     mult *= Math.pow(ZONE_SPEEDUP_BASE, task.task_definition.zone_id);
 
     if (hasPerk(PerkType.MajorTimeCompression)) {
@@ -222,8 +226,8 @@ export function calcTaskTicks(progress_per_tick: number, cost: number) {
     return Math.ceil(cost / progress_per_tick);
 }
 
-function calcTaskEnergyCost(task: Task, hasted: boolean): number {
-    const progress_per_tick = calcTaskProgressMultiplier(task, hasted);
+function calcTaskEnergyCost(task: Task, hasted: boolean, lightning: boolean): number {
+    const progress_per_tick = calcTaskProgressMultiplier(task, hasted, lightning);
     const cost = calcTaskCost(task);
     const energy_per_tick = calcEnergyDrainPerTick(task, isSingleTickTaskImpl(progress_per_tick, cost));
     const ticks = calcTaskTicks(progress_per_tick, cost);
@@ -333,6 +337,10 @@ export function tryApplySingleRepEffects(task: Task) {
         task.xp_boosted = true;
         GAMESTATE.queued_magic_rings--;
     }
+    if (GAMESTATE.queued_lightning > 0 && task.task_definition.type == TaskType.Boss) {
+        task.lightning = true;
+        GAMESTATE.queued_lightning--;
+    }
 }
 
 export function clickTask(task: Task) {
@@ -401,7 +409,8 @@ export function isTaskDisabledDueToTooStrongBoss(task: Task) {
         return false;
     }
 
-    return calcTaskEnergyCost(task, GAMESTATE.queued_scrolls_of_haste > 0) > (GAMESTATE.current_energy * BOSS_MAX_ENERGY_DISPARITY);
+    const lightning = GAMESTATE.queued_lightning > 0 && task.task_definition.type == TaskType.Boss;
+    return calcTaskEnergyCost(task, GAMESTATE.queued_scrolls_of_haste > 0, lightning) > (GAMESTATE.current_energy * BOSS_MAX_ENERGY_DISPARITY);
 }
 
 function updateEnabledTasks() {
@@ -1274,6 +1283,7 @@ export class Gamestate {
     used_items: Map<ItemType, number> = new Map();
     queued_scrolls_of_haste = 0;
     queued_magic_rings = 0;
+    queued_lightning = 0;
 
     is_in_energy_reset = false;
     is_at_end_of_content = false;

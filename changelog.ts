@@ -10,6 +10,12 @@ export const CHANGELOG: ChangelogEntry[] = [
         date: "2026-01-28",
         changes: "- Added a new Prestige repeatable upgrade<br>"
         + "- Added a 3rd mandatory Task to Zone 20<br>"
+        + "- Made the bosses in Zone 19 and 20 harder<br>"
+        + "- Added zones Z21 through Z25, including:<br>"
+        + "-- A new Artifact<br>"
+        + "-- X new Items<br>"
+        + "-- X new Bosses<br>"
+        + "-- X new Perks<br>"
     },
     {
         version: "0.3.7",
