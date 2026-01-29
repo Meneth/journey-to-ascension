@@ -10,6 +10,73 @@ import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIV
 import { CHANGELOG } from "./changelog.js";
 import { CREDITS } from "./credits.js";
 import { AWAKENING_DIVINE_SPARK_MULT } from "./simulation_constants.js";
+import { HarrowCardType, HarrowCardDefinition, HARROW_CARDS, HARROW_SPARK_BONUS_PER_CARD, isHarrowUnlocked, ownsHarrowCard, isHarrowCardActive, toggleHarrowCard, purchaseHarrowCard, calcHarrowSparkBonusForPrestige } from "./harrow.js";
+
+// MARK: PWA Install
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let deferredInstallPrompt: any = null;
+
+function isInStandaloneMode(): boolean {
+    return window.matchMedia("(display-mode: standalone)").matches
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        || (navigator as any).standalone === true;
+}
+
+function isIOS(): boolean {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+
+function setupInstallButton() {
+    const install_button = document.querySelector<HTMLElement>("#install-app");
+    if (!install_button) {
+        return;
+    }
+
+    // Already running as installed app
+    if (isInStandaloneMode()) {
+        return;
+    }
+
+    // iOS: show button with instructions since there's no beforeinstallprompt
+    if (isIOS()) {
+        install_button.classList.remove("hidden");
+        install_button.addEventListener("click", () => {
+            createConfirmationOverlay(
+                "Install as App",
+                `To install on iOS:<br><br>1. Tap the <b>Share</b> button (box with arrow)<br>2. Scroll down and tap <b>Add to Home Screen</b><br>3. Tap <b>Add</b>`,
+                () => { /* dismiss */ }
+            );
+        });
+        return;
+    }
+
+    // Chromium: listen for beforeinstallprompt
+    window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        install_button.classList.remove("hidden");
+    });
+
+    install_button.addEventListener("click", async () => {
+        if (!deferredInstallPrompt) {
+            return;
+        }
+
+        deferredInstallPrompt.prompt();
+        const result = await deferredInstallPrompt.userChoice;
+        if (result.outcome === "accepted") {
+            install_button.classList.add("hidden");
+        }
+        deferredInstallPrompt = null;
+    });
+
+    // Hide button if app gets installed while page is open
+    window.addEventListener("appinstalled", () => {
+        install_button.classList.add("hidden");
+        deferredInstallPrompt = null;
+    });
+}
 
 // MARK: Mobile & Touch Support
 
@@ -1155,6 +1222,8 @@ function recreateItemsIfNeeded() {
 
         artifacts_container.classList.remove("hidden");
     }
+
+    recreateMobileItemBar();
 }
 
 function sortItems(items: [type: ItemType, amount: number][]) {
@@ -1207,9 +1276,106 @@ function updateItems() {
         const item_count = GAMESTATE.items.get(item);
         button.disabled = item_count == 0;
         button.classList.toggle("disabled", button.disabled);
-        
+
         const count_text = button.querySelector<HTMLElement>(".item-count") as HTMLElement;
         count_text.textContent = `${item_count}`;
+    }
+
+    // Sync mobile item bar
+    for (const [item, button] of RENDERING.mobile_item_buttons) {
+        const item_count = GAMESTATE.items.get(item);
+        button.disabled = item_count == 0;
+        button.classList.toggle("disabled", button.disabled);
+
+        const count_text = button.querySelector<HTMLElement>(".item-count") as HTMLElement;
+        count_text.textContent = `${item_count}`;
+    }
+
+    if (RENDERING.mobile_auto_use_button) {
+        RENDERING.mobile_auto_use_button.textContent = GAMESTATE.auto_use_items ? "Auto" : "Manual";
+        RENDERING.mobile_auto_use_button.classList.toggle("on", GAMESTATE.auto_use_items);
+    }
+}
+
+function recreateMobileItemBar() {
+    const bar = RENDERING.mobile_item_bar_element;
+    const bar_container = bar.parentElement;
+    bar.innerHTML = "";
+    RENDERING.mobile_item_buttons.clear();
+    RENDERING.mobile_auto_use_button = null;
+
+    // Collect non-artifact items (same logic as recreateItemsIfNeeded)
+    const items: [type: ItemType, amount: number][] = [];
+    for (const item of ITEMS_BY_ZONE) {
+        const amount = GAMESTATE.items.get(item);
+        if (amount !== undefined && !ARTIFACTS.includes(item)) {
+            items.push([item, amount]);
+        }
+    }
+    sortItems(items);
+
+    const item_order: ItemType[] = [];
+    for (const [item,] of items) {
+        item_order.push(item);
+    }
+
+    if (areArraysEqual(item_order, RENDERING.mobile_item_order) && item_order.length > 0) {
+        return; // No change needed
+    }
+
+    RENDERING.mobile_item_order = item_order;
+
+    if (item_order.length === 0) {
+        bar_container?.classList.add("hidden");
+        return;
+    }
+
+    bar_container?.classList.remove("hidden");
+
+    // Auto-use toggle (if unlocked)
+    if (hasPerk(PerkType.Amulet)) {
+        const auto_btn = createChildElement(bar, "button") as HTMLButtonElement;
+        auto_btn.className = "mobile-bar-auto-use";
+        auto_btn.textContent = GAMESTATE.auto_use_items ? "Auto" : "Manual";
+        auto_btn.classList.toggle("on", GAMESTATE.auto_use_items);
+
+        auto_btn.addEventListener("click", () => {
+            GAMESTATE.auto_use_items = !GAMESTATE.auto_use_items;
+            auto_btn.textContent = GAMESTATE.auto_use_items ? "Auto" : "Manual";
+            auto_btn.classList.toggle("on", GAMESTATE.auto_use_items);
+            setupControls();
+        });
+
+        setupTooltipStatic(auto_btn, "Auto-Use Items", "Toggle automatic item usage");
+
+        RENDERING.mobile_auto_use_button = auto_btn;
+
+        const sep = createChildElement(bar, "div");
+        sep.className = "mobile-bar-separator";
+    }
+
+    // Item buttons
+    for (const item of item_order) {
+        const button = createChildElement(bar, "button") as HTMLButtonElement;
+        button.className = "item-button element";
+
+        const item_definition = ITEMS[item] as ItemDefinition;
+        button.innerHTML = `<span class="text">${item_definition.icon}</span>`;
+
+        const count_text = createChildElement(button, "p");
+        count_text.className = "item-count";
+
+        const item_count = GAMESTATE.items.get(item);
+        count_text.textContent = `${item_count ?? 0}`;
+        button.disabled = item_count == 0;
+        button.classList.toggle("disabled", button.disabled);
+
+        button.addEventListener("click", () => { clickItem(item, false); });
+        button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
+
+        setupTooltipStaticHeader(button, `${item_definition.name}`, () => `${item_definition.getTooltip()}`);
+
+        RENDERING.mobile_item_buttons.set(item, button);
     }
 }
 
@@ -1538,6 +1704,10 @@ function populatePrestigeView() {
                 divine_spark_gain.innerHTML += `<br>Multiplier from ${getPerkNameWithEmoji(PerkType.Awakening)}: ${formatNumber(1 + AWAKENING_DIVINE_SPARK_MULT)}`;
             }
 
+            const harrow_bonus = calcHarrowSparkBonusForPrestige();
+            if (harrow_bonus > 0) {
+                divine_spark_gain.innerHTML += `<br>Harrow Deck bonus: +${(harrow_bonus * 100).toFixed(0)}%`;
+            }
 
             const divine_spark_gain_stats = createChildElement(dummy_div, "p");
             divine_spark_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
@@ -1650,7 +1820,195 @@ function populatePrestigeView() {
         }
     }
 
+    // MARK: Harrow section in prestige view
+    if (isHarrowUnlocked()) {
+        const harrow_div = createChildElement(scroll_area, "div");
+        harrow_div.className = "harrow-section";
+
+        const harrow_header = createChildElement(harrow_div, "h2");
+        harrow_header.textContent = "Harrow Deck";
+
+        const harrow_desc = createChildElement(harrow_div, "p");
+        harrow_desc.innerHTML = `Challenge cards that grant <b>+${HARROW_SPARK_BONUS_PER_CARD * 100}%</b> ${DIVINE_SPARK_TEXT} gain each`;
+
+        const active_count = GAMESTATE.harrow_active.filter(c => !GAMESTATE.harrow_forfeited.includes(c)).length;
+        if (active_count > 0) {
+            const bonus_display = createChildElement(harrow_div, "p");
+            bonus_display.className = "harrow-bonus-display";
+            bonus_display.textContent = `Active bonus: +${(active_count * HARROW_SPARK_BONUS_PER_CARD * 100).toFixed(0)}% ${DIVINE_SPARK_TEXT}`;
+        }
+
+        const cards_container = createChildElement(harrow_div, "div");
+        cards_container.className = "harrow-cards-container";
+
+        for (const card_def of HARROW_CARDS) {
+            createHarrowCard(cards_container, card_def, ownsHarrowCard(card_def.type), false);
+        }
+    }
+
     scroll_area.scrollTop = scrollTop;
+}
+
+function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned: boolean, isToggleMode: boolean): HTMLElement {
+    const wrapper = createChildElement(parent, "div") as HTMLElement;
+    wrapper.className = "harrow-card-wrapper";
+
+    if (owned) {
+        wrapper.classList.add("harrow-owned");
+    }
+
+    if (isHarrowCardActive(cardDef.type)) {
+        wrapper.classList.add("harrow-active");
+    }
+
+    if (GAMESTATE.harrow_forfeited.includes(cardDef.type)) {
+        wrapper.classList.add("harrow-forfeited");
+    }
+
+    if (!owned && !isToggleMode) {
+        if (GAMESTATE.divine_spark < cardDef.cost) {
+            wrapper.classList.add("harrow-unaffordable");
+        }
+    }
+
+    const inner = createChildElement(wrapper, "div");
+    inner.className = "harrow-card-inner";
+
+    // Front face
+    const front = createChildElement(inner, "div");
+    front.className = "harrow-card-front";
+
+    const emoji = createChildElement(front, "div");
+    emoji.className = "harrow-card-emoji";
+    emoji.textContent = cardDef.emoji;
+
+    const name = createChildElement(front, "div");
+    name.className = "harrow-card-name";
+    name.textContent = cardDef.name;
+
+    if (!isToggleMode && !owned) {
+        const cost = createChildElement(front, "div");
+        cost.className = "harrow-card-cost";
+        cost.textContent = `Cost: ${cardDef.cost} ${DIVINE_SPARK_TEXT}`;
+    }
+
+    // Back face
+    const back = createChildElement(inner, "div");
+    back.className = "harrow-card-back";
+
+    const effect = createChildElement(back, "div");
+    effect.className = "harrow-card-effect";
+    effect.textContent = cardDef.effect_description;
+
+    const back_name = createChildElement(back, "div");
+    back_name.className = "harrow-card-name";
+    back_name.textContent = cardDef.name;
+
+    // Click behavior
+    if (isToggleMode && owned) {
+        wrapper.addEventListener("click", () => {
+            toggleHarrowCard(cardDef.type);
+            populateHarrowTogglePopup();
+        });
+    } else if (!owned && !isToggleMode) {
+        // Flip on first click, purchase on second
+        wrapper.addEventListener("click", () => {
+            if (wrapper.classList.contains("harrow-flipped")) {
+                if (purchaseHarrowCard(cardDef.type)) {
+                    populatePrestigeView();
+                }
+            } else {
+                wrapper.classList.add("harrow-flipped");
+            }
+        });
+    } else {
+        // Already owned in purchase mode - just flip to view
+        wrapper.addEventListener("click", () => {
+            wrapper.classList.toggle("harrow-flipped");
+        });
+    }
+
+    // 3D parallax tilt effect
+    wrapper.addEventListener("mousemove", (e: MouseEvent) => {
+        const rect = wrapper.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const maxDeg = 15;
+
+        const rotateY_val = ((x - centerX) / centerX) * maxDeg;
+        const rotateX_val = -((y - centerY) / centerY) * maxDeg;
+
+        inner.style.transform = wrapper.classList.contains("harrow-flipped")
+            ? `rotateY(${180 + rotateY_val}deg) rotateX(${rotateX_val}deg)`
+            : `rotateY(${rotateY_val}deg) rotateX(${rotateX_val}deg)`;
+    });
+
+    wrapper.addEventListener("mouseleave", () => {
+        inner.style.transform = wrapper.classList.contains("harrow-flipped")
+            ? "rotateY(180deg)"
+            : "";
+    });
+
+    return wrapper;
+}
+
+function populateHarrowTogglePopup() {
+    const harrow_overlay = RENDERING.harrow_overlay_element;
+    const harrow_div = harrow_overlay.querySelector("#harrow-box");
+    if (!harrow_div) {
+        return;
+    }
+
+    harrow_div.innerHTML = "";
+
+    const scroll_area = createChildElement(harrow_div, "div");
+    scroll_area.className = "scroll-area";
+
+    const header = createChildElement(scroll_area, "h1");
+    header.className = "harrow-popup-header";
+    header.textContent = "Harrow Deck";
+
+    const desc = createChildElement(scroll_area, "p");
+    desc.className = "harrow-popup-desc";
+    desc.innerHTML = `Activate cards to increase difficulty. Each active card grants <b>+${HARROW_SPARK_BONUS_PER_CARD * 100}%</b> ${DIVINE_SPARK_TEXT} on Prestige.`;
+
+    const active_count = GAMESTATE.harrow_active.length;
+    const bonus_display = createChildElement(scroll_area, "p");
+    bonus_display.className = "harrow-bonus-display";
+    bonus_display.textContent = active_count > 0
+        ? `Current bonus: +${(active_count * HARROW_SPARK_BONUS_PER_CARD * 100).toFixed(0)}% ${DIVINE_SPARK_TEXT}`
+        : `No cards active`;
+
+    const cards_container = createChildElement(scroll_area, "div");
+    cards_container.className = "harrow-cards-container";
+
+    for (const card_def of HARROW_CARDS) {
+        if (ownsHarrowCard(card_def.type)) {
+            createHarrowCard(cards_container, card_def, true, true);
+        }
+    }
+
+    // Show The Fool's random selection if active
+    if (isHarrowCardActive(HarrowCardType.TheFool) && GAMESTATE.harrow_fool_selection >= 0) {
+        const fool_card = HARROW_CARDS[GAMESTATE.harrow_fool_selection];
+        if (fool_card) {
+            const fool_info = createChildElement(scroll_area, "p");
+            fool_info.className = "harrow-fool-info";
+            fool_info.textContent = `The Fool will apply: ${fool_card.emoji} ${fool_card.name}`;
+        }
+    }
+
+    const begin_button = createChildElement(scroll_area, "button") as HTMLButtonElement;
+    begin_button.className = "harrow-begin-run";
+    begin_button.textContent = "Begin Run";
+    begin_button.addEventListener("click", () => {
+        GAMESTATE.harrow_show_toggle_popup = false;
+        harrow_overlay.classList.add("hidden");
+    });
+
+    harrow_overlay.classList.remove("hidden");
 }
 
 function setupOpenPrestige() {
@@ -2531,6 +2889,11 @@ export class Rendering {
     changelog_overlay_element: HTMLElement;
     credits_overlay_element: HTMLElement;
     hints_overlay_element: HTMLElement;
+    harrow_overlay_element: HTMLElement;
+    mobile_item_bar_element: HTMLElement;
+    mobile_item_buttons: Map<ItemType, HTMLButtonElement> = new Map();
+    mobile_item_order: ItemType[] = [];
+    mobile_auto_use_button: HTMLButtonElement | null = null;
 
     energy_reset_count: number = 0;
     current_zone: number = 0;
@@ -2591,6 +2954,8 @@ export class Rendering {
         this.changelog_overlay_element = getElement("changelog-overlay");
         this.credits_overlay_element = getElement("credits-overlay");
         this.hints_overlay_element = getElement("hints-overlay");
+        this.harrow_overlay_element = getElement("harrow-overlay");
+        this.mobile_item_bar_element = getElement("mobile-item-bar-inner");
     }
 
     public initialize() {
@@ -2604,6 +2969,15 @@ export class Rendering {
         setupOpenPrestige();
         setupOpenStats();
         setupItemUndo();
+
+        // Harrow overlay click-outside-to-close
+        this.harrow_overlay_element.addEventListener("click", (e) => {
+            if (e.target === this.harrow_overlay_element) {
+                this.harrow_overlay_element.classList.add("hidden");
+            }
+        });
+
+        setupInstallButton();
     }
 
     public start() {
@@ -2750,6 +3124,12 @@ export function updateRendering() {
     updateExtraStats();
     updateItems();
     updateGameOver();
+
+    // Harrow: show toggle popup after prestige if player owns cards
+    if (GAMESTATE.harrow_show_toggle_popup) {
+        populateHarrowTogglePopup();
+        GAMESTATE.harrow_show_toggle_popup = false;
+    }
 
     if (RENDERING.queued_update_tooltip) {
         RENDERING.queued_update_tooltip = false;

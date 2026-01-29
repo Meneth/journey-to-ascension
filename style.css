@@ -939,6 +939,180 @@ div.prestige-purchase {
     scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
 }
 
+/* MARK: Harrow Deck
+*/
+
+#harrow-box {
+    width: 600px;
+    max-height: 80vh;
+    padding: 0;
+    overflow-y: auto;
+
+    scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
+}
+
+.harrow-section {
+    width: 100%;
+    border-top: 1px solid var(--tooltip-palette-table-lines);
+    padding: 8px 0;
+}
+
+.harrow-section h2 {
+    text-align: center;
+    margin: 4px 0 8px 0;
+}
+
+.harrow-section p {
+    text-align: center;
+    margin: 4px 0;
+}
+
+.harrow-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    padding: 8px;
+}
+
+.harrow-card-wrapper {
+    width: 130px;
+    height: 180px;
+    perspective: 600px;
+    cursor: pointer;
+}
+
+.harrow-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease;
+}
+
+.harrow-card-wrapper.harrow-flipped .harrow-card-inner {
+    transform: rotateY(180deg);
+}
+
+.harrow-card-front,
+.harrow-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--default-border-radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #333;
+    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    color: #ddd;
+}
+
+.harrow-card-back {
+    transform: rotateY(180deg);
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+.harrow-card-emoji {
+    font-size: 2.5em;
+    margin-bottom: 4px;
+}
+
+.harrow-card-name {
+    font-weight: bold;
+    font-size: 0.85em;
+    margin-bottom: 4px;
+}
+
+.harrow-card-cost {
+    font-size: 0.75em;
+    color: #aaa;
+}
+
+.harrow-card-effect {
+    font-size: 0.75em;
+    padding: 4px;
+}
+
+.harrow-card-back .harrow-card-name {
+    margin-top: 8px;
+    font-size: 0.75em;
+    color: #aaa;
+}
+
+/* State: owned */
+.harrow-card-wrapper.harrow-owned .harrow-card-front,
+.harrow-card-wrapper.harrow-owned .harrow-card-back {
+    border-color: #2ecc71;
+}
+
+/* State: active */
+.harrow-card-wrapper.harrow-active .harrow-card-front,
+.harrow-card-wrapper.harrow-active .harrow-card-back {
+    border-color: #ffcc00;
+    box-shadow: 0 0 10px 3px rgba(255, 204, 0, 0.4);
+}
+
+/* State: unaffordable or locked */
+.harrow-card-wrapper.harrow-unaffordable,
+.harrow-card-wrapper.harrow-locked {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* State: forfeited (visually dimmed) */
+.harrow-card-wrapper.harrow-forfeited .harrow-card-front,
+.harrow-card-wrapper.harrow-forfeited .harrow-card-back {
+    border-color: #666;
+    opacity: 0.6;
+}
+
+.harrow-bonus-display {
+    text-align: center;
+    font-size: 1.1em;
+    color: #ffcc00;
+    margin: 4px 0;
+}
+
+button.harrow-begin-run {
+    background-color: var(--prestige-color);
+    font-size: 1.5em;
+    padding: 8px 24px;
+    margin: 8px auto;
+    display: block;
+}
+
+.harrow-popup-header {
+    text-align: center;
+    margin: 8px 0 4px 0;
+}
+
+.harrow-popup-desc {
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+    margin: 0 8px 8px 8px;
+}
+
+.harrow-fool-info {
+    text-align: center;
+    font-size: 0.9em;
+    color: #e67e22;
+    margin: 8px 0;
+}
+
+/* MARK: Mobile Item Bar
+*/
+
+#mobile-item-bar {
+    display: none;
+}
+
 /* MARK: Messages
 */
 footer {
@@ -1076,12 +1250,12 @@ footer {
 .item-wrapper .mobile-info-btn,
 .perk-wrapper .mobile-info-btn {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 14px;
-    height: 14px;
-    min-width: 14px;
-    font-size: 0.5em;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    font-size: 0.6em;
     z-index: 1;
 }
 
@@ -1094,16 +1268,11 @@ footer {
     margin-left: 8px;
 }
 
-/* Skill info button - inline at end */
-.skill {
-    position: relative;
-}
-
+/* Skill info button - inline in the name row */
 .skill > .mobile-info-btn {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: static;
+    float: right;
+    margin-top: 2px;
 }
 
 /* MARK: Responsive - Mobile (≤768px)
@@ -1203,10 +1372,77 @@ footer {
         width: 100%;
     }
 
+    /* Mobile item bar */
+    #mobile-item-bar {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 64px;
+        background: var(--element-background-color);
+        border-top: 2px solid var(--element-foreground-color);
+        z-index: 999;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #mobile-item-bar.hidden {
+        display: none;
+    }
+
+    #mobile-item-bar::after {
+        content: "";
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 24px;
+        height: 64px;
+        background: linear-gradient(to right, transparent, var(--element-background-color));
+        pointer-events: none;
+        z-index: 1000;
+    }
+
+    #mobile-item-bar-inner {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 28px 6px 6px;
+        height: 100%;
+        width: max-content;
+        min-width: 100%;
+    }
+
+    #mobile-item-bar-inner .item-button {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+    }
+
+    #mobile-item-bar-inner .mobile-bar-auto-use {
+        height: 48px;
+        flex-shrink: 0;
+        font-size: 0.75em;
+        padding: 4px 8px;
+        white-space: nowrap;
+    }
+
+    #mobile-item-bar-inner .mobile-bar-separator {
+        width: 1px;
+        height: 36px;
+        background: var(--element-foreground-color);
+        flex-shrink: 0;
+    }
+
+    .mobile-menu-toggle {
+        bottom: 80px;
+    }
+
     /* Compact notifications */
     footer {
         width: calc(100% - 16px);
-        bottom: 80px;
+        bottom: 144px;
     }
 
     .message {
@@ -1227,10 +1463,31 @@ footer {
         overflow-y: auto;
     }
 
-    #prestige-box, #stats-box, #changelog-box, #credits-box {
+    #prestige-box, #stats-box, #changelog-box, #credits-box, #harrow-box {
         height: auto;
         max-height: calc(100vh - 64px);
         width: calc(100vw - 32px) !important;
+    }
+
+    .harrow-card-wrapper {
+        width: 100px;
+        height: 140px;
+    }
+
+    .harrow-card-emoji {
+        font-size: 1.8em;
+    }
+
+    .harrow-card-name {
+        font-size: 0.7em;
+    }
+
+    .harrow-card-cost {
+        font-size: 0.65em;
+    }
+
+    .harrow-card-effect {
+        font-size: 0.65em;
     }
 
     .confirmation {
@@ -1271,6 +1528,10 @@ footer {
     }
 
     .sidebar-backdrop {
+        display: none !important;
+    }
+
+    #install-app {
         display: none !important;
     }
 }

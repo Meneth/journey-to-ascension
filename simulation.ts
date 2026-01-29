@@ -6,6 +6,7 @@ import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemCont
 import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
+import { HarrowCardType, isHarrowEffectActive, calcHarrowSparkBonusForPrestige, rollFoolCard } from "./harrow.js";
 
 // MARK: Constants
 let task_progress_mult = 1;
@@ -49,6 +50,11 @@ export function calcSkillXp(task: Task, task_progress: number, ignore_boost = fa
         xp *= MAGIC_RING_MULT;
     }
 
+    // Harrow: The Frost - 80% XP reduction
+    if (isHarrowEffectActive(HarrowCardType.TheFrost)) {
+        xp *= 0.2;
+    }
+
     return xp;
 }
 
@@ -81,6 +87,23 @@ function addSkillXp(skill: SkillType, xp: number) {
         const context: SkillUpContext = { skill: skill_entry.type, new_level: skill_entry.level, levels_gained: skill_entry.level - old_level };
         const event = new RenderEvent(EventType.SkillUp, context);
         GAMESTATE.queueRenderEvent(event);
+    }
+
+    // Harrow: The Shackled - clamp skill level to ceil(secondHighest * 1.1)
+    if (isHarrowEffectActive(HarrowCardType.TheShackled) && skill_entry.level > 0) {
+        const other_levels: number[] = [];
+        for (const s of GAMESTATE.skills) {
+            if (s.type !== skill_entry.type) {
+                other_levels.push(s.level);
+            }
+        }
+        other_levels.sort((a, b) => b - a);
+        const second_highest = other_levels[0] ?? 0;
+        const max_allowed = Math.ceil(second_highest * 1.1);
+        if (max_allowed > 0 && skill_entry.level > max_allowed) {
+            skill_entry.level = max_allowed;
+            skill_entry.progress = 0;
+        }
     }
 }
 
@@ -166,7 +189,14 @@ export function calcTaskCost(task: Task): number {
     const zone_exponent = 2.2;
     const zone_mult = Math.pow(zone_exponent, task.task_definition.zone_id);
 
-    return base_cost * task.task_definition.cost_multiplier * zone_mult;
+    let cost = base_cost * task.task_definition.cost_multiplier * zone_mult;
+
+    // Harrow: The Serpent - double cost for Boss tasks
+    if (isHarrowEffectActive(HarrowCardType.TheSerpent) && task.task_definition.type === TaskType.Boss) {
+        cost *= 2;
+    }
+
+    return cost;
 }
 
 export function calcTaskProgressMultiplier(task: Task, override_haste: boolean | null = null): number {
@@ -260,7 +290,14 @@ function progressTask(task: Task, progress: number, consume_energy = true) {
 
     const is_single_tick = isSingleTickTaskImpl(progress, cost);
     if (consume_energy) {
-        modifyEnergy(-calcEnergyDrainPerTick(task, is_single_tick));
+        let energy_drain = calcEnergyDrainPerTick(task, is_single_tick);
+
+        // Harrow: The Tempest - minimum energy drain of 10
+        if (isHarrowEffectActive(HarrowCardType.TheTempest)) {
+            energy_drain = Math.max(energy_drain, 10);
+        }
+
+        modifyEnergy(-energy_drain);
     }
 
     for (const skill of task.task_definition.skills) {
@@ -297,6 +334,12 @@ function updateActiveTask() {
     if (!active_task) {
         GAMESTATE.active_task = pickNextTaskInAutomationQueue();
         active_task = GAMESTATE.active_task;
+
+        // Harrow: mark run as started when automation picks a task
+        if (active_task && !GAMESTATE.harrow_run_started && GAMESTATE.harrow_active.length > 0) {
+            GAMESTATE.harrow_run_started = true;
+            rollFoolCard();
+        }
     }
     if (!active_task) {
         return;
@@ -342,6 +385,12 @@ export function clickTask(task: Task) {
     else {
         GAMESTATE.active_task = task;
         tryApplySingleRepEffects(task);
+
+        // Harrow: mark run as started and roll The Fool on first task
+        if (!GAMESTATE.harrow_run_started && GAMESTATE.harrow_active.length > 0) {
+            GAMESTATE.harrow_run_started = true;
+            rollFoolCard();
+        }
     }
 }
 
@@ -523,6 +572,16 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
         drain *= MAJOR_TIME_COMPRESSION_EFFECT;
     }
 
+    // Harrow: The Hourglass - triple energy drain
+    if (isHarrowEffectActive(HarrowCardType.TheHourglass)) {
+        drain *= 3;
+    }
+
+    // Harrow: The Reaper - double drain when above max energy
+    if (isHarrowEffectActive(HarrowCardType.TheReaper) && GAMESTATE.current_energy > GAMESTATE.max_energy) {
+        drain *= 2;
+    }
+
     return drain;
 }
 
@@ -538,6 +597,11 @@ function doAnyReset() {
     GAMESTATE.items_found_this_energy_reset = [];
     GAMESTATE.used_items.clear();
     removeTemporarySkillBonuses();
+
+    // Harrow: reset run state but keep active cards through energy resets
+    GAMESTATE.harrow_run_started = false;
+    GAMESTATE.harrow_forfeited = [];
+    GAMESTATE.harrow_fool_selection = -1;
 }
 
 function calcEnergeticMemoryGain() {
@@ -565,7 +629,14 @@ export function doEnergyReset() {
 }
 
 export function calcItemEnergyGain(base_energy: number) {
-    return Math.floor(base_energy * (1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineAppetite) * DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT));
+    let gain = Math.floor(base_energy * (1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineAppetite) * DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT));
+
+    // Harrow: The Brittle - halve energy from items
+    if (isHarrowEffectActive(HarrowCardType.TheBrittle)) {
+        gain = Math.floor(gain * 0.5);
+    }
+
+    return gain;
 }
 
 // MARK: Items
@@ -616,7 +687,13 @@ export function clickItem(item: ItemType, use_all: boolean) {
 
 function handleEnergyResetItemCounts() {
     for (const [key, value] of GAMESTATE.items) {
-        const new_value = hasPerk(PerkType.UnderstandingTheReset) ? Math.ceil(value / 2) : 0;
+        let new_value = 0;
+        if (hasPerk(PerkType.UnderstandingTheReset)) {
+            // Harrow: The Grave - quarter items instead of halving
+            new_value = isHarrowEffectActive(HarrowCardType.TheGrave)
+                ? Math.ceil(value / 4)
+                : Math.ceil(value / 2);
+        }
         GAMESTATE.items.set(key, new_value);
     }
 }
@@ -1005,7 +1082,15 @@ export function calcDivineSparkGainFromHighestZone(zone: number) {
 }
 
 export function calcDivineSparkGain() {
-    return calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone)
+    let gain = calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone);
+
+    // Harrow: +25% Divine Spark per active non-forfeited card
+    const harrow_bonus = calcHarrowSparkBonusForPrestige();
+    if (harrow_bonus > 0) {
+        gain = Math.ceil(gain * (1 + harrow_bonus));
+    }
+
+    return gain;
 }
 
 export function hasPrestigeUnlock(unlock: PrestigeUnlockType) {
@@ -1126,6 +1211,15 @@ export function doPrestige() {
     GAMESTATE.auto_use_items = false;
     GAMESTATE.unlocked_new_prestige_this_prestige = false;
 
+    // Harrow: clear active cards on prestige, show toggle popup if owns cards
+    GAMESTATE.harrow_active = [];
+    GAMESTATE.harrow_forfeited = [];
+    GAMESTATE.harrow_run_started = false;
+    GAMESTATE.harrow_fool_selection = -1;
+    if (GAMESTATE.harrow_owned.length > 0) {
+        GAMESTATE.harrow_show_toggle_popup = true;
+    }
+
     for (const [, task] of TASK_LOOKUP) {
         if (task.type == TaskType.Boss && hasAutomatedTask(task)) {
             toggleAutomation(task);
@@ -1238,6 +1332,14 @@ function loadGameFromData(data: any) {
     if (GAMESTATE.highest_prestige_zone == 0 && GAMESTATE.prestige_count > 0) {
         GAMESTATE.highest_prestige_zone = GAMESTATE.highest_zone_ever;
     }
+
+    // Harrow save migration
+    if (GAMESTATE.harrow_owned === undefined) { GAMESTATE.harrow_owned = []; }
+    if (GAMESTATE.harrow_active === undefined) { GAMESTATE.harrow_active = []; }
+    if (GAMESTATE.harrow_forfeited === undefined) { GAMESTATE.harrow_forfeited = []; }
+    if (GAMESTATE.harrow_run_started === undefined) { GAMESTATE.harrow_run_started = false; }
+    if (GAMESTATE.harrow_fool_selection === undefined) { GAMESTATE.harrow_fool_selection = -1; }
+    if (GAMESTATE.harrow_show_toggle_popup === undefined) { GAMESTATE.harrow_show_toggle_popup = false; }
 }
 
 // MARK: Gamestate
@@ -1296,6 +1398,13 @@ export class Gamestate {
     prestige_unlocks: PrestigeUnlockType[] = [];
     prestige_repeatables: Map<PrestigeRepeatableType, number> = new Map();
     prestige_layers_unlocked: PrestigeLayer[] = [];
+
+    harrow_owned: HarrowCardType[] = [];
+    harrow_active: HarrowCardType[] = [];
+    harrow_forfeited: HarrowCardType[] = [];
+    harrow_run_started: boolean = false;
+    harrow_fool_selection: number = -1;
+    harrow_show_toggle_popup: boolean = false;
 
     pending_render_events: RenderEvent[] = [];
 
@@ -1359,6 +1468,12 @@ function advanceZone() {
     }
     
     GAMESTATE.current_zone = new_zone;
+
+    // Harrow: The Eclipse - lose 10% of current energy on zone advance
+    if (isHarrowEffectActive(HarrowCardType.TheEclipse)) {
+        GAMESTATE.current_energy *= 0.9;
+    }
+
     resetTasks();
 }
 

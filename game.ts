@@ -24,6 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
     RENDERING.start();
 
     setTickRate();
+
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js").catch(() => { /* SW registration failed, install prompt won't be available */ });
+    }
 });
 
 document.addEventListener("keyup", handleHotkeyReleased);
