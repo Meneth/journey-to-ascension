@@ -635,6 +635,7 @@ button:hover:not(.disabled):not(:disabled) {
     justify-content: center;
     align-items: center;
     color: white;
+    z-index: 2000;
 
     background: #0008;
 }
@@ -1432,6 +1433,57 @@ footer {
         width: calc(100vw - 32px);
     }
 
+    /* Compact zone header */
+    #zone-name {
+        font-size: 1.1em;
+        margin: 0;
+        padding: 2px 0;
+    }
+
+    #zone {
+        margin-bottom: 4px;
+    }
+
+    /* Compact tasks */
+    .task {
+        margin-bottom: 4px;
+        padding: 4px;
+    }
+
+    .task .task-button {
+        min-height: 36px;
+        height: 36px;
+        margin-bottom: 3px;
+        font-size: 0.85em;
+    }
+
+    .task .indicator {
+        width: 12px;
+        height: 12px;
+    }
+
+    .progress-bar {
+        height: 7px;
+    }
+
+    .skills-used-text {
+        font-size: 0.8em;
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    /* Compact info buttons */
+    .mobile-info-btn {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        font-size: 1em;
+    }
+
+    .task-upper > .mobile-info-btn {
+        margin-left: 4px;
+    }
+
     /* Larger touch targets */
     button, .element, .task .task-button {
         touch-action: manipulation;
@@ -1447,9 +1499,14 @@ footer {
         height: 68px;
     }
 
-    /* Task button adjustments */
-    .task .task-button {
-        min-height: 44px;
+    /* Compact bottom panel sections */
+    #right-column h2 {
+        font-size: 1.1em;
+        margin: 2px 0;
+    }
+
+    #right-column .sidebar-section {
+        margin-bottom: 4px;
     }
 
     /* Settings area in sidebar */

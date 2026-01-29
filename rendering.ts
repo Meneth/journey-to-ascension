@@ -23,8 +23,9 @@ function isInStandaloneMode(): boolean {
         || (navigator as any).standalone === true;
 }
 
-function isIOS(): boolean {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent);
+function isIOSOrIPadOS(): boolean {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent)
+        || (navigator.userAgent.includes("Macintosh") && "ontouchend" in document);
 }
 
 function setupInstallButton() {
@@ -33,47 +34,51 @@ function setupInstallButton() {
         return;
     }
 
-    // Already running as installed app
+    // Already running as installed app — hide the button
     if (isInStandaloneMode()) {
+        install_button.style.display = "none";
         return;
     }
 
-    // iOS: show button with instructions since there's no beforeinstallprompt
-    if (isIOS()) {
-        install_button.classList.remove("hidden");
-        install_button.addEventListener("click", () => {
+    // Capture beforeinstallprompt if the browser supports it
+    window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+    });
+
+    install_button.addEventListener("click", async () => {
+        // Best case: browser supports the native install prompt
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            const result = await deferredInstallPrompt.userChoice;
+            if (result.outcome === "accepted") {
+                install_button.style.display = "none";
+            }
+            deferredInstallPrompt = null;
+            return;
+        }
+
+        // iOS/iPadOS: Share > Add to Home Screen
+        if (isIOSOrIPadOS()) {
             createConfirmationOverlay(
                 "Install as App",
                 `To install on iOS:<br><br>1. Tap the <b>Share</b> button (box with arrow)<br>2. Scroll down and tap <b>Add to Home Screen</b><br>3. Tap <b>Add</b>`,
                 () => { /* dismiss */ }
             );
-        });
-        return;
-    }
-
-    // Chromium: listen for beforeinstallprompt
-    window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredInstallPrompt = e;
-        install_button.classList.remove("hidden");
-    });
-
-    install_button.addEventListener("click", async () => {
-        if (!deferredInstallPrompt) {
             return;
         }
 
-        deferredInstallPrompt.prompt();
-        const result = await deferredInstallPrompt.userChoice;
-        if (result.outcome === "accepted") {
-            install_button.classList.add("hidden");
-        }
-        deferredInstallPrompt = null;
+        // Fallback for other browsers (Firefox, etc.)
+        createConfirmationOverlay(
+            "Install as App",
+            `To install:<br><br>Open your browser's menu and look for <b>Install App</b> or <b>Add to Home Screen</b>`,
+            () => { /* dismiss */ }
+        );
     });
 
     // Hide button if app gets installed while page is open
     window.addEventListener("appinstalled", () => {
-        install_button.classList.add("hidden");
+        install_button.style.display = "none";
         deferredInstallPrompt = null;
     });
 }
