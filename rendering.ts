@@ -956,12 +956,14 @@ function setupTooltip(element: ElementWithTooltip, header_callback: tooltipLambd
     element.generateTooltipBody = body_callback;
 
     element.addEventListener("pointerenter", (event) => {
+        if (isTouchDevice) { return; }
         RENDERING.potential_tooltipped_element = element;
         if (!GAMESTATE.manual_tooltips || event.ctrlKey) {
             showTooltip(element);
         }
     });
     element.addEventListener("pointerleave", () => {
+        if (isTouchDevice) { return; }
         hideTooltip();
         RENDERING.potential_tooltipped_element = null;
     });
