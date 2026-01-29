@@ -6,6 +6,22 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "0.3.6",
+        date: "2026-01-28",
+        changes: "- Minor Time Compression's tooltip now does the math for how big the effect currently is<br>"
+        + "- Fixed the stylesheet being broken<br>"
+    },
+    {
+        version: "0.3.5",
+        date: "2026-01-28",
+        changes: "- Fixed the tooltip of Energy Items not updating immediately when you upgrade Divine Appetite<br>"
+        + "- Fixed Energy Items energy gain not being truncated at and above Divine Appetite level 7 (showing E.G., 12.00000000002)<br>"
+        + "- Added favicon (browser tab icon)<br>"
+        + "- Made Transcendant Aptitude cheaper, but made the cost scale up faster<br>"
+        + "- Setting the automation target Zone to the current Zone or lower now stops ongoing automation<br>"
+        + "- The To Zone automation button is now disabled if the target Zone isn't higher than the current Zone<br>"
+    },
+    {
         version: "0.3.4",
         date: "2026-01-27",
         changes: "- Renamed the 'All' task automation mode to 'Until Zone'. You can now specify a Zone that it'll stop when you get to. If you're already in or past that Zone when enabling Until Zone, it'll just do whatever Zone you're in, like Current Zone automation<br>"
