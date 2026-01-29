@@ -604,7 +604,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 energy_cost_class = "extreme";
             }
 
-            const energy_cost_text = `<span class="${energy_cost_class}">${formatNumber(energy_cost)}</span>`;
+            const energy_cost_text = `<span class="${energy_cost_class}">${formatNumber(energy_cost, energy_cost > 0)}</span>`;
             createTwoElementRow(table, ENERGY_TEXT, `${energy_cost_text}`);
 
             const task_ticks = estimateTotalTaskTicks(task, completions);
