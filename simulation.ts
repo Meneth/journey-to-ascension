@@ -290,13 +290,7 @@ function progressTask(task: Task, progress: number, consume_energy = true) {
 
     const is_single_tick = isSingleTickTaskImpl(progress, cost);
     if (consume_energy) {
-        let energy_drain = calcEnergyDrainPerTick(task, is_single_tick);
-
-        // Harrow: The Tempest - minimum energy drain of 10
-        if (isHarrowEffectActive(HarrowCardType.TheTempest)) {
-            energy_drain = Math.max(energy_drain, 10);
-        }
-
+        const energy_drain = calcEnergyDrainPerTick(task, is_single_tick);
         modifyEnergy(-energy_drain);
     }
 
@@ -580,6 +574,11 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
     // Harrow: The Reaper - double drain when above max energy
     if (isHarrowEffectActive(HarrowCardType.TheReaper) && GAMESTATE.current_energy > GAMESTATE.max_energy) {
         drain *= 2;
+    }
+
+    // Harrow: The Tempest - minimum energy drain of 10
+    if (isHarrowEffectActive(HarrowCardType.TheTempest)) {
+        drain = Math.max(drain, 10);
     }
 
     return drain;

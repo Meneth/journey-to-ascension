@@ -1212,7 +1212,7 @@ button.harrow-begin-run {
 .harrow-popup-desc {
     text-align: center;
     font-size: 0.9em;
-    color: #666;
+    color: #333;
     margin: 0 8px 8px 8px;
 }
 
@@ -1232,7 +1232,7 @@ button.harrow-begin-run {
     justify-content: center;
     display: flex;
     cursor: pointer;
-    border-color: #ffcc00;
+    border: 2px solid #ffcc00;
     animation: harrow-active-glow 2s ease-in-out infinite alternate;
 }
 
@@ -1500,7 +1500,14 @@ footer {
 
     #toggle-left-sidebar {
         display: flex;
-        bottom: calc(33vh + 16px);
+        bottom: auto;
+        top: 36px;
+        left: auto;
+        right: 8px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2em;
+        z-index: 1001;
     }
 
     /* Tooltips */

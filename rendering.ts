@@ -2876,7 +2876,7 @@ function showCredits() {
 
     {
         const close_button = createChildElement(credits_div, "button");
-        close_button.className = "close";
+        close_button.className = "close close-scroll";
         close_button.textContent = "X";
 
         close_button.addEventListener("click", () => {
