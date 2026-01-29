@@ -185,8 +185,8 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         layer: PrestigeLayer.TranscendHumanity,
         name: "Transcendant Aptitude",
         get_description: () => { return `Increases starting skill levels by ${TRANSCENDANT_APTITUDE_MULT}<br>${getSkillString(SkillType.Ascension)} has its starting level increased by only half`; },
-        initial_cost: 200,
-        scaling_exponent: 2
+        initial_cost: 100,
+        scaling_exponent: 3
     },
     {
         type: PrestigeRepeatableType.Energized,

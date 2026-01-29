@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint, setAutomationEndZone } from "./simulation.js";
 import { GAMESTATE, RENDERING, resetSave } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
@@ -10,6 +10,90 @@ import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIV
 import { CHANGELOG } from "./changelog.js";
 import { CREDITS } from "./credits.js";
 import { AWAKENING_DIVINE_SPARK_MULT } from "./simulation_constants.js";
+
+// MARK: Mobile & Touch Support
+
+let isTouchDevice = false;
+let mobileSidebarState = {
+    left_open: false,
+    right_open: false
+};
+
+function detectTouchDevice(): void {
+    isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+}
+
+function setupMobileSidebars(): void {
+    const leftToggle = document.getElementById("toggle-left-sidebar");
+    const rightToggle = document.getElementById("toggle-right-sidebar");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const rightSidebar = document.getElementById("right-column");
+
+    if (!leftToggle || !rightToggle || !backdrop || !leftSidebar || !rightSidebar) {
+        return;
+    }
+
+    leftToggle.addEventListener("click", () => toggleMobileSidebar("left"));
+    rightToggle.addEventListener("click", () => toggleMobileSidebar("right"));
+    backdrop.addEventListener("click", closeMobileSidebars);
+}
+
+function toggleMobileSidebar(side: "left" | "right"): void {
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const rightSidebar = document.getElementById("right-column");
+
+    if (!backdrop || !leftSidebar || !rightSidebar) {
+        return;
+    }
+
+    if (side === "left") {
+        mobileSidebarState.left_open = !mobileSidebarState.left_open;
+        mobileSidebarState.right_open = false;
+        leftSidebar.classList.toggle("open", mobileSidebarState.left_open);
+        rightSidebar.classList.remove("open");
+    } else {
+        mobileSidebarState.right_open = !mobileSidebarState.right_open;
+        mobileSidebarState.left_open = false;
+        rightSidebar.classList.toggle("open", mobileSidebarState.right_open);
+        leftSidebar.classList.remove("open");
+    }
+
+    const anyOpen = mobileSidebarState.left_open || mobileSidebarState.right_open;
+    backdrop.classList.toggle("visible", anyOpen);
+}
+
+function closeMobileSidebars(): void {
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const rightSidebar = document.getElementById("right-column");
+
+    if (!backdrop || !leftSidebar || !rightSidebar) {
+        return;
+    }
+
+    mobileSidebarState.left_open = false;
+    mobileSidebarState.right_open = false;
+    leftSidebar.classList.remove("open");
+    rightSidebar.classList.remove("open");
+    backdrop.classList.remove("visible");
+}
+
+function setupGlobalTooltipDismiss(): void {
+    document.addEventListener("click", (event) => {
+        const tooltip = RENDERING.tooltip_element;
+        if (!tooltip || tooltip.classList.contains("hidden")) return;
+
+        const target = event.target as HTMLElement;
+
+        if (tooltip.contains(target)) return;
+
+        if (target.closest(".mobile-info-btn")) return;
+
+        hideTooltip();
+    });
+}
 
 // MARK: Helpers
 
@@ -289,6 +373,8 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
         tooltip += `<br>Bonuses not from levels (E.G., from Items and Perks) are not scaled down this way`;
         return tooltip;
     });
+
+    addMobileInfoButton(skill_div, skill_div);
 
     skills_div.appendChild(skill_div);
     RENDERING.skill_elements.set(skill.type, skill_div);
@@ -659,6 +745,9 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         return tooltip;
     });
 
+    // Mobile info button for tooltip
+    addMobileInfoButton(task_upper_div, task_div);
+
     tasks_div.appendChild(task_div);
     rendering.task_elements.set(task.task_definition, task_div);
 }
@@ -798,6 +887,7 @@ interface ElementWithTooltip extends HTMLElement {
 function setupTooltip(element: ElementWithTooltip, header_callback: tooltipLambda, body_callback: tooltipLambda) {
     element.generateTooltipHeader = header_callback;
     element.generateTooltipBody = body_callback;
+
     element.addEventListener("pointerenter", (event) => {
         RENDERING.potential_tooltipped_element = element;
         if (!GAMESTATE.manual_tooltips || event.ctrlKey) {
@@ -808,6 +898,25 @@ function setupTooltip(element: ElementWithTooltip, header_callback: tooltipLambd
         hideTooltip();
         RENDERING.potential_tooltipped_element = null;
     });
+}
+
+function addMobileInfoButton(parent: ElementWithTooltip, element: ElementWithTooltip): HTMLButtonElement {
+    const infoBtn = document.createElement("button");
+    infoBtn.className = "mobile-info-btn";
+    infoBtn.textContent = "ℹ";
+    infoBtn.setAttribute("aria-label", "Show info");
+
+    infoBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        if (RENDERING.tooltipped_element === element) {
+            hideTooltip();
+        } else {
+            showTooltip(element);
+        }
+    });
+
+    parent.appendChild(infoBtn);
+    return infoBtn;
 }
 
 function setupTooltipStaticHeader(element: ElementWithTooltip, header: string, body_callback: tooltipLambda) {
@@ -932,7 +1041,10 @@ function queueUpdateTooltip() {
 // MARK: Items
 
 function createItemDiv(item: ItemType, items_div: HTMLElement) {
-    const button = createChildElement(items_div, "button") as HTMLButtonElement;
+    const wrapper = createChildElement(items_div, "div");
+    wrapper.className = "item-wrapper";
+
+    const button = createChildElement(wrapper, "button") as HTMLButtonElement;
     button.className = "item-button";
     button.classList.add("element");
 
@@ -946,6 +1058,9 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
 
     setupTooltipStaticHeader(button, `${item_definition.name}`, () => `${item_definition.getTooltip()}`);
+
+    // Mobile info button for tooltip
+    addMobileInfoButton(wrapper, button);
 
     RENDERING.item_elements.set(item, button);
 }
@@ -1101,6 +1216,9 @@ function updateItems() {
 // MARK: Perks
 
 function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "perk-wrapper";
+
     const perk_div = document.createElement("div");
     perk_div.className = "perk";
     perk_div.classList.add("element");
@@ -1121,7 +1239,12 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean)
     setupTooltip(perk_div, () => `${perk_definition.name}`, () => `${perk_definition.getTooltip()}<br><br>Unlocked in Zone ${zone + 1}`);
 
     perk_div.appendChild(perk_text);
-    perks_div.appendChild(perk_div);
+    wrapper.appendChild(perk_div);
+
+    // Mobile info button for tooltip
+    addMobileInfoButton(wrapper, perk_div);
+
+    perks_div.appendChild(wrapper);
     RENDERING.perk_elements.set(perk, perk_div);
 }
 
@@ -2013,7 +2136,9 @@ function setupAutomationControls() {
     const automation_controls_div = createChildElement(automation_div, "div");
     automation_controls_div.className = "automation-controls";
 
-    const all_control = createChildElement(automation_controls_div, "button");
+    const all_control = createChildElement(automation_controls_div, "button") as HTMLButtonElement;
+    const to_zone_disabled = GAMESTATE.automation_mode != AutomationMode.All && GAMESTATE.current_zone >= GAMESTATE.automation_end;
+    all_control.disabled = to_zone_disabled;
 
     function updateZoneButtonText() {
         all_control.innerHTML = `To<br>Zone ${GAMESTATE.automation_end}`;
@@ -2025,8 +2150,8 @@ function setupAutomationControls() {
         max: 99,
         initialValue: GAMESTATE.automation_end,
         onChange: (value) => {
-            GAMESTATE.automation_end = value;
-            updateZoneButtonText();
+            setAutomationEndZone(value);
+            setupControls();
         },
         ariaLabel: "Target zone for automation"
     });
@@ -2045,7 +2170,11 @@ function setupAutomationControls() {
     });
 
     setupTooltip(all_control, function () { return `Automate To Zone ${GAMESTATE.automation_end}`; }, function () {
-        let tooltip = `Toggle between no automation, and automating Tasks until the specified Zone (${GAMESTATE.automation_end}) is reached`;
+        let tooltip = ``;
+        if (to_zone_disabled) {
+            tooltip += `<p class="disable-reason">Disabled due to the target Zone (${GAMESTATE.automation_end + 1}) not being higher than the current Zone (${GAMESTATE.current_zone + 1})</p>`;
+        }
+        tooltip += `Toggle between no automation, and automating Tasks until the specified Zone (${GAMESTATE.automation_end}) is reached`;
         tooltip += "<br>Right-click Tasks to designate them as automated";
         tooltip += "<br>They'll be executed in the order you right-clicked them, as indicated by the number in their corner";
         tooltip += "<br><br>Hotkey: A";
@@ -2465,6 +2594,9 @@ export class Rendering {
     }
 
     public initialize() {
+        detectTouchDevice();
+        setupMobileSidebars();
+        setupGlobalTooltipDismiss();
         setupEnergyReset(this.energy_reset_element);
         setupSettings();
         setupControls();
@@ -2546,43 +2678,63 @@ function showTooltip(element: ElementWithTooltip) {
     tooltip_element.classList.add("hidden");
     tooltip_element.innerHTML = "";
     RENDERING.tooltipped_element = element;
-    
+
     tooltip_element.innerHTML = `<h3>${element.generateTooltipHeader()}</h3>`;
     const body_text = element.generateTooltipBody();
     if (body_text != ``) {
         tooltip_element.innerHTML += `<hr />`;
         tooltip_element.innerHTML += body_text;
     }
-    
+
     tooltip_element.style.top = "";
     tooltip_element.style.bottom = "";
     tooltip_element.style.left = "";
     tooltip_element.style.right = "";
-    
-    const elementRect = element.getBoundingClientRect();
-    const beyondVerticalCenter = elementRect.top > (window.innerHeight / 2);
-    const beyondHorizontalCenter = elementRect.left > (window.innerWidth / 2);
-    let x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
-    let y = (beyondVerticalCenter ? elementRect.bottom : elementRect.top) + window.scrollY;
 
-    // Energy element covers basically full width so needs its own logic to look good
-    if (element.id == "energy") {
-        x = elementRect.left + window.scrollX;
-        tooltip_element.style.left = x + "px";
-        y = elementRect.bottom + scrollY + 5;
-        tooltip_element.style.top = y + "px";
-    } else {
-        if (beyondHorizontalCenter) {
-            x = document.documentElement.clientWidth - x;
-            tooltip_element.style.right = x + "px";
+    const isMobile = window.innerWidth <= 768;
+    const elementRect = element.getBoundingClientRect();
+
+    if (isMobile) {
+        // Mobile: center horizontally, position above or below element
+        tooltip_element.style.left = "10px";
+        tooltip_element.style.right = "10px";
+
+        const spaceAbove = elementRect.top;
+        const spaceBelow = window.innerHeight - elementRect.bottom;
+
+        if (spaceBelow >= spaceAbove || spaceBelow > 150) {
+            // Position below
+            tooltip_element.style.top = (elementRect.bottom + window.scrollY + 8) + "px";
         } else {
-            tooltip_element.style.left = x + "px";
+            // Position above
+            tooltip_element.style.bottom = (window.innerHeight - elementRect.top + 8) + "px";
         }
-        if (beyondVerticalCenter) {
-            y = document.documentElement.clientHeight - y;
-            tooltip_element.style.bottom = y + "px";
-        } else {
+    } else {
+        // Desktop positioning
+        const beyondVerticalCenter = elementRect.top > (window.innerHeight / 2);
+        const beyondHorizontalCenter = elementRect.left > (window.innerWidth / 2);
+        let x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
+        let y = (beyondVerticalCenter ? elementRect.bottom : elementRect.top) + window.scrollY;
+
+        // Energy element covers basically full width so needs its own logic to look good
+        if (element.id == "energy") {
+            x = elementRect.left + window.scrollX;
+            tooltip_element.style.left = x + "px";
+            y = elementRect.bottom + scrollY + 5;
             tooltip_element.style.top = y + "px";
+        } else {
+            if (beyondHorizontalCenter) {
+                x = document.documentElement.clientWidth - x;
+                tooltip_element.style.right = x + "px";
+            } else {
+                tooltip_element.style.left = x + "px";
+            }
+            if (beyondVerticalCenter) {
+                y = document.documentElement.clientHeight - y;
+                tooltip_element.style.bottom = y + "px";
+            } else {
+                tooltip_element.style.top = y + "px";
+            }
         }
     }
 

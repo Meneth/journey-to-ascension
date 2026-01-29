@@ -8,7 +8,7 @@ import {
     XP_TEXT
 } from "./rendering_constants.js";
 import { calcReflectionsOnTheJourneyMult, hasPrestigeUnlock } from "./simulation.js";
-import { REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_BASE, AWAKENING_DIVINE_SPARK_MULT } from "./simulation_constants.js";
+import { REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_BASE, AWAKENING_DIVINE_SPARK_MULT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
 import { SkillType } from "./skills.js";
 
 export enum PerkType {
@@ -140,7 +140,7 @@ export const PERKS: PerkDefinition[] = [
     new PerkDefinition({
         enum: PerkType.MinorTimeCompression,
         name: `Minor Time Compression`,
-        get_custom_tooltip: () => { return `Tasks reps that are completed instantly (in a single ⏰Tick) now cost 80% less ${ENERGY_TEXT}<br>Zones where all Tasks are instant without using Items are completed for free in a single ⏰Tick when doing an ${ENERGY_TEXT} Reset, giving all the benefits doing those Tasks manually would have`; },
+        get_custom_tooltip: () => { return `Tasks reps that are completed instantly (in a single ⏰Tick) now cost 80% less ${ENERGY_TEXT}<br>Zones where all Tasks are instant without using Items are completed for free in a single ⏰Tick when doing an ${ENERGY_TEXT} Reset<br>This gives all the benefits doing those Tasks manually would have`; },
         icon: `⌚`,
     }),
     new PerkDefinition({
@@ -303,7 +303,18 @@ export const PERKS: PerkDefinition[] = [
     new PerkDefinition({
         enum: PerkType.UnifiedTheoryOfMagic,
         name: `Unified Theory of Magic`,
-        get_custom_tooltip: () => { return `Each Zone fully completed in this Prestige increases Task Speed 2%<br>For instance, having fully completed the 15th Zone would speed up Task speed 1.02^15 = 35%<br>Note that it's based on your highest fully completed, so you can skip fully completing earlier Zones if you want<br><br>Highest Zone fully completed currently: ${GAMESTATE.highest_zone_fully_completed + 1}`; },
+        get_custom_tooltip: () => {
+            const example_effect = Math.pow(1 + UNIFIED_THEORY_OF_MAGIC_EFFECT, 15);
+            let tooltip = `Each Zone fully completed in this Prestige increases Task Speed ${(UNIFIED_THEORY_OF_MAGIC_EFFECT * 100).toFixed(0)}%`;
+            tooltip += `<br>For instance, having fully completed the 15th Zone would speed up Task speed ${1 + UNIFIED_THEORY_OF_MAGIC_EFFECT}^15 = ${(example_effect * 100 - 100).toFixed(0)}%`;
+            tooltip += `<br>Note that it's based on your highest fully completed, so you can skip fully completing earlier Zones if you want`
+            tooltip += `<br><br>Highest Zone fully completed currently: ${GAMESTATE.highest_zone_fully_completed + 1}`;
+
+            const effect = Math.pow(1 + UNIFIED_THEORY_OF_MAGIC_EFFECT, GAMESTATE.highest_zone_fully_completed + 1);
+            tooltip += `<br>Current effect: +${(effect * 100 - 100).toFixed(0)}% Task speed`
+
+            return tooltip;
+        },
         icon: `📜`,
     }),
     new PerkDefinition({
