@@ -1140,6 +1140,11 @@ function applyGameStartPrestigeEffects() {
     if (hasPrestigeUnlock(PrestigeUnlockType.TranscendantMemory)) {
         tryAddPerk(PerkType.EnergeticMemory, show_notification);
     }
+    if (hasPrestigeUnlock(PrestigeUnlockType.MasteryOfTime)) {
+        tryAddPerk(PerkType.MinorTimeCompression, show_notification);
+        tryAddPerk(PerkType.MajorTimeCompression, show_notification);
+        doMasteryOfTimeTaskCompletion();
+    }
 
     const energy_boost = ENERGIZED_INCREASE * getPrestigeRepeatableLevel(PrestigeRepeatableType.Energized);
     modifyEnergy(energy_boost);
