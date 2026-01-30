@@ -44,6 +44,7 @@ export enum PerkType {
     DragonSlayer,
     UnderstandingTheReset,
     OvercameFearOfSkydiving,
+    DestroyedTheRing,
 
     Count
 }
@@ -350,5 +351,14 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Fortitude, 0.3],
         ]),
         icon: `🪂`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.DestroyedTheRing,
+        name: `Destroyed the Ring`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Ascension, 0.5],
+            [SkillType.Charisma, 0.5],
+        ]),
+        icon: `💍`,
     }),
 ]

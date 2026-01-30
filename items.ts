@@ -14,7 +14,7 @@ export enum ItemType {
     Book,
     ScrollOfHaste,
     GoblinWaraxe,
-    FiremakingKit,
+    CampingEquipment,
     Reagents,
     MagicalRoots,
     GoblinTreasure,
@@ -38,6 +38,7 @@ export enum ItemType {
     MagicalVessel,
     MagicRing,
     BottledLightning,
+    HeatEssence,
 
     Count
 }
@@ -162,8 +163,8 @@ export const ITEMS: ItemDefinition[] = [
         ]),
     }),
     new ItemDefinition({
-        enum: ItemType.FiremakingKit, name: `Firemaking Kit`, name_plural: `Firemaking Kits`,
-        icon: `🔥`,
+        enum: ItemType.CampingEquipment, name: `Camping Equipment`, name_plural: `Camping Equipment`,
+        icon: `⛺`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Fortitude, 0.15]
         ]),
@@ -347,6 +348,13 @@ export const ITEMS: ItemDefinition[] = [
         get_custom_tooltip: () => { return `The next Boss Task you start is ${BOTTLED_LIGHTNING_MULT}x as fast<br>This stacks with Scroll of Haste`; },
         get_custom_effect_text: (amount) => { return `Next ${amount} Boss Tasks are ${BOTTLED_LIGHTNING_MULT}x as fast`; },
         on_consume: (amount) => { GAMESTATE.queued_lightning += amount; },
+    }),
+    new ItemDefinition({
+        enum: ItemType.HeatEssence, name: `Heat Essence`, name_plural: `Heat Essence`,
+        icon: `🔥`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Charisma, 1.0]
+        ]),
     }),
 ]
 
