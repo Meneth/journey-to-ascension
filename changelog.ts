@@ -17,6 +17,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "-- X new Items<br>"
         + "-- X new Bosses<br>"
         + "-- X new Perks<br>"
+        + "- Made the post-boss Task in Z19 harder<br>"
     },
     {
         version: "0.3.7",

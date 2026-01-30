@@ -310,7 +310,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 195, name: "Hide from the Dragon Some More", cost_multiplier: 5_000, max_reps: 3, xp_mult: 5, skills: [SkillType.Subterfuge] }),
             new TaskDefinition({ id: 196, name: "Practice Magic Under Pressure", cost_multiplier: 5_000_000, max_reps: 3, xp_mult: 1.5, skills: [SkillType.Magic] }),
             new TaskDefinition({ id: 197, name: "Dragon", type: TaskType.Boss, cost_multiplier: 1_000_000_000_000, xp_mult: 0.01, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 198 }),
-            new TaskDefinition({ id: 198, name: "Hunt Down the Dragon's Spawn", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+            new TaskDefinition({ id: 198, name: "Hunt Down the Dragon's Spawn", cost_multiplier: 300_000_000_000_000, xp_mult: 0.000001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
     {
@@ -341,7 +341,20 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 218, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
-    
+    {
+        name: "The Volcano",
+        tasks: [
+            new TaskDefinition({ id: 220, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 5000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 221, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 500_000_000, max_reps: 2, skills: [SkillType.Search, SkillType.Study], xp_mult: 0.02 }),
+            new TaskDefinition({ id: 222, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 1200, max_reps: 3, skills: [SkillType.Crafting], xp_mult: 1 }),
+            new TaskDefinition({ id: 223, name: "PLACEHOLDER", max_reps: 1, cost_multiplier: 5_000_000_000, skills: [SkillType.Magic], item: ItemType.BottledLightning, xp_mult: 0.01 },),
+            new TaskDefinition({ id: 224, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000, max_reps: 3, xp_mult: 0.00002, skills: [SkillType.Fortitude], perk: PerkType.OvercameFearOfSkydiving }),
+            new TaskDefinition({ id: 225, name: "PLACEHOLDER", cost_multiplier: 10_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 1 }),
+            new TaskDefinition({ id: 226, name: "PLACEHOLDER", cost_multiplier: 100_000, max_reps: 4, xp_mult: 200, skills: [SkillType.Charisma] }),
+            new TaskDefinition({ id: 227, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 20_000_000_000_000, xp_mult: 0.002, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 228 }),
+            new TaskDefinition({ id: 228, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+        ],
+    },
 ]
 
 ZONES.forEach((zone, index) => {
