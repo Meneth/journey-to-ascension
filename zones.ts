@@ -334,13 +334,14 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 211, name: "Plot the Course", type: TaskType.Mandatory, cost_multiplier: 500_000_000, max_reps: 2, skills: [SkillType.Search, SkillType.Study], xp_mult: 0.02 }),
             new TaskDefinition({ id: 212, name: "Conduct Emergency Repairs", type: TaskType.Mandatory, cost_multiplier: 1200, max_reps: 3, skills: [SkillType.Crafting], xp_mult: 1 }),
             new TaskDefinition({ id: 213, name: "Harness Lightning", max_reps: 1, cost_multiplier: 5_000_000_000, skills: [SkillType.Magic], item: ItemType.BottledLightning, xp_mult: 0.01 },),
-            new TaskDefinition({ id: 214, name: "Watch the Clouds Go By", cost_multiplier: 10_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 1 }),
-            new TaskDefinition({ id: 215, name: "Chat with the Crew", cost_multiplier: 100_000, max_reps: 4, xp_mult: 200, skills: [SkillType.Charisma] }),
-            new TaskDefinition({ id: 216, name: "Go Skydiving", cost_multiplier: 5_000_000, max_reps: 3, xp_mult: 0.1, skills: [SkillType.Fortitude] }),
+            new TaskDefinition({ id: 214, name: "Go Skydiving", cost_multiplier: 3_000_000_000, max_reps: 3, xp_mult: 0.00002, skills: [SkillType.Fortitude], perk: PerkType.OvercameFearOfSkydiving }),
+            new TaskDefinition({ id: 215, name: "Watch the Clouds Go By", cost_multiplier: 10_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 1 }),
+            new TaskDefinition({ id: 216, name: "Chat with the Crew", cost_multiplier: 100_000, max_reps: 4, xp_mult: 200, skills: [SkillType.Charisma] }),
             new TaskDefinition({ id: 217, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 20_000_000_000_000, xp_mult: 0.002, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 218 }),
             new TaskDefinition({ id: 218, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
+    
 ]
 
 ZONES.forEach((zone, index) => {

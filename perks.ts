@@ -43,6 +43,7 @@ export enum PerkType {
     Headmaster,
     DragonSlayer,
     UnderstandingTheReset,
+    OvercameFearOfSkydiving,
 
     Count
 }
@@ -340,5 +341,14 @@ export const PERKS: PerkDefinition[] = [
         name: `Understanding of the Reset`,
         get_custom_tooltip: () => { return `When you run out of ${ENERGY_TEXT} and reincarnate you keep half your remaining Items (rounded up)<br>This means you can use more Items in a run than just those gained in that specific run`; },
         icon: `🔁`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.OvercameFearOfSkydiving,
+        name: `Overcame Fear of Skydiving`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Combat, 0.3],
+            [SkillType.Fortitude, 0.3],
+        ]),
+        icon: `🪂`,
     }),
 ]
