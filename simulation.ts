@@ -835,7 +835,7 @@ export function calcPowerGain(task: Task) {
         return 0;
     }
 
-    const mult = task.task_definition.zone_id - 1; // First boss is zone 3, which is internally 2
+    const mult = Math.max(task.task_definition.zone_id - 1, 1); // First boss is zone 3, which is internally 2
     let powerAmount = 5 * mult;
     powerAmount *= Math.pow(2, getPrestigeRepeatableLevel(PrestigeRepeatableType.UnlimitedPower));
     return powerAmount;
@@ -1062,6 +1062,22 @@ export function getPrestigeRepeatableLevel(repeatable: PrestigeRepeatableType) {
     return GAMESTATE.prestige_repeatables.get(repeatable) ?? 0;
 }
 
+function applyPrestigeUnlockEffects(unlock: PrestigeUnlockType, show_notification: boolean) {
+    if (unlock == PrestigeUnlockType.PermanentAutomation) {
+        tryAddPerk(PerkType.Amulet, show_notification);
+    } else if (unlock == PrestigeUnlockType.LookInTheMirror) {
+        tryAddPerk(PerkType.ReflectionsOnTheJourney, show_notification);
+    } else if (unlock == PrestigeUnlockType.FullyAttuned) {
+        tryAddPerk(PerkType.Attunement, show_notification);
+    } else if (unlock == PrestigeUnlockType.TranscendantMemory) {
+        tryAddPerk(PerkType.EnergeticMemory, show_notification);
+    } else if (unlock == PrestigeUnlockType.MasteryOfTime) {
+        tryAddPerk(PerkType.MinorTimeCompression, show_notification);
+        tryAddPerk(PerkType.MajorTimeCompression, show_notification);
+        doMasteryOfTimeTaskCompletion();
+    }
+}
+
 export function addPrestigeUnlock(unlock: PrestigeUnlockType) {
     if (hasPrestigeUnlock(unlock)) {
         console.error("Already has prestige unlock");
@@ -1078,19 +1094,8 @@ export function addPrestigeUnlock(unlock: PrestigeUnlockType) {
     GAMESTATE.divine_spark -= definition.cost;
     GAMESTATE.prestige_unlocks.push(unlock);
 
-    if (unlock == PrestigeUnlockType.PermanentAutomation) {
-        tryAddPerk(PerkType.Amulet);
-    } else if (unlock == PrestigeUnlockType.LookInTheMirror) {
-        tryAddPerk(PerkType.ReflectionsOnTheJourney);
-    } else if (unlock == PrestigeUnlockType.FullyAttuned) {
-        tryAddPerk(PerkType.Attunement);
-    } else if (unlock == PrestigeUnlockType.TranscendantMemory) {
-        tryAddPerk(PerkType.EnergeticMemory);
-    } else if (unlock == PrestigeUnlockType.MasteryOfTime) {
-        tryAddPerk(PerkType.MinorTimeCompression);
-        tryAddPerk(PerkType.MajorTimeCompression);
-        doMasteryOfTimeTaskCompletion();
-    }
+    const show_notification = true;
+    applyPrestigeUnlockEffects(unlock, show_notification);
 }
 
 export function calcPrestigeRepeatableCost(repeatable: PrestigeRepeatableType) {
@@ -1128,22 +1133,8 @@ export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableTy
 function applyGameStartPrestigeEffects() {
     const show_notification = false;
 
-    if (hasPrestigeUnlock(PrestigeUnlockType.PermanentAutomation)) {
-        tryAddPerk(PerkType.Amulet, show_notification);
-    }
-    if (hasPrestigeUnlock(PrestigeUnlockType.LookInTheMirror)) {
-        tryAddPerk(PerkType.ReflectionsOnTheJourney, show_notification);
-    }
-    if (hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned)) {
-        tryAddPerk(PerkType.Attunement, show_notification);
-    }
-    if (hasPrestigeUnlock(PrestigeUnlockType.TranscendantMemory)) {
-        tryAddPerk(PerkType.EnergeticMemory, show_notification);
-    }
-    if (hasPrestigeUnlock(PrestigeUnlockType.MasteryOfTime)) {
-        tryAddPerk(PerkType.MinorTimeCompression, show_notification);
-        tryAddPerk(PerkType.MajorTimeCompression, show_notification);
-        doMasteryOfTimeTaskCompletion();
+    for (const unlock of GAMESTATE.prestige_unlocks) {
+        applyPrestigeUnlockEffects(unlock, show_notification);
     }
 
     const energy_boost = ENERGIZED_INCREASE * getPrestigeRepeatableLevel(PrestigeRepeatableType.Energized);
