@@ -29,6 +29,12 @@
 
     --prestige-color: rgb(141, 23, 196);
     --prestige-color-brighter: rgb(162, 54, 204);
+
+    /* Mobile responsive variables */
+    --mobile-breakpoint: 768px;
+    --tablet-breakpoint: 1100px;
+    --sidebar-width: 280px;
+    --sidebar-transition: transform 0.3s ease-in-out;
 }
 
 /* MARK: Main areas
@@ -179,6 +185,18 @@ button:hover:not(.disabled):not(:disabled) {
     display: none !important;
 }
 
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* MARK: Tasks
 */
 
@@ -191,7 +209,7 @@ button:hover:not(.disabled):not(:disabled) {
     flex-direction: column-reverse;
 }
 
-.task button {
+.task .task-button {
     position: relative;
     width: 50%;
     height: 32px;
@@ -629,6 +647,7 @@ button:hover:not(.disabled):not(:disabled) {
     justify-content: center;
     align-items: center;
     color: white;
+    z-index: 2000;
 
     background: #0008;
 }
@@ -771,7 +790,9 @@ div.prestige-purchase {
     margin-right: 5px;
     padding: 5px;
     border-radius: var(--default-border-radius);
-    z-index: 1000;
+    z-index: 1002;
+    max-width: min(400px, calc(100vw - 20px));
+    overflow-wrap: break-word;
 }
 
 #tooltip h3 {
@@ -931,6 +952,298 @@ div.prestige-purchase {
     scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
 }
 
+/* MARK: Harrow Deck
+*/
+
+#harrow-box {
+    width: 600px;
+    max-height: 80vh;
+    padding: 0;
+    overflow-y: auto;
+
+    scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
+}
+
+.harrow-section {
+    width: 100%;
+    border-top: 1px solid var(--tooltip-palette-table-lines);
+    padding: 8px 0;
+}
+
+.harrow-section h2 {
+    text-align: center;
+    margin: 4px 0 8px 0;
+}
+
+.harrow-section p {
+    text-align: center;
+    margin: 4px 0;
+}
+
+.harrow-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    padding: 8px;
+}
+
+.harrow-card-wrapper {
+    width: 130px;
+    height: 180px;
+    perspective: 600px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.harrow-card-wrapper:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.harrow-card-wrapper:focus-visible {
+    outline: 2px solid #ffcc00;
+    outline-offset: 3px;
+    border-radius: var(--default-border-radius);
+}
+
+.harrow-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease;
+}
+
+.harrow-card-wrapper.harrow-flipped .harrow-card-inner {
+    transform: rotateY(180deg);
+}
+
+.harrow-card-front,
+.harrow-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--default-border-radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #333;
+    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    color: #ddd;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.harrow-card-front {
+    position: absolute;
+    overflow: hidden;
+}
+
+.harrow-card-back {
+    transform: rotateY(180deg);
+    font-size: 0.8em;
+    line-height: 1.4;
+}
+
+.harrow-card-emoji {
+    font-size: 2.5em;
+    margin-bottom: 4px;
+}
+
+.harrow-card-name {
+    font-weight: bold;
+    font-size: 0.85em;
+    margin-bottom: 4px;
+}
+
+.harrow-card-outer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.harrow-card-buy-btn {
+    width: 130px;
+    padding: 4px 0;
+    font-size: 0.75em;
+    text-align: center;
+    border-radius: var(--default-border-radius);
+    background: linear-gradient(5deg, var(--prestige-color), var(--prestige-color-brighter));
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.harrow-card-buy-btn:hover:not(:disabled) {
+    filter: brightness(1.15);
+}
+
+.harrow-card-buy-btn:active:not(:disabled) {
+    transform: scale(0.96);
+}
+
+.harrow-card-buy-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.harrow-card-effect {
+    font-size: 0.75em;
+    padding: 4px;
+}
+
+/* Toggle mode: inactive = lighter bg */
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-front,
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-back {
+    background: linear-gradient(145deg, #2a2a4e, #263a5e);
+    border-color: #444;
+}
+
+/* Toggle mode: active = darker bg + glow */
+.harrow-card-wrapper.harrow-toggle-mode.harrow-active .harrow-card-front,
+.harrow-card-wrapper.harrow-toggle-mode.harrow-active .harrow-card-back {
+    background: linear-gradient(145deg, #0d0d1a, #0a1020);
+    border-color: #ffcc00;
+    animation: harrow-active-glow 2s ease-in-out infinite alternate;
+}
+
+/* Toggle mode: card needs more space for effect text */
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-emoji {
+    font-size: 1.8em;
+    margin-bottom: 2px;
+}
+
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-name {
+    font-size: 0.75em;
+    margin-bottom: 2px;
+}
+
+.harrow-card-wrapper.harrow-toggle-mode .harrow-card-effect {
+    font-size: 0.6em;
+    color: #bbb;
+    line-height: 1.2;
+}
+
+.harrow-card-wrapper.harrow-toggle-mode {
+    cursor: pointer;
+}
+
+.harrow-card-back .harrow-card-name {
+    margin-top: 8px;
+    font-size: 0.75em;
+    color: #aaa;
+}
+
+.harrow-card-owned-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(46, 204, 113, 0.85);
+    color: #fff;
+    font-size: 0.65em;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    text-align: center;
+    padding: 2px 0;
+    border-radius: var(--default-border-radius) var(--default-border-radius) 0 0;
+    z-index: 1;
+}
+
+/* State: owned */
+.harrow-card-wrapper.harrow-owned .harrow-card-front,
+.harrow-card-wrapper.harrow-owned .harrow-card-back {
+    border-color: #2ecc71;
+    background: linear-gradient(145deg, #1a2e1a, #162e26);
+}
+
+/* State: active */
+.harrow-card-wrapper.harrow-active .harrow-card-front,
+.harrow-card-wrapper.harrow-active .harrow-card-back {
+    border-color: #ffcc00;
+    animation: harrow-active-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes harrow-active-glow {
+    from { box-shadow: 0 0 10px 3px rgba(255, 204, 0, 0.3); }
+    to   { box-shadow: 0 0 14px 5px rgba(255, 204, 0, 0.6); }
+}
+
+/* State: unaffordable or locked */
+.harrow-card-wrapper.harrow-unaffordable,
+.harrow-card-wrapper.harrow-locked {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* State: forfeited (visually dimmed) */
+.harrow-card-wrapper.harrow-forfeited .harrow-card-front,
+.harrow-card-wrapper.harrow-forfeited .harrow-card-back {
+    border-color: #666;
+    opacity: 0.6;
+}
+
+.harrow-bonus-display {
+    text-align: center;
+    font-size: 1.1em;
+    color: #ffcc00;
+    margin: 4px 0;
+}
+
+button.harrow-begin-run {
+    background-color: var(--prestige-color);
+    font-size: 1.5em;
+    padding: 8px 24px;
+    margin: 8px auto;
+    display: block;
+}
+
+.harrow-popup-header {
+    text-align: center;
+    margin: 8px 0 4px 0;
+}
+
+.harrow-popup-desc {
+    text-align: center;
+    font-size: 0.9em;
+    color: #333;
+    margin: 0 8px 8px 8px;
+}
+
+.harrow-fool-info {
+    text-align: center;
+    font-size: 0.9em;
+    color: #e67e22;
+    margin: 8px 0;
+}
+
+/* MARK: Harrow Sidebar Cards
+*/
+
+.harrow-sidebar-card {
+    font-size: 1.5em;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    cursor: pointer;
+    border: 2px solid #ffcc00;
+    animation: harrow-active-glow 2s ease-in-out infinite alternate;
+}
+
+.harrow-sidebar-card.harrow-sidebar-forfeited {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+    animation: none;
+    border-color: #666;
+}
+
 /* MARK: Messages
 */
 footer {
@@ -953,4 +1266,424 @@ footer {
     padding: 5px 10px;
     border-radius: var(--default-border-radius);
     font-size: 0.9em;
+}
+
+/* MARK: Mobile Sidebar Toggle Buttons
+*/
+
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+.sidebar-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    bottom: 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    z-index: 1001;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    align-items: center;
+    justify-content: center;
+}
+
+#toggle-left-sidebar {
+    left: 16px;
+}
+
+#toggle-right-sidebar {
+    right: 16px;
+}
+
+/* MARK: Responsive - Tablet (≤1100px)
+*/
+
+@media (max-width: 1100px) {
+    #game-area {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 8px;
+    }
+
+    #main-area {
+        width: calc(100% - 198px);
+        min-width: 0;
+    }
+
+    #top-area {
+        width: calc(100% - 214px);
+        max-width: calc(100vw - 214px);
+    }
+
+    #left-column {
+        width: 60%;
+        min-width: 0;
+    }
+
+    #right-column {
+        width: 40%;
+        min-width: 0;
+    }
+
+    footer {
+        width: calc(100% - 16px);
+        max-width: calc(100vw - 16px);
+    }
+}
+
+/* MARK: Mobile Info Buttons
+*/
+
+.mobile-info-btn {
+    display: none;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1.2em;
+    background: var(--element-background-color);
+    color: #fff;
+    border: 1px solid var(--element-foreground-color);
+    cursor: pointer;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-info-btn:active {
+    background: var(--element-foreground-color);
+}
+
+.item-wrapper,
+.perk-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.item-wrapper .mobile-info-btn,
+.perk-wrapper .mobile-info-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    font-size: 0.6em;
+    z-index: 1;
+}
+
+/* Task info button - appears at end of task-upper row */
+.task-upper {
+    position: relative;
+}
+
+.task-upper > .mobile-info-btn {
+    margin-left: 8px;
+}
+
+/* Skill info button - inline in the name row */
+.skill > .mobile-info-btn {
+    position: static;
+    float: right;
+    margin-top: 2px;
+}
+
+/* MARK: Responsive - Mobile (≤768px)
+*/
+
+@media (max-width: 768px) {
+    .mobile-info-btn {
+        display: inline-flex;
+    }
+    body {
+        margin: 4px;
+    }
+
+    #game-area {
+        flex-direction: column;
+        padding: 0 4px;
+    }
+
+    #main-area {
+        width: 100%;
+    }
+
+    #top-area {
+        width: calc(100% - 8px);
+        max-width: calc(100vw - 8px);
+        left: 4px;
+        transform: none;
+        padding: 4px;
+        padding-top: 12px;
+    }
+
+    #play-area {
+        flex-direction: column;
+        margin-top: 40px;
+        padding-bottom: calc(33vh + 16px);
+    }
+
+    #left-column {
+        width: 100%;
+    }
+
+    /* Mobile sidebars - off-canvas */
+    #left-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        height: 100%;
+        background: linear-gradient(180deg, #102661, #8c386d);
+        z-index: 1001;
+        transform: translateX(-100%);
+        transition: var(--sidebar-transition);
+        overflow-y: auto;
+        padding: 16px;
+        padding-top: 24px;
+    }
+
+    #left-sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* Right column: sticky bottom panel instead of off-canvas */
+    #right-column {
+        position: fixed;
+        top: auto;
+        right: auto;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 33vh;
+        background: linear-gradient(180deg, #102661, #1a1a3e);
+        border-top: 2px solid var(--element-foreground-color);
+        z-index: 999;
+        transform: none;
+        transition: none;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 8px;
+        margin-left: 0;
+    }
+
+    #right-column.open {
+        transform: none;
+    }
+
+    /* Hide right sidebar toggle — panel is always visible */
+    #toggle-right-sidebar {
+        display: none !important;
+    }
+
+    .sidebar-backdrop {
+        display: block;
+    }
+
+    #toggle-left-sidebar {
+        display: flex;
+        bottom: auto;
+        top: 36px;
+        left: auto;
+        right: 8px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2em;
+        z-index: 1001;
+    }
+
+    /* Tooltips */
+    #tooltip {
+        max-width: calc(100vw - 20px);
+        font-size: 0.9em;
+    }
+
+    .tooltip>.simple-table {
+        min-width: 0;
+        width: 100%;
+    }
+
+    /* Compact notifications */
+    footer {
+        width: calc(100% - 16px);
+        bottom: calc(33vh + 16px);
+    }
+
+    .message {
+        padding: 4px 8px;
+        font-size: 0.8em;
+        max-height: 50px;
+        overflow: hidden;
+    }
+
+    #messages > .message:nth-child(n+4) {
+        display: none;
+    }
+
+    /* Overlay dialogs */
+    .overlay-box {
+        width: calc(100vw - 32px) !important;
+        max-height: calc(100vh - 64px);
+        overflow-y: auto;
+    }
+
+    #prestige-box, #stats-box, #changelog-box, #credits-box, #harrow-box {
+        height: auto;
+        max-height: calc(100vh - 64px);
+        width: calc(100vw - 32px) !important;
+    }
+
+    .harrow-card-wrapper {
+        width: 100px;
+        height: 140px;
+    }
+
+    .harrow-card-buy-btn {
+        width: 100px;
+        font-size: 0.7em;
+        padding: 4px 6px;
+    }
+
+    .harrow-card-emoji {
+        font-size: 1.8em;
+    }
+
+    .harrow-card-name {
+        font-size: 0.7em;
+    }
+
+    .harrow-card-cost {
+        font-size: 0.65em;
+    }
+
+    .harrow-card-effect {
+        font-size: 0.65em;
+    }
+
+    .harrow-card-wrapper.harrow-toggle-mode .harrow-card-emoji {
+        font-size: 1.4em;
+    }
+
+    .harrow-card-wrapper.harrow-toggle-mode .harrow-card-effect {
+        font-size: 0.5em;
+    }
+
+    .confirmation {
+        height: auto;
+        width: calc(100vw - 32px);
+    }
+
+    /* Compact zone header */
+    #zone-name {
+        font-size: 1.1em;
+        margin: 0;
+        padding: 2px 0;
+    }
+
+    #zone {
+        margin-bottom: 4px;
+    }
+
+    /* Compact tasks */
+    .task {
+        margin-bottom: 4px;
+        padding: 4px;
+    }
+
+    .task .task-button {
+        min-height: 36px;
+        height: 36px;
+        margin-bottom: 3px;
+        font-size: 0.85em;
+    }
+
+    .task .indicator {
+        width: 12px;
+        height: 12px;
+    }
+
+    .progress-bar {
+        height: 7px;
+    }
+
+    .skills-used-text {
+        font-size: 0.8em;
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    /* Compact info buttons */
+    .mobile-info-btn {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        font-size: 1em;
+    }
+
+    .task-upper > .mobile-info-btn {
+        margin-left: 4px;
+    }
+
+    /* Larger touch targets */
+    button, .element, .task .task-button {
+        touch-action: manipulation;
+    }
+
+    .element {
+        width: 52px;
+        height: 52px;
+    }
+
+    #controls .element {
+        width: 68px;
+        height: 68px;
+    }
+
+    /* Compact bottom panel sections */
+    #right-column h2 {
+        font-size: 1.1em;
+        margin: 2px 0;
+    }
+
+    #right-column .sidebar-section {
+        margin-bottom: 4px;
+    }
+
+    /* Settings area in sidebar */
+    #settings-area button {
+        font-size: 1.5em;
+    }
+}
+
+/* Desktop - hide mobile toggles */
+@media (min-width: 769px) {
+    .mobile-menu-toggle {
+        display: none !important;
+    }
+
+    .sidebar-backdrop {
+        display: none !important;
+    }
+
+    #install-app {
+        display: none !important;
+    }
 }

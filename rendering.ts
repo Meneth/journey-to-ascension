@@ -10,6 +10,162 @@ import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIV
 import { CHANGELOG } from "./changelog.js";
 import { CREDITS } from "./credits.js";
 import { AWAKENING_DIVINE_SPARK_MULT } from "./simulation_constants.js";
+import { HarrowCardType, HarrowCardDefinition, HARROW_CARDS, HARROW_SPARK_BONUS_PER_CARD, isHarrowUnlocked, ownsHarrowCard, isHarrowCardActive, toggleHarrowCard, purchaseHarrowCard, calcHarrowSparkBonusForPrestige } from "./harrow.js";
+
+// MARK: PWA Install
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let deferredInstallPrompt: any = null;
+
+function isInStandaloneMode(): boolean {
+    return window.matchMedia("(display-mode: standalone)").matches
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        || (navigator as any).standalone === true;
+}
+
+function isIOSOrIPadOS(): boolean {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent)
+        || (navigator.userAgent.includes("Macintosh") && "ontouchend" in document);
+}
+
+function setupInstallButton() {
+    const install_button = document.querySelector<HTMLElement>("#install-app");
+    if (!install_button) {
+        return;
+    }
+
+    // Already running as installed app — hide the button
+    if (isInStandaloneMode()) {
+        install_button.style.display = "none";
+        return;
+    }
+
+    // Capture beforeinstallprompt if the browser supports it
+    window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+    });
+
+    install_button.addEventListener("click", async () => {
+        // Best case: browser supports the native install prompt
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            const result = await deferredInstallPrompt.userChoice;
+            if (result.outcome === "accepted") {
+                install_button.style.display = "none";
+            }
+            deferredInstallPrompt = null;
+            return;
+        }
+
+        // iOS/iPadOS: Share > Add to Home Screen
+        if (isIOSOrIPadOS()) {
+            createConfirmationOverlay(
+                "Install as App",
+                `To install on iOS:<br><br>1. Tap the <b>Share</b> button (box with arrow)<br>2. Scroll down and tap <b>Add to Home Screen</b><br>3. Tap <b>Add</b>`,
+                () => { /* dismiss */ }
+            );
+            return;
+        }
+
+        // Fallback for other browsers (Firefox, etc.)
+        createConfirmationOverlay(
+            "Install as App",
+            `To install:<br><br>Open your browser's menu and look for <b>Install App</b> or <b>Add to Home Screen</b>`,
+            () => { /* dismiss */ }
+        );
+    });
+
+    // Hide button if app gets installed while page is open
+    window.addEventListener("appinstalled", () => {
+        install_button.style.display = "none";
+        deferredInstallPrompt = null;
+    });
+}
+
+// MARK: Mobile & Touch Support
+
+let isTouchDevice = false;
+let mobileSidebarState = {
+    left_open: false,
+    right_open: false
+};
+
+function detectTouchDevice(): void {
+    isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+}
+
+function setupMobileSidebars(): void {
+    const leftToggle = document.getElementById("toggle-left-sidebar");
+    const rightToggle = document.getElementById("toggle-right-sidebar");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const rightSidebar = document.getElementById("right-column");
+
+    if (!leftToggle || !rightToggle || !backdrop || !leftSidebar || !rightSidebar) {
+        return;
+    }
+
+    leftToggle.addEventListener("click", () => toggleMobileSidebar("left"));
+    rightToggle.addEventListener("click", () => toggleMobileSidebar("right"));
+    backdrop.addEventListener("click", closeMobileSidebars);
+}
+
+function toggleMobileSidebar(side: "left" | "right"): void {
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const rightSidebar = document.getElementById("right-column");
+
+    if (!backdrop || !leftSidebar || !rightSidebar) {
+        return;
+    }
+
+    if (side === "left") {
+        mobileSidebarState.left_open = !mobileSidebarState.left_open;
+        mobileSidebarState.right_open = false;
+        leftSidebar.classList.toggle("open", mobileSidebarState.left_open);
+        rightSidebar.classList.remove("open");
+    } else {
+        mobileSidebarState.right_open = !mobileSidebarState.right_open;
+        mobileSidebarState.left_open = false;
+        rightSidebar.classList.toggle("open", mobileSidebarState.right_open);
+        leftSidebar.classList.remove("open");
+    }
+
+    const anyOpen = mobileSidebarState.left_open || mobileSidebarState.right_open;
+    backdrop.classList.toggle("visible", anyOpen);
+}
+
+function closeMobileSidebars(): void {
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const leftSidebar = document.getElementById("left-sidebar");
+    const rightSidebar = document.getElementById("right-column");
+
+    if (!backdrop || !leftSidebar || !rightSidebar) {
+        return;
+    }
+
+    mobileSidebarState.left_open = false;
+    mobileSidebarState.right_open = false;
+    leftSidebar.classList.remove("open");
+    rightSidebar.classList.remove("open");
+    backdrop.classList.remove("visible");
+}
+
+function setupGlobalTooltipDismiss(): void {
+    document.addEventListener("click", (event) => {
+        const tooltip = RENDERING.tooltip_element;
+        if (!tooltip || tooltip.classList.contains("hidden")) return;
+
+        const target = event.target as HTMLElement;
+
+        if (tooltip.contains(target)) return;
+
+        if (target.closest(".mobile-info-btn")) return;
+
+        hideTooltip();
+    });
+}
 
 // MARK: Helpers
 
@@ -289,6 +445,8 @@ function createSkillDiv(skill: Skill, skills_div: HTMLElement) {
         tooltip += `<br>Bonuses not from levels (E.G., from Items and Perks) are not scaled down this way`;
         return tooltip;
     });
+
+    addMobileInfoButton(skill_div, skill_div);
 
     skills_div.appendChild(skill_div);
     RENDERING.skill_elements.set(skill.type, skill_div);
@@ -659,6 +817,9 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         return tooltip;
     });
 
+    // Mobile info button for tooltip
+    addMobileInfoButton(task_upper_div, task_div);
+
     tasks_div.appendChild(task_div);
     rendering.task_elements.set(task.task_definition, task_div);
 }
@@ -798,16 +959,38 @@ interface ElementWithTooltip extends HTMLElement {
 function setupTooltip(element: ElementWithTooltip, header_callback: tooltipLambda, body_callback: tooltipLambda) {
     element.generateTooltipHeader = header_callback;
     element.generateTooltipBody = body_callback;
+
     element.addEventListener("pointerenter", (event) => {
+        if (isTouchDevice) { return; }
         RENDERING.potential_tooltipped_element = element;
         if (!GAMESTATE.manual_tooltips || event.ctrlKey) {
             showTooltip(element);
         }
     });
     element.addEventListener("pointerleave", () => {
+        if (isTouchDevice) { return; }
         hideTooltip();
         RENDERING.potential_tooltipped_element = null;
     });
+}
+
+function addMobileInfoButton(parent: ElementWithTooltip, element: ElementWithTooltip): HTMLButtonElement {
+    const infoBtn = document.createElement("button");
+    infoBtn.className = "mobile-info-btn";
+    infoBtn.textContent = "ℹ";
+    infoBtn.setAttribute("aria-label", "Show info");
+
+    infoBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        if (RENDERING.tooltipped_element === element) {
+            hideTooltip();
+        } else {
+            showTooltip(element);
+        }
+    });
+
+    parent.appendChild(infoBtn);
+    return infoBtn;
 }
 
 function setupTooltipStaticHeader(element: ElementWithTooltip, header: string, body_callback: tooltipLambda) {
@@ -921,6 +1104,18 @@ function setupInfoTooltips() {
 
         return tooltip;
     });
+
+    const harrow_info = document.querySelector<HTMLElement>("#harrow-cards .section-info");
+
+    if (harrow_info) {
+        setupTooltipStaticHeader(harrow_info, `Harrow Cards`, function () {
+            let tooltip = `These are your active Harrow Cards for the current run`;
+            tooltip += `<br>Each active card imposes a penalty but grants a ${DIVINE_SPARK_TEXT} bonus`;
+            tooltip += `<br><br>Click a card to forfeit it — this removes the penalty but you lose the ${DIVINE_SPARK_TEXT} bonus from that card`;
+            tooltip += `<br>Forfeiting is permanent for the rest of the run`;
+            return tooltip;
+        });
+    }
 }
 
 function queueUpdateTooltip() {
@@ -932,7 +1127,10 @@ function queueUpdateTooltip() {
 // MARK: Items
 
 function createItemDiv(item: ItemType, items_div: HTMLElement) {
-    const button = createChildElement(items_div, "button") as HTMLButtonElement;
+    const wrapper = createChildElement(items_div, "div");
+    wrapper.className = "item-wrapper";
+
+    const button = createChildElement(wrapper, "button") as HTMLButtonElement;
     button.className = "item-button";
     button.classList.add("element");
 
@@ -946,6 +1144,9 @@ function createItemDiv(item: ItemType, items_div: HTMLElement) {
     button.addEventListener("contextmenu", (e) => { e.preventDefault(); clickItem(item, true); });
 
     setupTooltipStaticHeader(button, `${item_definition.name}`, () => `${item_definition.getTooltip()}`);
+
+    // Mobile info button for tooltip
+    addMobileInfoButton(wrapper, button);
 
     RENDERING.item_elements.set(item, button);
 }
@@ -1092,15 +1293,19 @@ function updateItems() {
         const item_count = GAMESTATE.items.get(item);
         button.disabled = item_count == 0;
         button.classList.toggle("disabled", button.disabled);
-        
+
         const count_text = button.querySelector<HTMLElement>(".item-count") as HTMLElement;
         count_text.textContent = `${item_count}`;
     }
+
 }
 
 // MARK: Perks
 
 function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "perk-wrapper";
+
     const perk_div = document.createElement("div");
     perk_div.className = "perk";
     perk_div.classList.add("element");
@@ -1121,7 +1326,12 @@ function createPerkDiv(perk: PerkType, perks_div: HTMLElement, enabled: boolean)
     setupTooltip(perk_div, () => `${perk_definition.name}`, () => `${perk_definition.getTooltip()}<br><br>Unlocked in Zone ${zone + 1}`);
 
     perk_div.appendChild(perk_text);
-    perks_div.appendChild(perk_div);
+    wrapper.appendChild(perk_div);
+
+    // Mobile info button for tooltip
+    addMobileInfoButton(wrapper, perk_div);
+
+    perks_div.appendChild(wrapper);
     RENDERING.perk_elements.set(perk, perk_div);
 }
 
@@ -1149,6 +1359,102 @@ function recreatePerks() {
 
     for (const perk of perks) {
         createPerkDiv(perk, perks_div, hasPerk(perk));
+    }
+}
+
+// MARK: Harrow Sidebar Cards
+
+function createHarrowSidebarCardDiv(card: HarrowCardType, container: HTMLElement) {
+    const cardDef = HARROW_CARDS[card] as HarrowCardDefinition;
+    const is_forfeited = GAMESTATE.harrow_forfeited.includes(card);
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "perk-wrapper";
+
+    const card_div = document.createElement("div");
+    card_div.className = "harrow-sidebar-card element";
+    if (is_forfeited) {
+        card_div.classList.add("harrow-sidebar-forfeited");
+    }
+
+    const text_span = document.createElement("span");
+    text_span.className = "text";
+    text_span.textContent = cardDef.emoji;
+    card_div.appendChild(text_span);
+
+    if (!is_forfeited) {
+        card_div.addEventListener("click", () => {
+            createConfirmationOverlay(
+                "Forfeit Harrow Card",
+                `Forfeit <b>${cardDef.name}</b>?<br><br>This removes its penalty but you lose the ${DIVINE_SPARK_TEXT} bonus from this card for the rest of the run.`,
+                () => {
+                    toggleHarrowCard(card);
+                    recreateHarrowSidebarCards();
+                }
+            );
+        });
+    }
+
+    const tooltip_body = () => {
+        let tooltip = `${cardDef.effect_description}`;
+        if (is_forfeited) {
+            tooltip += `<br><br><span class="disable-reason">Forfeited</span>`;
+        } else {
+            tooltip += `<br><br>Click to forfeit`;
+        }
+        return tooltip;
+    };
+
+    setupTooltipStaticHeader(card_div, cardDef.name, tooltip_body);
+
+    // Mobile info button for tooltip
+    addMobileInfoButton(wrapper, card_div);
+
+    wrapper.appendChild(card_div);
+    container.appendChild(wrapper);
+    RENDERING.harrow_card_elements.set(card, card_div);
+}
+
+function recreateHarrowSidebarCards() {
+    const container = document.getElementById("harrow-cards-list");
+    if (!container) {
+        console.error("The element with ID 'harrow-cards-list' was not found.");
+        return;
+    }
+
+    const section = document.getElementById("harrow-cards");
+    if (!section) {
+        return;
+    }
+
+    const cards: HarrowCardType[] = [];
+    for (const card of GAMESTATE.harrow_active) {
+        cards.push(card);
+    }
+    for (const card of GAMESTATE.harrow_forfeited) {
+        if (!cards.includes(card)) {
+            cards.push(card);
+        }
+    }
+
+    const should_show = GAMESTATE.harrow_run_started && cards.length > 0;
+    section.classList.toggle("hidden", !should_show);
+
+    if (!should_show) {
+        RENDERING.harrow_card_order = [];
+        return;
+    }
+
+    if (areArraysEqual(cards, RENDERING.harrow_card_order)) {
+        return;
+    }
+
+    RENDERING.harrow_card_order = [...cards];
+    container.innerHTML = "";
+    RENDERING.harrow_card_elements.clear();
+
+    for (const card of cards) {
+        createHarrowSidebarCardDiv(card, container);
     }
 }
 
@@ -1415,6 +1721,10 @@ function populatePrestigeView() {
                 divine_spark_gain.innerHTML += `<br>Multiplier from ${getPerkNameWithEmoji(PerkType.Awakening)}: ${formatNumber(1 + AWAKENING_DIVINE_SPARK_MULT)}`;
             }
 
+            const harrow_bonus = calcHarrowSparkBonusForPrestige();
+            if (harrow_bonus > 0) {
+                divine_spark_gain.innerHTML += `<br>Harrow Deck bonus: ${(harrow_bonus * 100 + 100).toFixed(0)}%`;
+            }
 
             const divine_spark_gain_stats = createChildElement(dummy_div, "p");
             divine_spark_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
@@ -1527,7 +1837,253 @@ function populatePrestigeView() {
         }
     }
 
+    // MARK: Harrow section in prestige view
+    if (isHarrowUnlocked()) {
+        const harrow_div = createChildElement(scroll_area, "div") as HTMLElement;
+        harrow_div.className = "harrow-section";
+        harrow_div.setAttribute("role", "region");
+        harrow_div.setAttribute("aria-label", "Harrow Deck");
+
+        const harrow_header = createChildElement(harrow_div, "h2");
+        harrow_header.textContent = "Harrow Deck";
+
+        const harrow_desc = createChildElement(harrow_div, "p");
+        harrow_desc.innerHTML = `Challenge cards that multiply ${DIVINE_SPARK_TEXT} gain by <b>x${1 + HARROW_SPARK_BONUS_PER_CARD}</b> each`;
+
+        const harrow_bonus_prestige = calcHarrowSparkBonusForPrestige();
+        if (harrow_bonus_prestige > 0) {
+            const bonus_display = createChildElement(harrow_div, "p");
+            bonus_display.className = "harrow-bonus-display";
+            bonus_display.textContent = `Active bonus: ${(harrow_bonus_prestige * 100 + 100).toFixed(0)}% ${DIVINE_SPARK_TEXT}`;
+        }
+
+        const cards_container = createChildElement(harrow_div, "div");
+        cards_container.className = "harrow-cards-container";
+
+        for (const card_def of HARROW_CARDS) {
+            createHarrowCard(cards_container, card_def, ownsHarrowCard(card_def.type), false);
+        }
+    }
+
     scroll_area.scrollTop = scrollTop;
+}
+
+function createHarrowCard(parent: Element, cardDef: HarrowCardDefinition, owned: boolean, isToggleMode: boolean): HTMLElement {
+    const outer = createChildElement(parent, "div") as HTMLElement;
+    outer.className = "harrow-card-outer";
+
+    const wrapper = createChildElement(outer, "div") as HTMLElement;
+    wrapper.className = "harrow-card-wrapper";
+    wrapper.setAttribute("tabindex", "0");
+    wrapper.setAttribute("role", "button");
+
+    if (owned) {
+        wrapper.classList.add("harrow-owned");
+    }
+
+    const is_active = isHarrowCardActive(cardDef.type);
+    if (is_active) {
+        wrapper.classList.add("harrow-active");
+    }
+
+    if (GAMESTATE.harrow_forfeited.includes(cardDef.type)) {
+        wrapper.classList.add("harrow-forfeited");
+    }
+
+    if (isToggleMode) {
+        wrapper.classList.add("harrow-toggle-mode");
+        wrapper.setAttribute("aria-pressed", is_active ? "true" : "false");
+        wrapper.setAttribute("aria-label", `${cardDef.name} card. ${cardDef.effect_description}.`);
+    } else {
+        const label = owned
+            ? `${cardDef.name} card. ${cardDef.effect_description}. Owned.`
+            : `${cardDef.name} card. ${cardDef.effect_description}. Cost: ${cardDef.cost} Divine Spark.`;
+        wrapper.setAttribute("aria-label", label);
+    }
+
+    const can_afford = GAMESTATE.divine_spark >= cardDef.cost;
+
+    const inner = createChildElement(wrapper, "div");
+    inner.className = "harrow-card-inner";
+
+    // Front face
+    const front = createChildElement(inner, "div");
+    front.className = "harrow-card-front";
+
+    if (owned && !isToggleMode) {
+        const owned_badge = createChildElement(front, "div");
+        owned_badge.className = "harrow-card-owned-badge";
+        owned_badge.textContent = "OWNED";
+    }
+
+    const emoji = createChildElement(front, "div");
+    emoji.className = "harrow-card-emoji";
+    emoji.textContent = cardDef.emoji;
+
+    const name = createChildElement(front, "div");
+    name.className = "harrow-card-name";
+    name.textContent = cardDef.name;
+
+    if (isToggleMode) {
+        const front_effect = createChildElement(front, "div");
+        front_effect.className = "harrow-card-effect";
+        front_effect.textContent = cardDef.effect_description;
+    }
+
+    // Back face (mirrors front for 3D parallax)
+    const back = createChildElement(inner, "div");
+    back.className = "harrow-card-back";
+
+    const back_emoji = createChildElement(back, "div");
+    back_emoji.className = "harrow-card-emoji";
+    back_emoji.textContent = cardDef.emoji;
+
+    if (!isToggleMode) {
+        const effect = createChildElement(back, "div");
+        effect.className = "harrow-card-effect";
+        effect.textContent = cardDef.effect_description;
+    }
+
+    const back_name = createChildElement(back, "div");
+    back_name.className = "harrow-card-name";
+    back_name.textContent = cardDef.name;
+
+    if (isToggleMode) {
+        const back_effect = createChildElement(back, "div");
+        back_effect.className = "harrow-card-effect";
+        back_effect.textContent = cardDef.effect_description;
+    }
+
+    // Click behavior
+    const handleCardAction = (e?: Event) => {
+        if (isToggleMode && owned) {
+            // Flip animation, then toggle state and rebuild
+            wrapper.classList.add("harrow-flipped");
+            toggleHarrowCard(cardDef.type);
+            setTimeout(() => {
+                populateHarrowTogglePopup();
+            }, 600);
+            return;
+        }
+        // Don't flip if the buy button was clicked
+        if (e && (e.target as HTMLElement).closest(".harrow-card-buy-btn")) {
+            return;
+        }
+        wrapper.classList.toggle("harrow-flipped");
+    };
+
+    wrapper.addEventListener("click", handleCardAction);
+
+    wrapper.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleCardAction();
+        }
+    });
+
+    // Purchase button below the card (only in prestige view, unowned)
+    if (!isToggleMode && !owned) {
+        const buy_btn = createChildElement(outer, "button") as HTMLButtonElement;
+        buy_btn.className = "harrow-card-buy-btn";
+        buy_btn.innerHTML = `${cardDef.cost} ${DIVINE_SPARK_TEXT}`;
+        buy_btn.disabled = !can_afford;
+        buy_btn.setAttribute("aria-label", `Buy ${cardDef.name} for ${cardDef.cost} Divine Spark`);
+
+        buy_btn.addEventListener("click", () => {
+            if (purchaseHarrowCard(cardDef.type)) {
+                populatePrestigeView();
+            }
+        });
+    }
+
+    // 3D parallax tilt effect
+    wrapper.addEventListener("mousemove", (e: MouseEvent) => {
+        const rect = wrapper.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const maxDeg = 15;
+
+        const rotateY_val = ((x - centerX) / centerX) * maxDeg;
+        const rotateX_val = -((y - centerY) / centerY) * maxDeg;
+
+        inner.style.transform = wrapper.classList.contains("harrow-flipped")
+            ? `rotateY(${180 + rotateY_val}deg) rotateX(${rotateX_val}deg)`
+            : `rotateY(${rotateY_val}deg) rotateX(${rotateX_val}deg)`;
+    });
+
+    wrapper.addEventListener("mouseleave", () => {
+        inner.style.transform = wrapper.classList.contains("harrow-flipped")
+            ? "rotateY(180deg)"
+            : "";
+    });
+
+    return outer;
+}
+
+function populateHarrowTogglePopup() {
+    const harrow_overlay = RENDERING.harrow_overlay_element;
+    const harrow_div = harrow_overlay.querySelector("#harrow-box") as HTMLElement;
+    if (!harrow_div) {
+        return;
+    }
+
+    harrow_div.innerHTML = "";
+    harrow_div.setAttribute("role", "dialog");
+    harrow_div.setAttribute("aria-modal", "true");
+    harrow_div.setAttribute("aria-label", "Harrow Deck card selection");
+
+    const scroll_area = createChildElement(harrow_div, "div");
+    scroll_area.className = "scroll-area";
+
+    const header = createChildElement(scroll_area, "h1");
+    header.className = "harrow-popup-header";
+    header.textContent = "Harrow Deck";
+
+    const desc = createChildElement(scroll_area, "p");
+    desc.className = "harrow-popup-desc";
+    desc.innerHTML = `Activate cards to increase difficulty. Each active card multiplies ${DIVINE_SPARK_TEXT} gain by <b>x${1 + HARROW_SPARK_BONUS_PER_CARD}</b>.`;
+
+    const harrow_bonus_popup = calcHarrowSparkBonusForPrestige();
+    const bonus_display = createChildElement(scroll_area, "p");
+    bonus_display.className = "harrow-bonus-display";
+    bonus_display.setAttribute("aria-live", "polite");
+    bonus_display.textContent = harrow_bonus_popup > 0
+        ? `Current bonus: ${(harrow_bonus_popup * 100 + 100).toFixed(0)}% ${DIVINE_SPARK_TEXT}`
+        : `No cards active`;
+
+    const cards_container = createChildElement(scroll_area, "div");
+    cards_container.className = "harrow-cards-container";
+
+    for (const card_def of HARROW_CARDS) {
+        if (ownsHarrowCard(card_def.type)) {
+            createHarrowCard(cards_container, card_def, true, true);
+        }
+    }
+
+    // Show The Fool's random selection if active
+    if (isHarrowCardActive(HarrowCardType.TheFool) && GAMESTATE.harrow_fool_selection >= 0) {
+        const fool_card = HARROW_CARDS[GAMESTATE.harrow_fool_selection];
+        if (fool_card) {
+            const fool_info = createChildElement(scroll_area, "p");
+            fool_info.className = "harrow-fool-info";
+            fool_info.textContent = `The Fool will apply: ${fool_card.emoji} ${fool_card.name}`;
+        }
+    }
+
+    const begin_button = createChildElement(scroll_area, "button") as HTMLButtonElement;
+    begin_button.className = "harrow-begin-run";
+    begin_button.textContent = "Begin Run";
+    begin_button.addEventListener("click", () => {
+        GAMESTATE.harrow_show_toggle_popup = false;
+        harrow_overlay.classList.add("hidden");
+    });
+
+    harrow_overlay.classList.remove("hidden");
+
+    // Auto-focus the Begin Run button when popup opens
+    requestAnimationFrame(() => begin_button.focus());
 }
 
 function setupOpenPrestige() {
@@ -2320,7 +2876,7 @@ function showCredits() {
 
     {
         const close_button = createChildElement(credits_div, "button");
-        close_button.className = "close";
+        close_button.className = "close close-scroll";
         close_button.textContent = "X";
 
         close_button.addEventListener("click", () => {
@@ -2402,18 +2958,21 @@ export class Rendering {
     skill_elements: Map<SkillType, HTMLElement> = new Map();
     item_elements: Map<ItemType, HTMLButtonElement> = new Map();
     perk_elements: Map<PerkType, HTMLElement> = new Map();
+    harrow_card_elements: Map<HarrowCardType, HTMLElement> = new Map();
     controls_list_element: HTMLElement;
     open_stats_element: HTMLElement;
     stats_overlay_element: HTMLElement;
     changelog_overlay_element: HTMLElement;
     credits_overlay_element: HTMLElement;
     hints_overlay_element: HTMLElement;
+    harrow_overlay_element: HTMLElement;
 
     energy_reset_count: number = 0;
     current_zone: number = 0;
     item_order: ItemType[] = [];
     artifact_order: ItemType[] = [];
     viewing_last_reset: boolean = false;
+    harrow_card_order: HarrowCardType[] = [];
 
     public createTasks() {
         const tasks_div = document.getElementById("tasks");
@@ -2468,9 +3027,13 @@ export class Rendering {
         this.changelog_overlay_element = getElement("changelog-overlay");
         this.credits_overlay_element = getElement("credits-overlay");
         this.hints_overlay_element = getElement("hints-overlay");
+        this.harrow_overlay_element = getElement("harrow-overlay");
     }
 
     public initialize() {
+        detectTouchDevice();
+        setupMobileSidebars();
+        setupGlobalTooltipDismiss();
         setupEnergyReset(this.energy_reset_element);
         setupSettings();
         setupControls();
@@ -2478,6 +3041,15 @@ export class Rendering {
         setupOpenPrestige();
         setupOpenStats();
         setupItemUndo();
+
+        // Harrow overlay click-outside-to-close
+        this.harrow_overlay_element.addEventListener("click", (e) => {
+            if (e.target === this.harrow_overlay_element) {
+                this.harrow_overlay_element.classList.add("hidden");
+            }
+        });
+
+        setupInstallButton();
     }
 
     public start() {
@@ -2487,6 +3059,7 @@ export class Rendering {
         setupZone();
         recreatePerks();
         recreateItemsIfNeeded();
+        recreateHarrowSidebarCards();
 
         updateRendering();
 
@@ -2512,6 +3085,7 @@ function checkForZoneAndReset() {
     if (was_reset) {
         recreateItemsIfNeeded();
         recreatePerks();
+        recreateHarrowSidebarCards();
     }
     setupControls();
     setupZone();
@@ -2552,43 +3126,63 @@ function showTooltip(element: ElementWithTooltip) {
     tooltip_element.classList.add("hidden");
     tooltip_element.innerHTML = "";
     RENDERING.tooltipped_element = element;
-    
+
     tooltip_element.innerHTML = `<h3>${element.generateTooltipHeader()}</h3>`;
     const body_text = element.generateTooltipBody();
     if (body_text != ``) {
         tooltip_element.innerHTML += `<hr />`;
         tooltip_element.innerHTML += body_text;
     }
-    
+
     tooltip_element.style.top = "";
     tooltip_element.style.bottom = "";
     tooltip_element.style.left = "";
     tooltip_element.style.right = "";
-    
-    const elementRect = element.getBoundingClientRect();
-    const beyondVerticalCenter = elementRect.top > (window.innerHeight / 2);
-    const beyondHorizontalCenter = elementRect.left > (window.innerWidth / 2);
-    let x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
-    let y = (beyondVerticalCenter ? elementRect.bottom : elementRect.top) + window.scrollY;
 
-    // Energy element covers basically full width so needs its own logic to look good
-    if (element.id == "energy") {
-        x = elementRect.left + window.scrollX;
-        tooltip_element.style.left = x + "px";
-        y = elementRect.bottom + scrollY + 5;
-        tooltip_element.style.top = y + "px";
-    } else {
-        if (beyondHorizontalCenter) {
-            x = document.documentElement.clientWidth - x;
-            tooltip_element.style.right = x + "px";
+    const isMobile = window.innerWidth <= 768;
+    const elementRect = element.getBoundingClientRect();
+
+    if (isMobile) {
+        // Mobile: center horizontally, position above or below element
+        tooltip_element.style.left = "10px";
+        tooltip_element.style.right = "10px";
+
+        const spaceAbove = elementRect.top;
+        const spaceBelow = window.innerHeight - elementRect.bottom;
+
+        if (spaceBelow >= spaceAbove || spaceBelow > 150) {
+            // Position below
+            tooltip_element.style.top = (elementRect.bottom + window.scrollY + 8) + "px";
         } else {
-            tooltip_element.style.left = x + "px";
+            // Position above
+            tooltip_element.style.bottom = (window.innerHeight - elementRect.top + 8) + "px";
         }
-        if (beyondVerticalCenter) {
-            y = document.documentElement.clientHeight - y;
-            tooltip_element.style.bottom = y + "px";
-        } else {
+    } else {
+        // Desktop positioning
+        const beyondVerticalCenter = elementRect.top > (window.innerHeight / 2);
+        const beyondHorizontalCenter = elementRect.left > (window.innerWidth / 2);
+        let x = (beyondHorizontalCenter ? elementRect.left : elementRect.right) + window.scrollX;
+        let y = (beyondVerticalCenter ? elementRect.bottom : elementRect.top) + window.scrollY;
+
+        // Energy element covers basically full width so needs its own logic to look good
+        if (element.id == "energy") {
+            x = elementRect.left + window.scrollX;
+            tooltip_element.style.left = x + "px";
+            y = elementRect.bottom + scrollY + 5;
             tooltip_element.style.top = y + "px";
+        } else {
+            if (beyondHorizontalCenter) {
+                x = document.documentElement.clientWidth - x;
+                tooltip_element.style.right = x + "px";
+            } else {
+                tooltip_element.style.left = x + "px";
+            }
+            if (beyondVerticalCenter) {
+                y = document.documentElement.clientHeight - y;
+                tooltip_element.style.bottom = y + "px";
+            } else {
+                tooltip_element.style.top = y + "px";
+            }
         }
     }
 
@@ -2603,7 +3197,14 @@ export function updateRendering() {
     updateEnergyRendering();
     updateExtraStats();
     updateItems();
+    recreateHarrowSidebarCards();
     updateGameOver();
+
+    // Harrow: show toggle popup after prestige if player owns cards
+    if (GAMESTATE.harrow_show_toggle_popup) {
+        populateHarrowTogglePopup();
+        GAMESTATE.harrow_show_toggle_popup = false;
+    }
 
     if (RENDERING.queued_update_tooltip) {
         RENDERING.queued_update_tooltip = false;
