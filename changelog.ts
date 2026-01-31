@@ -19,6 +19,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "-- X new Perks<br>"
         + "- Made the post-boss Task in Z19 harder<br>"
         + "- Renamed Firemaking Kit to Camping Equipment and changed its icon<br>"
+        + "- Updated the tooltip for the Settings Menu button<br>"
     },
     {
         version: "0.3.7",

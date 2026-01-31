@@ -1619,7 +1619,7 @@ function setupSettings() {
         settings_div.classList.remove("hidden");
     });
 
-    setupTooltipStatic(open_button, `Open Settings Menu`, `Lets you Save and Load from disk`);
+    setupTooltipStatic(open_button, `Open Settings Menu`, `Deal with saving and tooltips, or view the Changelog and Credits`);
 
     const close_button = settings_div.querySelector<HTMLElement>(".close");
 
