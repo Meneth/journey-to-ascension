@@ -118,8 +118,8 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         type: PrestigeUnlockType.SeeBeyondTheVeil,
         layer: PrestigeLayer.TranscendHumanity,
         name: "See Beyond the Veil",
-        get_description: () => { return `Unlocks NUMBER new tasks before Zone 20<br>This does nothing yet`; },
-        cost: 250000
+        get_description: () => { return `Unlocks NUMBER new tasks before Zone 20<br>Boss Tasks no longer get removed from Automation on Prestige`; },
+        cost: 100_000
     },
 ];
 

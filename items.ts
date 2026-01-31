@@ -39,6 +39,7 @@ export enum ItemType {
     MagicRing,
     BottledLightning,
     HeatEssence,
+    DivineNotes,
 
     Count
 }
@@ -354,6 +355,15 @@ export const ITEMS: ItemDefinition[] = [
         icon: `🔥`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Charisma, 1.0]
+        ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.HeatEssence, name: `Divine Note`, name_plural: `Divine Notes`,
+        icon: `📜`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Study, 0.3],
+            [SkillType.Search, 0.3],
+            [SkillType.Travel, 0.1],
         ]),
     }),
 ]

@@ -37,6 +37,10 @@ export function calcSkillXp(task: Task, task_progress: number, ignore_boost = fa
         xp *= 1.5;
     }
 
+    if (hasPerk(PerkType.GazedBeyondTheVeil)) {
+        xp *= 2;
+    }
+
     if (hasPrestigeUnlock(PrestigeUnlockType.DivineInspiration)) {
         xp *= 1.5;
     }
@@ -487,11 +491,12 @@ function unlockTask(task_id: number) {
 
     const task = TASK_LOOKUP.get(task_id) as TaskDefinition;
     GAMESTATE.unlocked_tasks.push(task_id);
-    GAMESTATE.tasks.push(new Task(task));
-
-    const context: UnlockedTaskContext = { task_definition: task };
-    const event = new RenderEvent(EventType.UnlockedTask, context);
-    GAMESTATE.queueRenderEvent(event);
+    if (GAMESTATE.current_zone == task.zone_id) {
+        GAMESTATE.tasks.push(new Task(task));
+        const context: UnlockedTaskContext = { task_definition: task };
+        const event = new RenderEvent(EventType.UnlockedTask, context);
+        GAMESTATE.queueRenderEvent(event);
+    }
 }
 
 function isTaskFullyCompleted(task: Task): boolean {
@@ -500,6 +505,11 @@ function isTaskFullyCompleted(task: Task): boolean {
 
 function doMasteryOfTimeTaskCompletion() {
     if (!hasPrestigeUnlock(PrestigeUnlockType.MasteryOfTime)) {
+        return;
+    }
+
+    if (GAMESTATE.is_in_zone_skip) {
+        // Gets handled at the end of the zone skipping so we don't spam unnecessary notifications
         return;
     }
 
@@ -791,6 +801,8 @@ function skipFreeZones() {
         return;
     }
 
+    GAMESTATE.is_in_zone_skip = true;
+
     while (skipCurrentZoneIfFree()) { /* Effect is in conditional */ }
 
     if (GAMESTATE.current_zone > 0) {
@@ -798,6 +810,9 @@ function skipFreeZones() {
         const event = new RenderEvent(EventType.SkippedZones, {});
         GAMESTATE.queueRenderEvent(event);
     }
+
+    GAMESTATE.is_in_zone_skip = false;
+    doMasteryOfTimeTaskCompletion();
 }
 
 export function gatherPerkBonuses(skill: SkillType): PerkType[] {
@@ -1075,6 +1090,12 @@ function applyPrestigeUnlockEffects(unlock: PrestigeUnlockType, show_notificatio
         tryAddPerk(PerkType.MinorTimeCompression, show_notification);
         tryAddPerk(PerkType.MajorTimeCompression, show_notification);
         doMasteryOfTimeTaskCompletion();
+    } else if (unlock == PrestigeUnlockType.SeeBeyondTheVeil) {
+        unlockTask(17); // Secret Fishing Spot
+        unlockTask(28); // Training Dummy
+        unlockTask(88); // Train at every Guild
+        unlockTask(158); // Divine Notes
+        unlockTask(209); // Gaze Beyond the Veil
     }
 }
 
@@ -1172,9 +1193,12 @@ export function doPrestige() {
     GAMESTATE.auto_use_items = false;
     GAMESTATE.unlocked_new_prestige_this_prestige = false;
 
-    for (const [, task] of TASK_LOOKUP) {
-        if (task.type == TaskType.Boss && hasAutomatedTask(task)) {
-            toggleAutomation(task);
+    if (!hasPrestigeUnlock(PrestigeUnlockType.SeeBeyondTheVeil))
+    {
+        for (const [, task] of TASK_LOOKUP) {
+            if (task.type == TaskType.Boss && hasAutomatedTask(task)) {
+                toggleAutomation(task);
+            }
         }
     }
 
@@ -1325,6 +1349,7 @@ export class Gamestate {
     is_in_energy_reset = false;
     is_at_end_of_content = false;
     energy_reset_info = new EnergyResetInfo();
+    is_in_zone_skip = false;
 
     current_energy = STARTING_ENERGY;
     max_energy = STARTING_ENERGY;

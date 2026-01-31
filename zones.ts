@@ -61,6 +61,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 14, name: "Beg for Food", max_reps: 10, skills: [SkillType.Charisma], xp_mult: 2, item: ItemType.Food }),
             new TaskDefinition({ id: 15, name: "Hide and Seek", cost_multiplier: 2, xp_mult: 1.5, max_reps: 3, skills: [SkillType.Search, SkillType.Subterfuge] }),
             new TaskDefinition({ id: 16, name: "Observe Surroundings", cost_multiplier: 1, max_reps: 5, skills: [SkillType.Study], xp_mult: 3 }),
+            new TaskDefinition({ id: 17, name: "Use Secret Fishing Spot", max_reps: 8, skills: [SkillType.Search], cost_multiplier: 500, xp_mult: 2, item: ItemType.Fish, hidden_by_default: true }),
         ],
     },
     {
@@ -74,6 +75,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 23, name: "Chit-chat", max_reps: 3, skills: [SkillType.Charisma], xp_mult: 3 }),
             new TaskDefinition({ id: 24, name: "Sparring", cost_multiplier: 1.5, xp_mult: 5, max_reps: 4, skills: [SkillType.Combat] }),
             new TaskDefinition({ id: 26, name: "Daydream About Leaving", cost_multiplier: 1, max_reps: 6, xp_mult: 3, skills: [SkillType.Travel, SkillType.Search] }),
+            new TaskDefinition({ id: 28, name: "Training Dummy", type: TaskType.Boss, cost_multiplier: 30, max_reps: 10, xp_mult: 3, skills: [SkillType.Combat], hidden_by_default: true }),
         ],
     },
     {
@@ -154,10 +156,10 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 83, name: "Scribe Scroll of Haste", max_reps: 1, cost_multiplier: 2, skills: [SkillType.Crafting, SkillType.Magic], item: ItemType.ScrollOfHaste }),
             new TaskDefinition({ id: 84, name: "Cast a Spell", cost_multiplier: 1, max_reps: 6, xp_mult: 0.2, skills: [SkillType.Magic], perk: PerkType.MinorTimeCompression }),
             new TaskDefinition({ id: 85, name: "Study at the Mage's Guild", cost_multiplier: 2, xp_mult: 2, skills: [SkillType.Study, SkillType.Magic] }),
-            new TaskDefinition({ id: 88, name: "DELETED TASK", hidden_by_default: true }),
             new TaskDefinition({ id: 86, name: "Train for Your Quest", cost_multiplier: 1, max_reps: 3, xp_mult: 3, skills: [SkillType.Search, SkillType.Fortitude] }),
             new TaskDefinition({ id: 87, name: "Corrupt Mayor", type: TaskType.Boss, cost_multiplier: 10000, skills: [SkillType.Combat], item: ItemType.CityChain, unlocks_task: 89 }),
-            new TaskDefinition({ id: 89, name: "Purge Corrupt Bureacracy", cost_multiplier: 100000, skills: [SkillType.Study, SkillType.Subterfuge], xp_mult: 0.02, perk: PerkType.PurgedBureaucracy, hidden_by_default: true }),
+            new TaskDefinition({ id: 89, name: "Purge Corrupt Bureacracy", cost_multiplier: 100_000, skills: [SkillType.Study, SkillType.Subterfuge], xp_mult: 0.02, perk: PerkType.PurgedBureaucracy, hidden_by_default: true }),
+            new TaskDefinition({ id: 88, name: "Train at Every Guild", cost_multiplier: 500_000_000, skills: [SkillType.Study, SkillType.Charisma, SkillType.Combat, SkillType.Magic, SkillType.Crafting], hidden_by_default: true }),
         ],
     },
     {
@@ -255,6 +257,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 155, name: "Practice Memorization", cost_multiplier: 1200, max_reps: 4, skills: [SkillType.Study, SkillType.Magic], perk: PerkType.EnergeticMemory, xp_mult: 0.5 }),
             new TaskDefinition({ id: 156, name: "Guided Spellcasting", cost_multiplier: 100, max_reps: 3, xp_mult: 10, skills: [SkillType.Magic] }),
             new TaskDefinition({ id: 157, name: "Go for a Walk", cost_multiplier: 4, max_reps: 1, xp_mult: 8, skills: [SkillType.Search, SkillType.Travel] }),
+            new TaskDefinition({ id: 158, name: "Write Down Some Learnings", max_reps: 5, cost_multiplier: 500_000, skills: [SkillType.Magic, SkillType.Study], item: ItemType.DivineNotes }),
         ],
     },
     {
@@ -325,6 +328,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 205, name: "Invent a New Spell", cost_multiplier: 300_000_000, max_reps: 3, skills: [SkillType.Magic], xp_mult: 0.01, perk: PerkType.UnifiedTheoryOfMagic }),
             new TaskDefinition({ id: 206, name: "Reflect on Past Obstacles", cost_multiplier: 300_000, max_reps: 5, xp_mult: 1, skills: [SkillType.Subterfuge, SkillType.Study] }),
             new TaskDefinition({ id: 207, name: "Prepare for a Greater Journey", cost_multiplier: 1_000_000, max_reps: 1, xp_mult: 0.01, skills: [SkillType.Travel, SkillType.Fortitude] }),
+            new TaskDefinition({ id: 209, name: "Gaze Beyond the Veil", max_reps: 3, cost_multiplier: 200, skills: [SkillType.Ascension], xp_mult: 0.02, perk: PerkType.GazedBeyondTheVeil, hidden_by_default: true }),
         ],
     },
     {

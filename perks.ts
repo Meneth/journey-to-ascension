@@ -45,6 +45,7 @@ export enum PerkType {
     UnderstandingTheReset,
     OvercameFearOfSkydiving,
     DestroyedTheRing,
+    GazedBeyondTheVeil,
 
     Count
 }
@@ -360,5 +361,11 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Charisma, 0.5],
         ]),
         icon: `💍`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.GazedBeyondTheVeil,
+        name: `Gazed Beyond the Veil`,
+        get_custom_tooltip: () => { return `Improves ${XP_TEXT} gain by 100%`; },
+        icon: `👀`,
     }),
 ]
