@@ -40,6 +40,7 @@ export enum ItemType {
     BottledLightning,
     HeatEssence,
     DivineNotes,
+    GriffinQuill,
 
     Count
 }
@@ -364,6 +365,13 @@ export const ITEMS: ItemDefinition[] = [
             [SkillType.Study, 0.3],
             [SkillType.Search, 0.3],
             [SkillType.Travel, 0.1],
+        ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.GriffinQuill, name: `Griffin Quill`, name_plural: `Griffin Quills`,
+        icon: `🕊️`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Study, 1.0]
         ]),
     }),
 ]
