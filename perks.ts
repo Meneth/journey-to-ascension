@@ -46,6 +46,7 @@ export enum PerkType {
     OvercameFearOfSkydiving,
     DestroyedTheRing,
     GazedBeyondTheVeil,
+    UndergroundForge,
 
     Count
 }
@@ -367,5 +368,13 @@ export const PERKS: PerkDefinition[] = [
         name: `Gazed Beyond the Veil`,
         get_custom_tooltip: () => { return `Improves ${XP_TEXT} gain by 100%`; },
         icon: `👀`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.UndergroundForge,
+        name: `Studied Underground Forge`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Crafting, 0.5],
+        ]),
+        icon: `⛏️`,
     }),
 ]

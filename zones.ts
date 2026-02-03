@@ -359,6 +359,20 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 228, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
+    {
+        name: "The Underworld",
+        tasks: [
+            new TaskDefinition({ id: 230, name: "Exit Through a Moonpool", type: TaskType.Travel, cost_multiplier: 5000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 231, name: "Cast underwater Breathing Spell", type: TaskType.Mandatory, cost_multiplier: 10_000_000_000, max_reps: 1, skills: [SkillType.Magic], xp_mult: 0.005 }),
+            new TaskDefinition({ id: 232, name: "Find Rare Mushroom Reagent", type: TaskType.Mandatory, cost_multiplier: 1_000_000_000, max_reps: 5, skills: [SkillType.Search], xp_mult: 0.05 }),
+            new TaskDefinition({ id: 233, name: "Steal Farmed Cave Insects", max_reps: 7, cost_multiplier: 4_000, skills: [SkillType.Subterfuge], item: ItemType.CaveInsects, xp_mult: 100 },),
+            new TaskDefinition({ id: 234, name: "Study Underground Forge", cost_multiplier: 1_000_000_000, max_reps: 2, xp_mult: 0.0001, skills: [SkillType.Study, SkillType.Crafting], perk: PerkType.UndergroundForge }),
+            new TaskDefinition({ id: 235, name: "Practice the Local Dialect", cost_multiplier: 5_000_000_000, max_reps: 8, skills: [SkillType.Study, SkillType.Charisma], xp_mult: 0.005 }),
+            new TaskDefinition({ id: 236, name: "Join Underground Fight Club", cost_multiplier: 10_000_000_000, max_reps: 4, xp_mult: 0.005, skills: [SkillType.Combat] }),
+            new TaskDefinition({ id: 237, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 20_000_000_000_000, xp_mult: 0.002, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 238 }),
+            new TaskDefinition({ id: 238, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+        ],
+    },
 ]
 
 ZONES.forEach((zone, index) => {
