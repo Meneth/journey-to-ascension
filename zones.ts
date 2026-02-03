@@ -373,6 +373,20 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 238, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
+    {
+        name: "The Bottom of the Sea",
+        tasks: [
+            new TaskDefinition({ id: 240, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 5000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 241, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 2_500_000_000, max_reps: 3, skills: [SkillType.Fortitude], xp_mult: 0.0001 }),
+            new TaskDefinition({ id: 242, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 500_000, max_reps: 1, skills: [SkillType.Subterfuge], xp_mult: 3 }),
+            new TaskDefinition({ id: 243, name: "PLACEHOLDER", max_reps: 3, cost_multiplier: 1_000_000_000, skills: [SkillType.Magic], item: ItemType.HeatEssence, xp_mult: 0.01 },),
+            new TaskDefinition({ id: 244, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000, max_reps: 1, xp_mult: 0.002, skills: [SkillType.Charisma], perk: PerkType.DestroyedTheRing }),
+            new TaskDefinition({ id: 245, name: "PLACEHOLDER", cost_multiplier: 500_000_000, max_reps: 3, skills: [SkillType.Fortitude], xp_mult: 0.002 }),
+            new TaskDefinition({ id: 246, name: "PLACEHOLDER", cost_multiplier: 10_000, max_reps: 4, xp_mult: 20, skills: [SkillType.Crafting] }),
+            new TaskDefinition({ id: 247, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 10_000_000_000_000_000, xp_mult: 0.0005, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 248 }),
+            new TaskDefinition({ id: 248, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+        ],
+    },
 ]
 
 ZONES.forEach((zone, index) => {
