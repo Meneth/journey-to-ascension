@@ -1488,7 +1488,7 @@ function populatePrestigeView() {
             unlock_button.className = "prestige-purchase prestige-purchase-repeatable";
             const cost = calcPrestigeRepeatableCost(upgrade.type);
             const level = getPrestigeRepeatableLevel(upgrade.type);
-            unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${cost}<br>Level: ${level}`;
+            unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${formatNumber(cost, false)}<br>Level: ${level}`;
 
             (unlock_button as HTMLInputElement).disabled = cost > GAMESTATE.divine_spark;
 
