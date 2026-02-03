@@ -540,7 +540,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
             const power_gain = completions * calcPowerGain(task);
             if (power_gain > 0 && GAMESTATE.has_unlocked_power) {
-                createTwoElementRow(getOrCreateTable(), `💪Power`, `${power_gain}`);
+                createTwoElementRow(getOrCreateTable(), `💪Power`, `${formatNumber(power_gain, false)}`);
             }
         }
 

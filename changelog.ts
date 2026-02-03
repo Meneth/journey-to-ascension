@@ -21,6 +21,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Renamed Firemaking Kit to Camping Equipment and changed its icon<br>"
         + "- Updated the tooltip for the Settings Menu button<br>"
         + "- The Divine Lightning tooltip now tells you its effect in the highest Zone you've reached<br>"
+        + "- Power gain now gets formated as `1.23k` and such once it passes 1k<br>"
     },
     {
         version: "0.3.7",
