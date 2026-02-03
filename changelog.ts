@@ -20,6 +20,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Made the post-boss Task in Z19 harder<br>"
         + "- Renamed Firemaking Kit to Camping Equipment and changed its icon<br>"
         + "- Updated the tooltip for the Settings Menu button<br>"
+        + "- The Divine Lightning tooltip now tells you its effect in the highest Zone you've reached<br>"
     },
     {
         version: "0.3.7",

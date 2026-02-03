@@ -1,3 +1,4 @@
+import { GAMESTATE } from "./game.js";
 import { getPerkNameWithEmoji, PerkType } from "./perks.js";
 import { getSkillString } from "./rendering.js";
 import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
@@ -177,7 +178,14 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         type: PrestigeRepeatableType.DivineLightning,
         layer: PrestigeLayer.TranscendHumanity,
         name: "Divine Lightning",
-        get_description: () => { return `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by ${DIVINE_LIGHTNING_EXPONENT_INCREASE}<br>One more level would increase ${DIVINE_SPARK_TEXT} gain at Zone 19 by ${(calcDivineSparkIncrease(4) * 100).toFixed(0)}%, and ${(calcDivineSparkIncrease(5) * 100).toFixed(0)}% at Zone 20`; },
+        get_description: () => { 
+            const highest_zone = GAMESTATE.highest_prestige_zone + 1;
+            const current_zone_diff = highest_zone - 15;
+
+            let tooltip = `Increases the exponent for the ${DIVINE_SPARK_TEXT} gain calculation by ${DIVINE_LIGHTNING_EXPONENT_INCREASE}`;
+            tooltip += `<br>One more level would increase ${DIVINE_SPARK_TEXT} gain at Zone 19 by ${(calcDivineSparkIncrease(4) * 100).toFixed(0)}%, and ${(calcDivineSparkIncrease(current_zone_diff) * 100).toFixed(0)}% at Zone ${highest_zone}`;
+            return tooltip;
+         },
         initial_cost: 1000,
         scaling_exponent: 3
     },
