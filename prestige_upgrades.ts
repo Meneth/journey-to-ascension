@@ -187,7 +187,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
             return tooltip;
          },
         initial_cost: 1000,
-        scaling_exponent: 3
+        scaling_exponent: 4
     },
     {
         type: PrestigeRepeatableType.TranscendantAptitude,
