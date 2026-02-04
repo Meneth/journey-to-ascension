@@ -6,7 +6,7 @@ import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.j
 import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpContext, SkippedTasksContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ATTUNEMENT_TEXT, BOTTLED_LIGHTNING_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, TRAVEL_EMOJI, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DEENERGIZED_BASE } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DEENERGIZED_BASE, PrestigeUnlockType } from "./prestige_upgrades.js";
 import { CHANGELOG } from "./changelog.js";
 import { CREDITS } from "./credits.js";
 import { AWAKENING_DIVINE_SPARK_MULT } from "./simulation_constants.js";
@@ -1397,7 +1397,12 @@ function populatePrestigeView() {
         });
 
         prestige_button.addEventListener("click", () => {
-            createConfirmationOverlay("Do Prestige", `Will give ${formatNumber(calcDivineSparkGain(), false)} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases<br>Will also remove all Boss Tasks from automation`, () => {
+            let warning = `Will give ${formatNumber(calcDivineSparkGain(), false)} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases`;
+            if (!hasPrestigeUnlock(PrestigeUnlockType.SeeBeyondTheVeil)) {
+                warning += `<br>Will also remove all Boss Tasks from automation`;
+            }
+
+            createConfirmationOverlay("Do Prestige", warning, () => {
                 doPrestige();
                 populatePrestigeView();
             });
