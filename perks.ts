@@ -48,6 +48,7 @@ export enum PerkType {
     GazedBeyondTheVeil,
     UndergroundForge,
     UnderstandingLeviathan,
+    PurgedDemonicInfluences,
 
     Count
 }
@@ -386,5 +387,14 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Combat, 0.3],
         ]),
         icon: `🐋`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.PurgedDemonicInfluences,
+        name: `Purged Demonic Influences`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Charisma, 0.3],
+            [SkillType.Fortitude, 0.3],
+        ]),
+        icon: `👹`,
     }),
 ]

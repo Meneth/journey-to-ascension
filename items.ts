@@ -41,6 +41,7 @@ export enum ItemType {
     HeatEssence,
     DivineNotes,
     GriffinQuill,
+    WingsOfShadow,
 
     Count
 }
@@ -372,6 +373,14 @@ export const ITEMS: ItemDefinition[] = [
         icon: `🕊️`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Study, 1.0]
+        ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.WingsOfShadow, name: `Wings of Shadow`, name_plural: `Wings of Shadow`,
+        icon: `🦇`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Ascension, 3.0],
+            [SkillType.Travel, 1.0],
         ]),
     }),
 ]
