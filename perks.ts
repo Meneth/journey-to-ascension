@@ -47,6 +47,7 @@ export enum PerkType {
     DestroyedTheRing,
     GazedBeyondTheVeil,
     UndergroundForge,
+    UnderstandingLeviathan,
 
     Count
 }
@@ -376,5 +377,14 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Crafting, 0.5],
         ]),
         icon: `⛏️`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.UnderstandingLeviathan,
+        name: `Understanding Leviathan`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Study, 0.3],
+            [SkillType.Combat, 0.3],
+        ]),
+        icon: `🐋`,
     }),
 ]
