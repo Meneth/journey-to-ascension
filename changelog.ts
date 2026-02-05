@@ -24,6 +24,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Made Divine Lightning scale faster in cost<br>"
         + "- Power gain now gets formated as `1.23k` and such once it passes 1k<br>"
         + "- Fixed the Prestige Task button not being highlighted in one case where it should be<br>"
+        + "- Buffed Divine Speed slightly<br>"
     },
     {
         version: "0.3.7",

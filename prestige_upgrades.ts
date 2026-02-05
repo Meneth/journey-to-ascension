@@ -62,7 +62,7 @@ export class PrestigeRepeatable {
     scaling_exponent = 0;
 }
 
-export const DIVINE_SPEED_TICKS_PER_PERCENT = 5;
+export const DIVINE_SPEED_TICKS_PER_PERCENT = 4;
 
 export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
