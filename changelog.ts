@@ -23,6 +23,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- The Divine Lightning tooltip now tells you its effect in the highest Zone you've reached<br>"
         + "- Made Divine Lightning scale faster in cost<br>"
         + "- Power gain now gets formated as `1.23k` and such once it passes 1k<br>"
+        + "- Fixed the Prestige Task button not being highlighted in one case where it should be<br>"
     },
     {
         version: "0.3.7",

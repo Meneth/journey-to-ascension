@@ -396,7 +396,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
     });
     task_button.addEventListener("contextmenu", (e) => { e.preventDefault(); toggleAutomation(task.task_definition); });
 
-    if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_available) {
+    if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_layers_unlocked.includes(task.task_definition.prestige_layer)) {
         task_button.classList.add("prestige-glow");
     }
 
