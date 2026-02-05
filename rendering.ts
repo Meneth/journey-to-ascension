@@ -1421,11 +1421,10 @@ function populatePrestigeView() {
             divine_spark.innerHTML = `${DIVINE_SPARK_TEXT} gain if you Prestige now: +${formatNumber(calcDivineSparkGain(), false)}`;
 
             const divine_spark_gain = createChildElement(dummy_div, "p");
-            divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} gain formula:<br>100, multiplied by ${getPrestigeGainExponent()} for each Zone past 15`;
+            divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} gain formula:<br>100, multiplied by ${formatNumber(getPrestigeGainExponent())} for each Zone past 15`;
             if (hasPerk(PerkType.Awakening)) {
                 divine_spark_gain.innerHTML += `<br>Multiplier from ${getPerkNameWithEmoji(PerkType.Awakening)}: ${formatNumber(1 + AWAKENING_DIVINE_SPARK_MULT)}`;
             }
-
 
             const divine_spark_gain_stats = createChildElement(dummy_div, "p");
             divine_spark_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
