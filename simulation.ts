@@ -5,7 +5,7 @@ import { getReflectionsOnTheJourneyExponent, PerkDefinition, PERKS, PerkType } f
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext, SkippedTasksContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT } from "./prestige_upgrades.js";
-import { AWAKENING_DIVINE_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
+import { AWAKENING_DIVINE_SPARK_MULT, DEFIED_THE_GODS_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
 
 // MARK: Constants
 let task_progress_mult = 1;
@@ -1060,6 +1060,9 @@ export function calcDivineSparkGainFromHighestZone(zone: number) {
     let gain_mult = Math.pow(getPrestigeGainExponent(), effective_zone);
     if (hasPerk(PerkType.Awakening)) {
         gain_mult *= 1 + AWAKENING_DIVINE_SPARK_MULT;
+    }
+    if (hasPerk(PerkType.DefiedTheGods)) {
+        gain_mult *= 1 + DEFIED_THE_GODS_SPARK_MULT;
     }
 
     return Math.ceil(gain_mult * BASE_PRESTIGE_GAIN);

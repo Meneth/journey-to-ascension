@@ -9,7 +9,7 @@ import { ATTUNEMENT_TEXT, BOTTLED_LIGHTNING_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DEENERGIZED_BASE, PrestigeUnlockType } from "./prestige_upgrades.js";
 import { CHANGELOG } from "./changelog.js";
 import { CREDITS } from "./credits.js";
-import { AWAKENING_DIVINE_SPARK_MULT } from "./simulation_constants.js";
+import { AWAKENING_DIVINE_SPARK_MULT, DEFIED_THE_GODS_SPARK_MULT } from "./simulation_constants.js";
 
 // MARK: Helpers
 
@@ -1424,6 +1424,10 @@ function populatePrestigeView() {
             divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} gain formula:<br>100, multiplied by ${formatNumber(getPrestigeGainExponent())} for each Zone past 15`;
             if (hasPerk(PerkType.Awakening)) {
                 divine_spark_gain.innerHTML += `<br>Multiplier from ${getPerkNameWithEmoji(PerkType.Awakening)}: ${formatNumber(1 + AWAKENING_DIVINE_SPARK_MULT)}`;
+            }
+
+            if (hasPerk(PerkType.DefiedTheGods)) {
+                divine_spark_gain.innerHTML += `<br>Multiplier from ${getPerkNameWithEmoji(PerkType.DefiedTheGods)}: ${formatNumber(1 + DEFIED_THE_GODS_SPARK_MULT)}`;
             }
 
             const divine_spark_gain_stats = createChildElement(dummy_div, "p");

@@ -8,7 +8,7 @@ import {
     XP_TEXT
 } from "./rendering_constants.js";
 import { calcReflectionsOnTheJourneyMult, hasPrestigeUnlock } from "./simulation.js";
-import { REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_BASE, AWAKENING_DIVINE_SPARK_MULT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
+import { REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_BASE, AWAKENING_DIVINE_SPARK_MULT, UNIFIED_THEORY_OF_MAGIC_EFFECT, DEFIED_THE_GODS_SPARK_MULT } from "./simulation_constants.js";
 import { SkillType } from "./skills.js";
 
 export enum PerkType {
@@ -49,6 +49,7 @@ export enum PerkType {
     UndergroundForge,
     UnderstandingLeviathan,
     PurgedDemonicInfluences,
+    DefiedTheGods,
 
     Count
 }
@@ -360,7 +361,7 @@ export const PERKS: PerkDefinition[] = [
         enum: PerkType.DestroyedTheRing,
         name: `Destroyed the Ring`,
         skill_modifiers: new PerkSkillModifierList([
-            [SkillType.Ascension, 0.5],
+            [SkillType.Ascension, 1.0],
             [SkillType.Charisma, 0.5],
         ]),
         icon: `💍`,
@@ -396,5 +397,14 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Fortitude, 0.3],
         ]),
         icon: `👹`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.DefiedTheGods,
+        name: `Defied the Gods`,
+        get_custom_tooltip: () => { return `Improves ${DIVINE_SPARK_TEXT} gain by ${formatNumber(DEFIED_THE_GODS_SPARK_MULT * 100)}%`; },
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Ascension, 1.0],
+        ]),
+        icon: `🚫`,
     }),
 ]

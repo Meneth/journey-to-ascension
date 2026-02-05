@@ -42,6 +42,7 @@ export enum ItemType {
     DivineNotes,
     GriffinQuill,
     WingsOfShadow,
+    RitualSymbol,
 
     Count
 }
@@ -379,8 +380,15 @@ export const ITEMS: ItemDefinition[] = [
         enum: ItemType.WingsOfShadow, name: `Wings of Shadow`, name_plural: `Wings of Shadow`,
         icon: `🦇`,
         skill_modifiers: new ItemSkillModifierList([
-            [SkillType.Ascension, 3.0],
+            [SkillType.Ascension, 5.0],
             [SkillType.Travel, 1.0],
+        ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.RitualSymbol, name: `Ritual Symbol`, name_plural: `Ritual Symbols`,
+        icon: `☯️`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Ascension, 1.0]
         ]),
     }),
 ]

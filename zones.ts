@@ -390,15 +390,14 @@ export const ZONES: Zone[] = [
     {
         name: "The Deepest Deep",
         tasks: [
-            new TaskDefinition({ id: 250, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 5000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 250, name: "Attempt to Enter Hell", type: TaskType.Travel, cost_multiplier: 200_000, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 251, name: "Dare the Gods to Intervene", type: TaskType.Mandatory, cost_multiplier: 1_000_000_000, max_reps: 1, skills: [SkillType.Charisma], xp_mult: 0.005 }),
-            new TaskDefinition({ id: 252, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 1_000_000_000, max_reps: 5, skills: [SkillType.Search], xp_mult: 0.05 }),
-            new TaskDefinition({ id: 253, name: "PLACEHOLDER", type: TaskType.Prestige, cost_multiplier: 1_000_000_000, max_reps: 5, skills: [SkillType.Ascension], prestige_layer: PrestigeLayer.EmbraceDivinity, xp_mult: 0.05 }),
-            new TaskDefinition({ id: 254, name: "PLACEHOLDER", max_reps: 7, cost_multiplier: 4_000, skills: [SkillType.Subterfuge], item: ItemType.CaveInsects, xp_mult: 100 },),
-            new TaskDefinition({ id: 255, name: "PLACEHOLDER", cost_multiplier: 1_000_000_000, max_reps: 2, xp_mult: 0.0001, skills: [SkillType.Study, SkillType.Crafting], perk: PerkType.UndergroundForge }),
-            new TaskDefinition({ id: 256, name: "PLACEHOLDER", cost_multiplier: 5_000_000_000, max_reps: 8, skills: [SkillType.Study, SkillType.Charisma], xp_mult: 0.005 }),
-            new TaskDefinition({ id: 257, name: "PLACEHOLDER", cost_multiplier: 10_000_000_000, max_reps: 4, xp_mult: 0.005, skills: [SkillType.Combat] }),
-            new TaskDefinition({ id: 257, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 9_000_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat], item: ItemType.DragonScale, unlocks_task: 258 }),
+            new TaskDefinition({ id: 252, name: "Dig a Tunnel", type: TaskType.Mandatory, cost_multiplier: 100_000, max_reps: 5, skills: [SkillType.Crafting], xp_mult: 0.05 }),
+            new TaskDefinition({ id: 253, name: "Embrace Divinity", type: TaskType.Prestige, cost_multiplier: 25_000, max_reps: 5, skills: [SkillType.Ascension], prestige_layer: PrestigeLayer.EmbraceDivinity, xp_mult: 0.015 }),
+            new TaskDefinition({ id: 254, name: "Etch Ritual Symbols", max_reps: 7, cost_multiplier: 30_000_000_000, skills: [SkillType.Magic], item: ItemType.RitualSymbol, xp_mult: 0.03 }),
+            new TaskDefinition({ id: 255, name: "Defy the Gods", cost_multiplier: 35_000_000_000_000, max_reps: 1, xp_mult: 0, skills: [SkillType.Fortitude, SkillType.Ascension], perk: PerkType.DefiedTheGods }),
+            new TaskDefinition({ id: 256, name: "Study Divinity", cost_multiplier: 20_000_000_000, max_reps: 8, skills: [SkillType.Study], xp_mult: 0.05 }),
+            new TaskDefinition({ id: 257, name: "Prepare to Face the Gods", cost_multiplier: 1_000_000_000_000_000, max_reps: 4, xp_mult: 0.00005, skills: [SkillType.Combat] }),
         ],
     },
 ]
