@@ -26,6 +26,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Fixed the Prestige Task button not being highlighted in one case where it should be<br>"
         + "- Buffed Divine Speed slightly<br>"
         + "- Fixed Task Automation not applying the effects of Haste and similar<br>"
+        + "- Boss Tasks disabled due to costing too much Energy now have a 🚫 icon<br>"
     },
     {
         version: "0.3.7",
