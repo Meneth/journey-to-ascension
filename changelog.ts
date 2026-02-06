@@ -7,17 +7,17 @@ export class ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
     {
         version: "0.4.0",
-        date: "2026-01-28",
-        changes: "- Added a new Prestige repeatable upgrade<br>"
+        date: "2026-02-06",
+        changes: "- Added zones Z21 through Z25, including:<br>"
+        + "-- A new Artifact<br>"
+        + "-- 5 new Items<br>"
+        + "-- 4 new Bosses<br>"
+        + "-- 6 new Perks<br>"
+        + "- Added a new Prestige repeatable upgrade<br>"
         + "- Added two new Prestige unlockables<br>"
         + "- Added a 3rd mandatory Task to Zone 20<br>"
         + "- Made the bosses in Zone 19 and 20 harder<br>"
-        + "- Added zones Z21 through Z25, including:<br>"
-        + "-- A new Artifact<br>"
-        + "-- X new Items<br>"
-        + "-- X new Bosses<br>"
-        + "-- X new Perks<br>"
-        + "- Made the post-boss Task in Z19 harder<br>"
+        + "- Made the post-boss Task in Zone 9 harder<br>"
         + "- Renamed Firemaking Kit to Camping Equipment and changed its icon<br>"
         + "- Updated the tooltip for the Settings Menu button<br>"
         + "- The Divine Lightning tooltip now tells you its effect in the highest Zone you've reached<br>"

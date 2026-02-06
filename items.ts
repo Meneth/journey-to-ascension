@@ -362,7 +362,7 @@ export const ITEMS: ItemDefinition[] = [
         ]),
     }),
     new ItemDefinition({
-        enum: ItemType.HeatEssence, name: `Divine Note`, name_plural: `Divine Notes`,
+        enum: ItemType.DivineNotes, name: `Divine Note`, name_plural: `Divine Notes`,
         icon: `📜`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Study, 0.3],
