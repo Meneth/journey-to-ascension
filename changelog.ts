@@ -27,11 +27,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Buffed Divine Speed slightly<br>"
         + "- Fixed Task Automation not applying the effects of Haste and similar<br>"
         + "- Boss Tasks disabled due to costing too much Energy now have a 🚫 icon<br>"
-    },
-    {
-        version: "0.3.7",
-        date: "2026-01-28",
-        changes: "- Fixed buttons getting highlighted in some cases when selected<br>"
+        + "- Fixed buttons getting highlighted in some cases when selected<br>"
     },
     {
         version: "0.3.6",
