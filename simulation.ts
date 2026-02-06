@@ -304,6 +304,9 @@ function updateActiveTask() {
     if (!active_task) {
         GAMESTATE.active_task = pickNextTaskInAutomationQueue();
         active_task = GAMESTATE.active_task;
+        if (active_task && active_task.progress == 0) {
+            applyTaskRepStartEffects(active_task);
+        }
     }
     if (!active_task) {
         return;

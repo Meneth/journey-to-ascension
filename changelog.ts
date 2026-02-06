@@ -25,6 +25,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Power gain now gets formated as `1.23k` and such once it passes 1k<br>"
         + "- Fixed the Prestige Task button not being highlighted in one case where it should be<br>"
         + "- Buffed Divine Speed slightly<br>"
+        + "- Fixed Task Automation not applying the effects of Haste and similar<br>"
     },
     {
         version: "0.3.7",
