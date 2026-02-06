@@ -331,6 +331,7 @@ function updateActiveTask() {
     saveGame();
 }
 
+// Note that free executions don't call this
 export function applyTaskRepStartEffects(task: Task) {
     if (GAMESTATE.queued_scrolls_of_haste > 0) {
         task.hasted = true;
@@ -344,6 +345,12 @@ export function applyTaskRepStartEffects(task: Task) {
         task.lightning = true;
         GAMESTATE.queued_lightning--;
     }
+
+    if (task.task_definition.use_item != ItemType.Count) {
+        consumeItem(task.task_definition.use_item, 1);
+    }
+
+    task.progress = Math.max(task.progress, 0.01); // Slight progress to ensure it counts as started
 }
 
 export function clickTask(task: Task) {
@@ -387,6 +394,7 @@ function doAllTaskRepsForFree(task: Task) {
     const consume_energy = false;
     while (task.reps < task.task_definition.max_reps) {
         progressTask(task, calcTaskCost(task), consume_energy);
+        // Deliberately doesn't call applyTaskRepStartEffects, we get to skip those
     }
 }
 
@@ -423,12 +431,41 @@ export function isTaskDisabledDueToTooStrongBoss(task: Task) {
     return calcTaskEnergyCost(task, GAMESTATE.queued_scrolls_of_haste > 0, lightning) > (GAMESTATE.current_energy * BOSS_MAX_ENERGY_DISPARITY);
 }
 
+export function isTaskDisabledDueToMissingItem(task: Task) {
+    if (isSingleTickTask(task)) {
+        return false; // If it is that cheap, we don't care about the item
+    }
+
+    if (task.progress > 0) {
+        return false;
+    }
+
+    if (task.task_definition.use_item == ItemType.Count) {
+        return false;
+    }
+
+    const item_count = GAMESTATE.items.get(task.task_definition.use_item) ?? 0;
+    return item_count <= 0;
+}
+
+export function isTaskDisabledWithoutBeingFinished(task: Task) {
+    if (isTaskDisabledDueToTooStrongBoss(task)) {
+        return true;
+    }
+
+    if (isTaskDisabledDueToMissingItem(task)) {
+        return true;
+    }
+
+    return false;
+}
+
 function updateEnabledTasks() {
     let has_unfinished_mandatory_task = false;
 
     for (const task of GAMESTATE.tasks) {
         const finished = task.reps >= task.task_definition.max_reps;
-        task.enabled = !finished && !isTaskDisabledDueToTooStrongBoss(task);
+        task.enabled = !finished && !isTaskDisabledWithoutBeingFinished(task);
         has_unfinished_mandatory_task = has_unfinished_mandatory_task
             || (task.task_definition.type == TaskType.Mandatory && !finished)
             || (task.task_definition.type == TaskType.Prestige && !finished);
@@ -644,12 +681,16 @@ export function addItem(item: ItemType, count: number) {
     GAMESTATE.queueRenderEvent(event);
 }
 
-function useItem(item: ItemType, amount: number) {
+function consumeItem(item: ItemType, amount: number ) {
     const old_value = GAMESTATE.items.get(item) ?? 0;
+    GAMESTATE.items.set(item, old_value - amount);
+}
+
+function useItem(item: ItemType, amount: number) {
+    consumeItem(item, amount);
     const old_use_value = GAMESTATE.used_items.get(item) ?? 0;
     const definition = ITEMS[item] as ItemDefinition;
     definition.applyEffects(amount);
-    GAMESTATE.items.set(item, old_value - amount);
     GAMESTATE.used_items.set(item, old_use_value + amount);
 
     const context: UsedItemContext = { item: item, count: Math.abs(amount) };
@@ -965,8 +1006,8 @@ function pickNextTaskInAutomationQueue(): Task | null {
                 continue;
             }
 
-            if (isTaskDisabledDueToTooStrongBoss(task)) {
-                return null; // Better to stop automating than having it fuck up by skipping a boss
+            if (isTaskDisabledWithoutBeingFinished(task)) {
+                return null; // Better to stop automating than having it fuck up by skipping a Task
             }
 
             if (!task.enabled) {

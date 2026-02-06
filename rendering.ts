@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint, setAutomationEndZone } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint, setAutomationEndZone, isTaskDisabledDueToMissingItem } from "./simulation.js";
 import { GAMESTATE, RENDERING, resetSave } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT, BOTTLED_LIGHTNING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
@@ -479,6 +479,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             else if (isTaskDisabledDueToTooStrongBoss(task)) {
                 tooltip += `<p class="disable-reason">Disabled due to this Boss requiring more than ${BOSS_MAX_ENERGY_DISPARITY}x your current ${ENERGY_TEXT}</p>`;
             }
+            else if (isTaskDisabledDueToMissingItem(task)) {
+                const item = ITEMS[task.task_definition.use_item] as ItemDefinition;
+                tooltip += `<p class="disable-reason">Disabled due to this requiring a ${item.icon}${item.name} Item</p>`;
+            }
             else {
                 console.error("Task disabled for unknown reason");
             }
@@ -523,7 +527,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             if (task.task_definition.item != ItemType.Count) {
                 const item = ITEMS[task.task_definition.item] as ItemDefinition;
                 const plural = completions > 1;
-                createTwoElementRow(getOrCreateTable(), `${item.icon}${item.name} ${plural ? "Items" : "Items"}`, `${completions}`);
+                createTwoElementRow(getOrCreateTable(), `${item.icon}${item.name} ${plural ? "Items" : "Item"}`, `${completions}`);
             }
 
             if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
@@ -586,6 +590,12 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
         {
             const table = createTableSection(task_table,"Cost Estimate");
+
+            if (task.task_definition.use_item != ItemType.Count) {
+                const item = ITEMS[task.task_definition.use_item] as ItemDefinition;
+                const plural = completions > 1;
+                createTwoElementRow(table, `${item.icon}${item.name} ${plural ? "Items" : "Item"}`, `${completions}`);
+            }
 
             const energy_cost = estimateTotalTaskEnergyConsumption(task, completions);
             const energy_cost_ratio = energy_cost / GAMESTATE.current_energy;

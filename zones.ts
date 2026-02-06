@@ -19,6 +19,7 @@ export class TaskDefinition {
     skills: SkillType[] = [];
     xp_mult: number = 1;
     item: ItemType = ItemType.Count;
+    use_item: ItemType = ItemType.Count;
     perk: PerkType = PerkType.Count;
     prestige_layer: PrestigeLayer = PrestigeLayer.Count;
     max_reps: number = 1;
@@ -352,7 +353,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 221, name: "Bottle Lava for the Ritual", type: TaskType.Mandatory, cost_multiplier: 2_500_000_000, max_reps: 3, skills: [SkillType.Fortitude], xp_mult: 0.0001 }),
             new TaskDefinition({ id: 222, name: "Sneak Past Beings of Pure Heat", type: TaskType.Mandatory, cost_multiplier: 500_000, max_reps: 1, skills: [SkillType.Subterfuge], xp_mult: 3 }),
             new TaskDefinition({ id: 223, name: "Harness Heat", max_reps: 3, cost_multiplier: 1_000_000_000, skills: [SkillType.Magic], item: ItemType.HeatEssence, xp_mult: 0.01 },),
-            new TaskDefinition({ id: 224, name: "Cast the Ring into the Fire", cost_multiplier: 3_000_000_000, max_reps: 1, xp_mult: 0.002, skills: [SkillType.Charisma], perk: PerkType.DestroyedTheRing }),
+            new TaskDefinition({ id: 224, name: "Cast the Ring into the Fire", cost_multiplier: 3_000_000_000, max_reps: 1, xp_mult: 0.002, skills: [SkillType.Charisma], perk: PerkType.DestroyedTheRing, use_item: ItemType.MagicRing }),
             new TaskDefinition({ id: 225, name: "Get Used to the Heat", cost_multiplier: 500_000_000, max_reps: 3, skills: [SkillType.Fortitude], xp_mult: 0.002 }),
             new TaskDefinition({ id: 226, name: "Try to Use Lava for Forging", cost_multiplier: 10_000, max_reps: 4, xp_mult: 20, skills: [SkillType.Crafting] }),
             new TaskDefinition({ id: 227, name: "Winged Demon", type: TaskType.Boss, cost_multiplier: 5_000_000_000, xp_mult: 0.0002, skills: [SkillType.Combat], item: ItemType.WingsOfShadow, unlocks_task: 228 }),
