@@ -386,7 +386,6 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
     const task_button = document.createElement("button");
     task_button.className = "task-button";
-    task_button.textContent = `${task.task_definition.name}`;
     task_button.addEventListener("click", () => {
         // We do this just via classes rather than the disabled propery
         // As Firefox would also disable right-clicking otherwise
@@ -395,6 +394,10 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
         }
     });
     task_button.addEventListener("contextmenu", (e) => { e.preventDefault(); toggleAutomation(task.task_definition); });
+
+    const task_button_text = createChildElement(task_button, "span");
+    task_button_text.textContent = task.task_definition.name;
+    task_button_text.className = "task-button-text";
 
     if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_layers_unlocked.includes(task.task_definition.prestige_layer)) {
         task_button.classList.add("prestige-glow");
@@ -698,7 +701,13 @@ function updateTaskRendering() {
             button.classList.toggle("disabled", !task.enabled);
             const disabled_with_reason = !task.enabled &&  isTaskDisabledWithoutBeingFinished(task);
 
-            button.textContent = (disabled_with_reason ? `🚫` : ``) + task.task_definition.name;
+            const button_text = task_element.querySelector<HTMLInputElement>(".task-button-text");
+
+            if (button_text) {
+                button_text.textContent = (disabled_with_reason ? `🚫` : ``) + task.task_definition.name;
+            } else {
+                console.error("No task-button-text");
+            }
         }
         else {
             console.error("No task-button");

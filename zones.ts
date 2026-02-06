@@ -258,7 +258,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 155, name: "Practice Memorization", cost_multiplier: 1200, max_reps: 4, skills: [SkillType.Study, SkillType.Magic], perk: PerkType.EnergeticMemory, xp_mult: 0.5 }),
             new TaskDefinition({ id: 156, name: "Guided Spellcasting", cost_multiplier: 100, max_reps: 3, xp_mult: 10, skills: [SkillType.Magic] }),
             new TaskDefinition({ id: 157, name: "Go for a Walk", cost_multiplier: 4, max_reps: 1, xp_mult: 8, skills: [SkillType.Search, SkillType.Travel] }),
-            new TaskDefinition({ id: 158, name: "Write Down Some Learnings", max_reps: 5, cost_multiplier: 500_000, skills: [SkillType.Magic, SkillType.Study], item: ItemType.DivineNotes }),
+            new TaskDefinition({ id: 158, name: "Write Down Some Learnings", max_reps: 5, cost_multiplier: 500_000, skills: [SkillType.Magic, SkillType.Study], item: ItemType.DivineNotes, hidden_by_default: true }),
         ],
     },
     {

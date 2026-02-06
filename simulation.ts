@@ -379,7 +379,9 @@ function onFullyFinishTask(task: Task) {
         advanceZone();
     }
 
-    if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_layers_unlocked.includes(task.task_definition.prestige_layer)) {
+    if (task.task_definition.prestige_layer == PrestigeLayer.EmbraceDivinity) {
+        GAMESTATE.is_at_end_of_content = true;
+    } else if (task.task_definition.type == TaskType.Prestige && !GAMESTATE.prestige_layers_unlocked.includes(task.task_definition.prestige_layer)) {
         GAMESTATE.prestige_layers_unlocked.push(task.task_definition.prestige_layer);
         GAMESTATE.unlocked_new_prestige_this_prestige = true;
         const event = new RenderEvent(EventType.NewPrestigeLayer, {});
