@@ -167,7 +167,9 @@ function storeLoopStartNumbersForNextGameOver() {
 
 export function calcTaskCost(task: Task): number {
     const base_cost = 10;
-    const zone_exponent = 2.2;
+    const normal_exponent = 2.2;
+    const boss_exponent = 4;
+    const zone_exponent = task.task_definition.type == TaskType.Boss ? boss_exponent : normal_exponent;
     const zone_mult = Math.pow(zone_exponent, task.task_definition.zone_id);
 
     return base_cost * task.task_definition.cost_multiplier * zone_mult;
