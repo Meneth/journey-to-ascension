@@ -17,7 +17,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Added two new Prestige unlockables<br>"
         + "- Added a 3rd mandatory Task to Zone 20<br>"
         + "- Made the bosses in Zone 19 and 20 harder<br>"
-        + "- Made the post-boss Task in Zone 9 harder<br>"
+        + "- Made the post-boss Task in Zone 19 harder<br>"
         + "- Renamed Firemaking Kit to Camping Equipment and changed its icon<br>"
         + "- Updated the tooltip for the Settings Menu button<br>"
         + "- The Divine Lightning tooltip now tells you its effect in the highest Zone you've reached<br>"
