@@ -6,6 +6,11 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "0.4.1",
+        date: "2026-02-08",
+        changes: "- Made Defy the Gods task about 30% easier<br>"
+    },
+    {
         version: "0.4.0",
         date: "2026-02-06",
         changes: "- Added zones Z21 through Z25, including:<br>"
