@@ -4,7 +4,7 @@ import { HASTE_MULT, ItemDefinition, ITEMS, ARTIFACTS, ItemType, MAGIC_RING_MULT
 import { getReflectionsOnTheJourneyExponent, PerkDefinition, PERKS, PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext, SkippedTasksContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT, PERKY_BASE, COMPULSIVE_NOTE_TAKING_AMOUNT, ENERGIZED_PERK_INCREASE } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT, PERKY_BASE, COMPULSIVE_NOTE_TAKING_AMOUNT, ENERGIZED_PERK_INCREASE, MANDATORY_SCHMANDATORY_MULT } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, DEFIED_THE_GODS_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
 
 // MARK: Constants
@@ -219,6 +219,11 @@ export function calcTaskProgressMultiplier(task: Task, override_haste: boolean |
 
     if (hasPerk(PerkType.UnifiedTheoryOfMagic)) {
         mult *= Math.pow(1 + UNIFIED_THEORY_OF_MAGIC_EFFECT, GAMESTATE.highest_zone_fully_completed + 1);
+    }
+
+    const mandatory_or_travel = task.task_definition.type == TaskType.Travel || task.task_definition.type == TaskType.Mandatory;
+    if (mandatory_or_travel) {
+        mult *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.MandatorySchmandatory) * MANDATORY_SCHMANDATORY_MULT;
     }
 
     return mult * task_progress_mult;

@@ -666,7 +666,7 @@ button.do-prestige {
 #prestige-box {
     position: relative;
     height: 730px;
-    width: 530px;
+    width: 590px;
     padding: 0;
     
     scrollbar-color: var(--element-foreground-color) var(--element-foreground-color-brighter); /* Firefox */
@@ -700,8 +700,8 @@ button.do-prestige {
 }
 
 .prestige-purchase {
-    width: 115px;
-    height: 84px;
+    width: 130px;
+    height: 90px;
     text-align: center;
     display: flex;
     align-items: center;
@@ -711,10 +711,6 @@ button.do-prestige {
 div.prestige-purchase {
     background-color: var(--prestige-unlock-bought-color);
     border-radius: var(--default-border-radius);
-}
-
-.prestige-purchase.prestige-purchase-repeatable {
-    height: 84px;
 }
 
 .prestige-section {

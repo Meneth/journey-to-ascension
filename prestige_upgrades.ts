@@ -1,7 +1,7 @@
 import { GAMESTATE } from "./game.js";
 import { ItemType } from "./items.js";
 import { getPerkNameWithEmoji, PerkType } from "./perks.js";
-import { formatNumber, getItemNameWithIcon, getSkillString } from "./rendering.js";
+import { formatNumber, formatPercentage, getItemNameWithIcon, getSkillString } from "./rendering.js";
 import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
 import { calcPerkySpeedMultiplier, getPrestigeGainExponent, hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
@@ -46,7 +46,7 @@ export enum PrestigeRepeatableType {
     Energized,
     Deenergized,
 
-    DivinePlaceholder1,
+    MandatorySchmandatory,
     DivinePlaceholder2,
     DivinePlaceholder3,
     DivinePlaceholder4,
@@ -174,6 +174,7 @@ export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.12;
 export const ENERGIZED_INCREASE = 20;
 export const ENERGIZED_PERK_INCREASE = 0.05;
 export const DEENERGIZED_BASE = 0.9;
+export const MANDATORY_SCHMANDATORY_MULT = 0.1;
 
 function calcDivineSparkIncrease(zone: number) {
     const current_exponent = getPrestigeGainExponent();
@@ -258,12 +259,12 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
     },
 
     {
-        type: PrestigeRepeatableType.DivinePlaceholder1,
+        type: PrestigeRepeatableType.MandatorySchmandatory,
         layer: PrestigeLayer.EmbraceDivinity,
-        name: "PLACEHOLDER",
-        get_description: () => { return `PLACEHOLDER`; },
-        initial_cost: 100_000_000_000,
-        scaling_exponent: 2.5
+        name: "Mandatory Schmandatory",
+        get_description: () => { return `Improves the speed of Travel and Mandatory Tasks by ${formatPercentage(MANDATORY_SCHMANDATORY_MULT)}`; },
+        initial_cost: 500_000,
+        scaling_exponent: 1.5
     },
     {
         type: PrestigeRepeatableType.DivinePlaceholder2,
