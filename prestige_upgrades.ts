@@ -172,6 +172,7 @@ export const GOTTA_GO_FAST_BASE = 1.1;
 export const TRANSCENDANT_APTITUDE_MULT = 100;
 export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.12;
 export const ENERGIZED_INCREASE = 20;
+export const ENERGIZED_PERK_INCREASE = 0.05;
 export const DEENERGIZED_BASE = 0.9;
 
 function calcDivineSparkIncrease(zone: number) {
@@ -243,7 +244,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         type: PrestigeRepeatableType.Energized,
         layer: PrestigeLayer.TranscendHumanity,
         name: "Energized",
-        get_description: () => { return `Increases Max ${ENERGY_TEXT} by ${ENERGIZED_INCREASE}`; },
+        get_description: () => { return `Increases Max ${ENERGY_TEXT} by ${ENERGIZED_INCREASE}<br>Increases the ${ENERGY_TEXT} gain from ${getPerkNameWithEmoji(PerkType.EnergeticMemory)} by ${formatNumber(ENERGIZED_PERK_INCREASE * 100, false)}%`; },
         initial_cost: 1500,
         scaling_exponent: 1.75
     },

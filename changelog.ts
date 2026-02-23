@@ -16,6 +16,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Fixed Bottled Lightning queued stacks not getting zeroed on Energy reset<br>"
         + "- Mastery of Time can now skip zones on prestige<br>"
         + "- Fixed numbers getting sometimes shown as 1000k and similar rather than 1.00M<br>"
+        + "- The Energized prestige upgrade now also boosts Energetic Memory's bonus a little<br>"
     },
     {
         version: "0.4.0",
