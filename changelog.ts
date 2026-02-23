@@ -17,6 +17,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Mastery of Time can now skip zones on prestige<br>"
         + "- Fixed numbers getting sometimes shown as 1000k and similar rather than 1.00M<br>"
         + "- The Energized prestige upgrade now also boosts Energetic Memory's bonus a little<br>"
+        + "- Made Z23 post-boss task cheaper<br>"
     },
     {
         version: "0.4.0",

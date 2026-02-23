@@ -371,7 +371,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 235, name: "Practice the Local Dialect", cost_multiplier: 5_000_000_000, max_reps: 8, skills: [SkillType.Study, SkillType.Charisma], xp_mult: 0.005 }),
             new TaskDefinition({ id: 236, name: "Join Underground Fight Club", cost_multiplier: 10_000_000_000, max_reps: 4, xp_mult: 0.005, skills: [SkillType.Combat] }),
             new TaskDefinition({ id: 237, name: "Floating Ball of Eyes", type: TaskType.Boss, cost_multiplier: 50_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat], item: ItemType.Glasses, unlocks_task: 238 }),
-            new TaskDefinition({ id: 238, name: "Steal Glasses", cost_multiplier: 500_000, xp_mult: 20, skills: [SkillType.Subterfuge], item: ItemType.Glasses, max_reps: 3, hidden_by_default: true }),
+            new TaskDefinition({ id: 238, name: "Steal Glasses", cost_multiplier: 250_000, xp_mult: 20, skills: [SkillType.Subterfuge], item: ItemType.Glasses, max_reps: 3, hidden_by_default: true }),
         ],
     },
     {
