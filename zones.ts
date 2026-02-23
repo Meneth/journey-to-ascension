@@ -394,7 +394,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 250, name: "Attempt to Enter Hell", type: TaskType.Travel, cost_multiplier: 200_000, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 251, name: "Dare the Gods to Intervene", type: TaskType.Mandatory, cost_multiplier: 1_000_000_000, max_reps: 1, skills: [SkillType.Charisma], xp_mult: 0.005 }),
             new TaskDefinition({ id: 252, name: "Dig a Tunnel", type: TaskType.Mandatory, cost_multiplier: 100_000, max_reps: 5, skills: [SkillType.Crafting], xp_mult: 0.05 }),
-            new TaskDefinition({ id: 253, name: "Embrace Divinity", type: TaskType.Prestige, cost_multiplier: 25_000, max_reps: 5, skills: [SkillType.Ascension], prestige_layer: PrestigeLayer.EmbraceDivinity, xp_mult: 0.015 }),
+            new TaskDefinition({ id: 253, name: "Embrace Divinity", type: TaskType.Prestige, cost_multiplier: 32_000, max_reps: 4, skills: [SkillType.Ascension], prestige_layer: PrestigeLayer.EmbraceDivinity, xp_mult: 0.015 }),
             new TaskDefinition({ id: 254, name: "Etch Ritual Symbols", max_reps: 7, cost_multiplier: 30_000_000_000, skills: [SkillType.Magic], item: ItemType.RitualSymbol, xp_mult: 0.03 }),
             new TaskDefinition({ id: 255, name: "Defy the Gods", cost_multiplier: 25_000_000_000_000, max_reps: 1, xp_mult: 0, skills: [SkillType.Fortitude, SkillType.Ascension], perk: PerkType.DefiedTheGods }),
             new TaskDefinition({ id: 256, name: "Study Divinity", cost_multiplier: 20_000_000_000, max_reps: 8, skills: [SkillType.Study], xp_mult: 0.05 }),

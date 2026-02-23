@@ -11,6 +11,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         changes: "- Made Defy the Gods task about 30% easier<br>"
         + "- Made Divine Knowledge's cost scale slightly faster<br>"
         + "- Made Permanent Automation and Divine Inspiration have a small cost<br>"
+        + "- The Z25 Prestige task is now 4 reps instead of 5, but slightly higher cost<br>"
     },
     {
         version: "0.4.0",
