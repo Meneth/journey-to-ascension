@@ -1,8 +1,8 @@
 import { GAMESTATE } from "./game.js";
 import { getPerkNameWithEmoji, PerkType } from "./perks.js";
-import { getSkillString } from "./rendering.js";
+import { formatNumber, getSkillString } from "./rendering.js";
 import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
-import { getPrestigeGainExponent, hasPrestigeUnlock } from "./simulation.js";
+import { calcPerkySpeedMultiplier, getPrestigeGainExponent, hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
 import { SkillType } from "./skills.js";
 
@@ -26,7 +26,7 @@ export enum PrestigeUnlockType {
     MasteryOfTime,
     SeeBeyondTheVeil,
 
-    DivinePlaceholder1,
+    Perky,
     DivinePlaceholder2,
     DivinePlaceholder3,
     DivinePlaceholder4,
@@ -73,6 +73,7 @@ export class PrestigeRepeatable {
 }
 
 export const DIVINE_SPEED_TICKS_PER_PERCENT = 4;
+export const PERKY_BASE = 1.01;
 
 export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
@@ -134,11 +135,11 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     },
 
     {
-        type: PrestigeUnlockType.DivinePlaceholder1,
+        type: PrestigeUnlockType.Perky,
         layer: PrestigeLayer.EmbraceDivinity,
-        name: "PLACEHOLDER",
-        get_description: () => { return `PLACEHOLDER`; },
-        cost: 100_000_000_000
+        name: "Perky",
+        get_description: () => { return `Every Perk unlocked increases Speed by ${formatNumber(100 * (PERKY_BASE - 1), false)}% (multiplicative)<br>Current effect: +${formatNumber(100 * (calcPerkySpeedMultiplier() - 1), false)}%`; },
+        cost: 100_000
     },
     {
         type: PrestigeUnlockType.DivinePlaceholder2,

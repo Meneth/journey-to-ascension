@@ -4,7 +4,7 @@ import { HASTE_MULT, ItemDefinition, ITEMS, ARTIFACTS, ItemType, MAGIC_RING_MULT
 import { getReflectionsOnTheJourneyExponent, PerkDefinition, PERKS, PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext, SkippedTasksContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT, PERKY_BASE } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, DEFIED_THE_GODS_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
 
 // MARK: Constants
@@ -1204,6 +1204,9 @@ export function increasePrestigeRepeatableLevel(repeatable: PrestigeRepeatableTy
 function applyGameStartPrestigeEffects() {
     const show_notification = false;
 
+    // We set this so Mastery of Time doesn't trigger and cause notifications
+    GAMESTATE.is_in_zone_skip = true;
+
     for (const unlock of GAMESTATE.prestige_unlocks) {
         applyPrestigeUnlockEffects(unlock, show_notification);
     }
@@ -1211,6 +1214,10 @@ function applyGameStartPrestigeEffects() {
     const energy_boost = ENERGIZED_INCREASE * getPrestigeRepeatableLevel(PrestigeRepeatableType.Energized);
     modifyEnergy(energy_boost);
     modifyMaxEnergy(energy_boost);
+    skipFreeZones();
+
+    GAMESTATE.is_in_zone_skip = false;
+    doMasteryOfTimeTaskCompletion();
 }
 
 export function doPrestige() {
@@ -1262,6 +1269,18 @@ export function doPrestige() {
     storeLoopStartNumbersForNextGameOver();
     setTickRate();
     saveGame();
+}
+
+export function calcPerkySpeedMultiplier() {
+    let unlocked_perks = 0;
+
+    for (const [, active] of GAMESTATE.perks) {
+        if (active) {
+            ++unlocked_perks;
+        }
+    }
+
+    return Math.pow(PERKY_BASE, unlocked_perks);
 }
 
 // MARK: Persistence

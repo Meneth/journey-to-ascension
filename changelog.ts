@@ -14,6 +14,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- The Z25 Prestige task is now 4 reps instead of 5, slightly higher cost per rep<br>"
         + "- Fixed Bottled Lightning showing up in the tooltips of Tasks it doesn't apply to<br>"
         + "- Fixed Bottled Lightning queued stacks not getting zeroed on Energy reset<br>"
+        + "- Mastery of Time can now skip zones on prestige<br>"
     },
     {
         version: "0.4.0",

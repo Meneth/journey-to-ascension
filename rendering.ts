@@ -1490,7 +1490,7 @@ function populatePrestigeView() {
 
             unlock_button.innerHTML = `${unlock.name}`;
             if (!is_unlocked) {
-                unlock_button.innerHTML += `<br>Cost: ${unlock.cost}`;
+                unlock_button.innerHTML += `<br>Cost: ${formatNumber(unlock.cost, false)}`;
             }
 
             if (!is_unlocked) {
