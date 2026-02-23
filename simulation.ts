@@ -639,6 +639,7 @@ function doAnyReset() {
     GAMESTATE.automation_mode = AutomationMode.Off;
     GAMESTATE.queued_scrolls_of_haste = 0;
     GAMESTATE.queued_magic_rings = 0;
+    GAMESTATE.queued_lightning = 0;
     GAMESTATE.items_found_this_energy_reset = [];
     GAMESTATE.used_items.clear();
     removeTemporarySkillBonuses();

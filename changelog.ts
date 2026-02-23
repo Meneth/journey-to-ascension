@@ -13,6 +13,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Made Permanent Automation and Divine Inspiration have a small cost<br>"
         + "- The Z25 Prestige task is now 4 reps instead of 5, but slightly higher cost<br>"
         + "- Fixed Bottled Lightning showing up in the tooltips of Tasks it doesn't apply to<br>"
+        + "- Fixed Bottled Lightning queued stacks not getting zeroed on Energy reset<br>"
     },
     {
         version: "0.4.0",
