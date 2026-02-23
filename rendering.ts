@@ -483,8 +483,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 tooltip += `<p class="disable-reason">Disabled due to this Boss requiring more than ${BOSS_MAX_ENERGY_DISPARITY}x your current ${ENERGY_TEXT}</p>`;
             }
             else if (isTaskDisabledDueToMissingItem(task)) {
-                const item = ITEMS[task.task_definition.use_item] as ItemDefinition;
-                tooltip += `<p class="disable-reason">Disabled due to this requiring a ${item.icon}${item.name} Item</p>`;
+                tooltip += `<p class="disable-reason">Disabled due to this requiring a ${getItemNameWithIcon(task.task_definition.use_item)} Item</p>`;
             }
             else {
                 console.error("Task disabled for unknown reason");
@@ -528,9 +527,8 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             }
 
             if (task.task_definition.item != ItemType.Count) {
-                const item = ITEMS[task.task_definition.item] as ItemDefinition;
                 const plural = completions > 1;
-                createTwoElementRow(getOrCreateTable(), `${item.icon}${item.name} ${plural ? "Items" : "Item"}`, `${completions}`);
+                createTwoElementRow(getOrCreateTable(), `${getItemNameWithIcon(task.task_definition.item)} ${plural ? "Items" : "Item"}`, `${completions}`);
             }
 
             if (task.task_definition.perk != PerkType.Count && !hasPerk(task.task_definition.perk)) {
@@ -595,9 +593,8 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
             const table = createTableSection(task_table,"Cost Estimate");
 
             if (task.task_definition.use_item != ItemType.Count) {
-                const item = ITEMS[task.task_definition.use_item] as ItemDefinition;
                 const plural = completions > 1;
-                createTwoElementRow(table, `${item.icon}${item.name} ${plural ? "Items" : "Item"}`, `${completions}`);
+                createTwoElementRow(table, `${getItemNameWithIcon(task.task_definition.use_item)} ${plural ? "Items" : "Item"}`, `${completions}`);
             }
 
             const energy_cost = estimateTotalTaskEnergyConsumption(task, completions);
@@ -987,8 +984,7 @@ function setupItemUndoForButton(button: HTMLInputElement) {
             return "Undo Last Item Use";
         }
         
-        const item = ITEMS[item_type] as ItemDefinition;
-        return `Undo Use of ${amount} ${amount == 1 ? `${item.name}` : `${item.name_plural}`}`;
+        return `Undo Use of ${amount} ${getItemNameWithIcon(item_type, amount != 1)}`;
     }, () => {
         const [item_type,] = GAMESTATE.undo_item;
         const conditions = "Item undo is available until you start your next Task<br>Using an Item while already having a Task active will prevent undoing<br>Automatically used Items also cannot be undone";
@@ -1124,6 +1120,11 @@ function updateItems() {
         const count_text = button.querySelector<HTMLElement>(".item-count") as HTMLElement;
         count_text.textContent = `${item_count}`;
     }
+}
+
+export function getItemNameWithIcon(item_type: ItemType, plural = false) {
+    const item = ITEMS[item_type] as ItemDefinition;
+    return `${item.icon}${plural ? item.name_plural : item.name}`;
 }
 
 // MARK: Perks
@@ -1904,7 +1905,7 @@ function handleEvents() {
                     const item_context = context as UsedItemContext;
                     const item = ITEMS[item_context.item] as ItemDefinition;
                     const plural = item_context.count > 1;
-                    message_div.innerHTML = `Used ${item_context.count} ${item.icon}${plural ? item.name_plural : item.name}`;
+                    message_div.innerHTML = `Used ${item_context.count} ${getItemNameWithIcon(item_context.item, plural)}`;
                     message_div.innerHTML += `<br>${item.getEffectText(item_context.count)}`;
                     recreateItemsIfNeeded();
                     break;
@@ -1912,9 +1913,8 @@ function handleEvents() {
             case EventType.UndidItem:
                 {
                     const item_context = context as UsedItemContext;
-                    const item = ITEMS[item_context.item] as ItemDefinition;
                     const plural = item_context.count > 1;
-                    message_div.innerHTML = `Undid use of ${item_context.count} ${item.icon}${plural ? item.name_plural : item.name}`;
+                    message_div.innerHTML = `Undid use of ${item_context.count} ${getItemNameWithIcon(item_context.item, plural)}`;
                     recreateItemsIfNeeded();
                     break;
                 }

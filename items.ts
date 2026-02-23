@@ -402,3 +402,4 @@ export const ITEMS: ItemDefinition[] = [
 ]
 
 export const ARTIFACTS = [ItemType.ScrollOfHaste, ItemType.Dreamcatcher, ItemType.MagicRing, ItemType.BottledLightning];
+export const NOTE_ITEMS = [ItemType.ScrollOfHaste, ItemType.Book, ItemType.CraftingRecipe, ItemType.DivineNotes, ItemType.GriffinQuill];

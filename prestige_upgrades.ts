@@ -1,6 +1,7 @@
 import { GAMESTATE } from "./game.js";
+import { ItemType } from "./items.js";
 import { getPerkNameWithEmoji, PerkType } from "./perks.js";
-import { formatNumber, getSkillString } from "./rendering.js";
+import { formatNumber, getItemNameWithIcon, getSkillString } from "./rendering.js";
 import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
 import { calcPerkySpeedMultiplier, getPrestigeGainExponent, hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
@@ -27,7 +28,7 @@ export enum PrestigeUnlockType {
     SeeBeyondTheVeil,
 
     Perky,
-    DivinePlaceholder2,
+    CompulsiveNotetaking,
     DivinePlaceholder3,
     DivinePlaceholder4,
     
@@ -74,6 +75,7 @@ export class PrestigeRepeatable {
 
 export const DIVINE_SPEED_TICKS_PER_PERCENT = 4;
 export const PERKY_BASE = 1.01;
+export const COMPULSIVE_NOTE_TAKING_AMOUNT = 2;
 
 export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
@@ -142,11 +144,11 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         cost: 100_000
     },
     {
-        type: PrestigeUnlockType.DivinePlaceholder2,
+        type: PrestigeUnlockType.CompulsiveNotetaking,
         layer: PrestigeLayer.EmbraceDivinity,
-        name: "PLACEHOLDER",
-        get_description: () => { return `PLACEHOLDER`; },
-        cost: 100_000_000_000
+        name: "Compulsive Notetaking",
+        get_description: () => { return `Start every reset with at minimum ${COMPULSIVE_NOTE_TAKING_AMOUNT} of each of ${getItemNameWithIcon(ItemType.ScrollOfHaste, true)}, ${getItemNameWithIcon(ItemType.Book, true)}, ${getItemNameWithIcon(ItemType.CraftingRecipe, true)}, ${getItemNameWithIcon(ItemType.DivineNotes, true)}, and ${getItemNameWithIcon(ItemType.GriffinQuill, true)}<br>Takes effect if you would keep fewer of the given Item on Energy Reset`; },
+        cost: 1_000_000
     },
     {
         type: PrestigeUnlockType.DivinePlaceholder3,
