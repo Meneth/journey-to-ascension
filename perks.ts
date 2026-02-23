@@ -1,7 +1,7 @@
 import { GAMESTATE } from "./game.js";
 import { PerkSkillModifierList } from "./modifiers.js";
 import { PrestigeUnlockType } from "./prestige_upgrades.js";
-import { formatNumber } from "./rendering.js";
+import { formatPercentage } from "./rendering.js";
 import {
     DIVINE_SPARK_TEXT,
     ENERGY_TEXT,
@@ -273,7 +273,7 @@ export const PERKS: PerkDefinition[] = [
     new PerkDefinition({
         enum: PerkType.Awakening,
         name: `Awakening`,
-        get_custom_tooltip: () => { return `Improves ${DIVINE_SPARK_TEXT} gain by ${formatNumber(AWAKENING_DIVINE_SPARK_MULT * 100)}%`; },
+        get_custom_tooltip: () => { return `Improves ${DIVINE_SPARK_TEXT} gain by ${formatPercentage(AWAKENING_DIVINE_SPARK_MULT)}`; },
         icon: `💤`,
     }),
     new PerkDefinition({
@@ -401,7 +401,7 @@ export const PERKS: PerkDefinition[] = [
     new PerkDefinition({
         enum: PerkType.DefiedTheGods,
         name: `Defied the Gods`,
-        get_custom_tooltip: () => { return `Improves ${DIVINE_SPARK_TEXT} gain by ${formatNumber(DEFIED_THE_GODS_SPARK_MULT * 100)}%`; },
+        get_custom_tooltip: () => { return `Improves ${DIVINE_SPARK_TEXT} gain by ${formatPercentage(DEFIED_THE_GODS_SPARK_MULT)}`; },
         skill_modifiers: new PerkSkillModifierList([
             [SkillType.Ascension, 1.0],
         ]),

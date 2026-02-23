@@ -545,7 +545,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
             const power_gain = completions * calcPowerGain(task);
             if (power_gain > 0 && GAMESTATE.has_unlocked_power) {
-                createTwoElementRow(getOrCreateTable(), `💪Power`, `${formatNumber(power_gain, false)}`);
+                createTwoElementRow(getOrCreateTable(), `💪Power`, `${formatInt(power_gain)}`);
             }
         }
 
@@ -876,7 +876,7 @@ function setupInfoTooltips() {
                 items_string += ITEMS[item_type]?.icon;
             }
 
-            createThreeElementRow(table, getSkillString(skill_type), items_string, `+${formatNumber((skill.speed_modifier - 1) * 100, false)}%`);
+            createThreeElementRow(table, getSkillString(skill_type), items_string, `+${formatPercentage((skill.speed_modifier - 1))}`);
         }
 
         if (table.children.length == 1) {
@@ -1271,7 +1271,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
     if (power_gain > 0) {
         const power_gain_text = document.createElement("p");
         const speed_bonus = calcPowerSpeedBonusAtLevel(info.power_at_end) / calcPowerSpeedBonusAtLevel(info.power_at_start);
-        power_gain_text.textContent = `${POWER_TEXT}: +${formatNumber(power_gain, false)} (x${speed_bonus.toFixed(2)} speed)`;
+        power_gain_text.textContent = `${POWER_TEXT}: +${formatInt(power_gain)} (x${speed_bonus.toFixed(2)} speed)`;
 
         skill_gain.appendChild(power_gain_text);
     }
@@ -1280,7 +1280,7 @@ function populateEnergyReset(energy_reset_div: HTMLElement) {
     if (attunement_gain > 0) {
         const attunement_gain_text = document.createElement("p");
         const speed_bonus = calcAttunementSpeedBonusAtLevel(info.attunement_at_end) / calcAttunementSpeedBonusAtLevel(info.attunement_at_start);
-        attunement_gain_text.textContent = `${ATTUNEMENT_TEXT}: +${formatNumber(attunement_gain, false)} (x${speed_bonus.toFixed(2)} speed)`;
+        attunement_gain_text.textContent = `${ATTUNEMENT_TEXT}: +${formatInt(attunement_gain)} (x${speed_bonus.toFixed(2)} speed)`;
 
         skill_gain.appendChild(attunement_gain_text);
     }
@@ -1420,7 +1420,7 @@ function populatePrestigeView() {
         });
 
         prestige_button.addEventListener("click", () => {
-            let warning = `Will give ${formatNumber(calcDivineSparkGain(), false)} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases`;
+            let warning = `Will give ${formatInt(calcDivineSparkGain())} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases`;
             if (!hasPrestigeUnlock(PrestigeUnlockType.SeeBeyondTheVeil)) {
                 warning += `<br>Will also remove all Boss Tasks from automation`;
             }
@@ -1434,14 +1434,14 @@ function populatePrestigeView() {
         prestige_button.classList.toggle("prestige-glow", GAMESTATE.unlocked_new_prestige_this_prestige);
 
         const divine_spark = createChildElement(summary_div, "p");
-        divine_spark.innerHTML = `${DIVINE_SPARK_TEXT}: ${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})<span class="divine-spark-info">ℹ</span>`;
+        divine_spark.innerHTML = `${DIVINE_SPARK_TEXT}: ${formatInt(GAMESTATE.divine_spark)} (+${formatInt(calcDivineSparkGain())})<span class="divine-spark-info">ℹ</span>`;
         divine_spark.className = "divine-spark-text";
 
         setupTooltipStaticHeader(divine_spark, `${DIVINE_SPARK_TEXT} Gain`, () => {
             const dummy_div = document.createElement("div");
 
             const divine_spark = createChildElement(dummy_div, "p");
-            divine_spark.innerHTML = `${DIVINE_SPARK_TEXT} gain if you Prestige now: +${formatNumber(calcDivineSparkGain(), false)}`;
+            divine_spark.innerHTML = `${DIVINE_SPARK_TEXT} gain if you Prestige now: +${formatInt(calcDivineSparkGain())}`;
 
             const divine_spark_gain = createChildElement(dummy_div, "p");
             divine_spark_gain.innerHTML = `${DIVINE_SPARK_TEXT} gain formula:<br>100, multiplied by ${formatNumber(getPrestigeGainExponent())} for each Zone past 15`;
@@ -1457,7 +1457,7 @@ function populatePrestigeView() {
             divine_spark_gain_stats.innerHTML = `Highest Zone reached: ${GAMESTATE.highest_zone + 1}`;
 
             const potentialReachGain = calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone + 1) - calcDivineSparkGainFromHighestZone(GAMESTATE.highest_zone);
-            divine_spark_gain_stats.innerHTML += `<br><br>Additional ${DIVINE_SPARK_TEXT} for reaching Zone ${GAMESTATE.highest_zone + 2}: ${formatNumber(potentialReachGain, false)}`;
+            divine_spark_gain_stats.innerHTML += `<br><br>Additional ${DIVINE_SPARK_TEXT} for reaching Zone ${GAMESTATE.highest_zone + 2}: ${formatInt(potentialReachGain)}`;
 
             return dummy_div.innerHTML;
         });
@@ -1491,7 +1491,7 @@ function populatePrestigeView() {
 
             unlock_button.innerHTML = `${unlock.name}`;
             if (!is_unlocked) {
-                unlock_button.innerHTML += `<br>Cost: ${formatNumber(unlock.cost, false)}`;
+                unlock_button.innerHTML += `<br>Cost: ${formatInt(unlock.cost)}`;
             }
 
             if (!is_unlocked) {
@@ -1519,7 +1519,7 @@ function populatePrestigeView() {
             unlock_button.className = "prestige-purchase prestige-purchase-repeatable";
             const cost = calcPrestigeRepeatableCost(upgrade.type);
             const level = getPrestigeRepeatableLevel(upgrade.type);
-            unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${formatNumber(cost, false)}<br>Level: ${level}`;
+            unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${formatInt(cost)}<br>Level: ${level}`;
 
             (unlock_button as HTMLInputElement).disabled = cost > GAMESTATE.divine_spark;
 
@@ -1529,13 +1529,13 @@ function populatePrestigeView() {
 
                 switch (upgrade.type) {
                     case PrestigeRepeatableType.DivineKnowledge:
-                        desc += `+${formatNumber(DIVINE_KNOWLEDGE_MULT * level * 100, false)}%`;
+                        desc += `+${formatPercentage(DIVINE_KNOWLEDGE_MULT * level)}`;
                         break;
                     case PrestigeRepeatableType.UnlimitedPower:
-                        desc += `x${formatNumber(Math.pow(2, level), false)}`;
+                        desc += `x${formatInt(Math.pow(2, level))}`;
                         break;
                     case PrestigeRepeatableType.DivineAppetite:
-                        desc += `+${formatNumber(DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT * level * 100, false)}%`;
+                        desc += `+${formatPercentage(DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT * level)}`;
                         break;
                     case PrestigeRepeatableType.GottaGoFast:
                         desc += `x${formatNumber(Math.pow(GOTTA_GO_FAST_BASE, level))}`;
@@ -1548,7 +1548,7 @@ function populatePrestigeView() {
                         break;
                     case PrestigeRepeatableType.Energized:
                         desc += `+${level * ENERGIZED_INCREASE}`;
-                        desc += ` and +${formatNumber(100 * level * ENERGIZED_PERK_INCREASE, false)}%`;
+                        desc += ` and +${formatPercentage(level * ENERGIZED_PERK_INCREASE)}`;
                         break;
                     case PrestigeRepeatableType.Deenergized:
                         desc += `x${formatNumber(Math.pow(DEENERGIZED_BASE, level))}`;
@@ -1589,7 +1589,7 @@ function setupOpenPrestige() {
         }
     });
 
-    setupTooltip(open_button, function () { return `${DIVINE_SPARK_TEXT} - ${formatNumber(GAMESTATE.divine_spark, false)}`; }, function () {
+    setupTooltip(open_button, function () { return `${DIVINE_SPARK_TEXT} - ${formatInt(GAMESTATE.divine_spark)}`; }, function () {
         const tooltip = `Within this menu you can Prestige to gain ${DIVINE_SPARK_TEXT}, and buy powerful upgrades`;
 
         return tooltip;
@@ -1639,12 +1639,12 @@ export function formatNumber(n: number, allow_decimals: boolean = true): string 
     }
 }
 
-export function formatInteger(n: number) {
+export function formatInt(n: number) {
     return formatNumber(n, false);
 }
 
 export function formatPercentage(n: number) {
-    return `${formatInteger(n * 100)}%`;
+    return `${formatInt(n * 100)}%`;
 }
 
 // MARK: Settings
@@ -2138,22 +2138,22 @@ function setupAutomationControls() {
 function updateExtraStats() {
     if (GAMESTATE.has_unlocked_power && RENDERING.power_element.classList.contains("hidden")) {
         RENDERING.power_element.classList.remove("hidden");
-        setupTooltip(RENDERING.power_element, function () { return `💪Power - ${formatNumber(GAMESTATE.power, false)}`; }, function () {
-            let tooltip = `Increases ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} speed by ${formatNumber(GAMESTATE.power, false)}%`;
+        setupTooltip(RENDERING.power_element, function () { return `💪Power - ${formatInt(GAMESTATE.power)}`; }, function () {
+            let tooltip = `Increases ${getSkillString(SkillType.Combat)} and ${getSkillString(SkillType.Fortitude)} speed by ${formatInt(GAMESTATE.power)}%`;
             tooltip += `<br><br>Increased by fighting Bosses`;
 
             return tooltip;
         });
     }
 
-    const power_text = `<span>💪Power</span><span>${formatNumber(GAMESTATE.power, false)}</span>`;
+    const power_text = `<span>💪Power</span><span>${formatInt(GAMESTATE.power)}</span>`;
     if (RENDERING.power_element.innerHTML != power_text) {
         RENDERING.power_element.innerHTML = power_text;
     }
 
     if (hasPerk(PerkType.Attunement) && RENDERING.attunement_element.classList.contains("hidden")) {
         RENDERING.attunement_element.classList.remove("hidden");
-        setupTooltip(RENDERING.attunement_element, function () { return `🌀Attunement - ${formatNumber(GAMESTATE.attunement, false)}`; }, function () {
+        setupTooltip(RENDERING.attunement_element, function () { return `🌀Attunement - ${formatInt(GAMESTATE.attunement)}`; }, function () {
             const attunement_skill_strings: string[] = [];
             calcAttunementSkills().forEach((value: SkillType) => { attunement_skill_strings.push(getSkillString(value)); });
 
@@ -2165,7 +2165,7 @@ function updateExtraStats() {
         });
     }
 
-    const attunement_text = `<span>🌀Attunement</span><span>${formatNumber(GAMESTATE.attunement, false)}</span>`;
+    const attunement_text = `<span>🌀Attunement</span><span>${formatInt(GAMESTATE.attunement)}</span>`;
     if (RENDERING.attunement_element.innerHTML != attunement_text) {
         RENDERING.attunement_element.innerHTML = attunement_text;
     }
@@ -2174,7 +2174,7 @@ function updateExtraStats() {
         RENDERING.open_prestige_element.classList.remove("hidden");
     }
 
-    const prestige_text = GAMESTATE.prestige_available ? `<h2>${DIVINE_SPARK_TEXT}<br>${formatNumber(GAMESTATE.divine_spark, false)} (+${formatNumber(calcDivineSparkGain(), false)})</h2>` : `<h2>${DIVINE_SPARK_TEXT}<br>${formatNumber(GAMESTATE.divine_spark, false)}</h2>`;
+    const prestige_text = GAMESTATE.prestige_available ? `<h2>${DIVINE_SPARK_TEXT}<br>${formatInt(GAMESTATE.divine_spark)} (+${formatInt(calcDivineSparkGain())})</h2>` : `<h2>${DIVINE_SPARK_TEXT}<br>${formatInt(GAMESTATE.divine_spark)}</h2>`;
     if (RENDERING.open_prestige_element.innerHTML != prestige_text) {
         RENDERING.open_prestige_element.innerHTML = prestige_text;
     }
@@ -2276,7 +2276,7 @@ function populateStatsView() {
                 const modifier = item.skill_modifiers.getStacked(amount);
                 const effect = modifier.getSkillEffect(skill_type);
     
-                createTwoElementRow(item_table, `${amount} ${item.getNameWithEmoji(amount)}`, `+${formatNumber(effect * 100)}%`);
+                createTwoElementRow(item_table, `${amount} ${item.getNameWithEmoji(amount)}`, `+${formatPercentage(effect)}`);
             }
     
             createTwoElementRow(item_table, "Total Item bonus", `x${formatNumber(skill.speed_modifier)}`);

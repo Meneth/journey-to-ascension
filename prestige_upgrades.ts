@@ -1,7 +1,7 @@
 import { GAMESTATE } from "./game.js";
 import { ItemType } from "./items.js";
 import { getPerkNameWithEmoji, PerkType } from "./perks.js";
-import { formatNumber, formatPercentage, getItemNameWithIcon, getSkillString } from "./rendering.js";
+import { formatPercentage, getItemNameWithIcon, getSkillString } from "./rendering.js";
 import { ATTUNEMENT_EMOJI, ATTUNEMENT_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, XP_TEXT } from "./rendering_constants.js";
 import { calcPerkySpeedMultiplier, getPrestigeGainExponent, hasPrestigeUnlock } from "./simulation.js";
 import { REFLECTIONS_ON_THE_JOURNEY_BASE, REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE } from "./simulation_constants.js";
@@ -140,7 +140,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         type: PrestigeUnlockType.Perky,
         layer: PrestigeLayer.EmbraceDivinity,
         name: "Perky",
-        get_description: () => { return `Every Perk unlocked increases Speed by ${formatNumber(100 * (PERKY_BASE - 1), false)}% (multiplicative)<br>Current effect: +${formatNumber(100 * (calcPerkySpeedMultiplier() - 1), false)}%`; },
+        get_description: () => { return `Every Perk unlocked increases Task Speed by ${formatPercentage(PERKY_BASE - 1)} (multiplicative)<br>Current effect: +${formatPercentage(calcPerkySpeedMultiplier() - 1)}`; },
         cost: 100_000
     },
     {
@@ -245,7 +245,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         type: PrestigeRepeatableType.Energized,
         layer: PrestigeLayer.TranscendHumanity,
         name: "Energized",
-        get_description: () => { return `Increases Max ${ENERGY_TEXT} by ${ENERGIZED_INCREASE}<br>Increases the ${ENERGY_TEXT} gain from ${getPerkNameWithEmoji(PerkType.EnergeticMemory)} by ${formatNumber(ENERGIZED_PERK_INCREASE * 100, false)}%`; },
+        get_description: () => { return `Increases Max ${ENERGY_TEXT} by ${ENERGIZED_INCREASE}<br>Increases the ${ENERGY_TEXT} gain from ${getPerkNameWithEmoji(PerkType.EnergeticMemory)} by ${formatPercentage(ENERGIZED_PERK_INCREASE )}`; },
         initial_cost: 1500,
         scaling_exponent: 1.75
     },
