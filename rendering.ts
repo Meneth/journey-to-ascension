@@ -646,7 +646,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
                 createTwoElementRow(getOrCreateTable(), `${HASTE_TEXT}${needs_asterisk ? "*".repeat(haste_asterisk_index) : ""}`, `<span class="good">x${HASTE_MULT}</span>`);
             }
 
-            if (lightning_stacks > 0) {
+            if (lightning_stacks > 0 && task.task_definition.type == TaskType.Boss) {
                 createTwoElementRow(getOrCreateTable(), BOTTLED_LIGHTNING_TEXT, `<span class="good">x${BOTTLED_LIGHTNING_MULT}</span>`);
             }
 

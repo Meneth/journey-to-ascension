@@ -12,6 +12,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Made Divine Knowledge's cost scale slightly faster<br>"
         + "- Made Permanent Automation and Divine Inspiration have a small cost<br>"
         + "- The Z25 Prestige task is now 4 reps instead of 5, but slightly higher cost<br>"
+        + "- Fixed Bottled Lightning showing up in the tooltips of Tasks it doesn't apply to<br>"
     },
     {
         version: "0.4.0",
