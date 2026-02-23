@@ -9,6 +9,8 @@ export const CHANGELOG: ChangelogEntry[] = [
         version: "0.4.1",
         date: "2026-02-08",
         changes: "- Made Defy the Gods task about 30% easier<br>"
+        + "- Made Divine Knowledge's cost scale slightly faster<br>"
+        + "- Made Permanent Automation and Divine Inspiration have a small cost<br>"
     },
     {
         version: "0.4.0",

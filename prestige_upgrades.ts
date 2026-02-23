@@ -70,14 +70,14 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         layer: PrestigeLayer.TouchTheDivine,
         name: "Permanent Automation",
         get_description: () => { return `Permanently unlocks the ${getPerkNameWithEmoji(PerkType.Amulet)} Perk`; },
-        cost: 1
+        cost: 10
     },
     {
         type: PrestigeUnlockType.DivineInspiration,
         layer: PrestigeLayer.TouchTheDivine,
         name: "Divine Inspiration",
         get_description: () => { return `Increases ${XP_TEXT} gain by 50% and 🌀Attunement gain by 100%<br>Note that 🌀Attunement still needs to be unlocked in Zone 10`; },
-        cost: 1
+        cost: 10
     },
     {
         type: PrestigeUnlockType.LookInTheMirror,
@@ -147,7 +147,7 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         name: "Divine Knowledge",
         get_description: () => { return `Increases ${XP_TEXT}${hasPrestigeUnlock(PrestigeUnlockType.FullyAttuned) ? ` and ${ATTUNEMENT_TEXT}` : ""} gain by ${DIVINE_KNOWLEDGE_MULT * 100}%`; },
         initial_cost: 10,
-        scaling_exponent: 1.23
+        scaling_exponent: 1.25
     },
     {
         type: PrestigeRepeatableType.UnlimitedPower,
