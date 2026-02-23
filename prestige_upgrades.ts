@@ -25,6 +25,11 @@ export enum PrestigeUnlockType {
     DivineSpeed,
     MasteryOfTime,
     SeeBeyondTheVeil,
+
+    DivinePlaceholder1,
+    DivinePlaceholder2,
+    DivinePlaceholder3,
+    DivinePlaceholder4,
     
     Count
 }
@@ -39,6 +44,11 @@ export enum PrestigeRepeatableType {
     TranscendantAptitude,
     Energized,
     Deenergized,
+
+    DivinePlaceholder1,
+    DivinePlaceholder2,
+    DivinePlaceholder3,
+    DivinePlaceholder4,
 
     Count
 }
@@ -121,6 +131,35 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         name: "See Beyond the Veil",
         get_description: () => { return `Unlocks five new tasks before Zone 20<br>Boss Tasks no longer get removed from Automation on Prestige`; },
         cost: 100_000
+    },
+
+    {
+        type: PrestigeUnlockType.DivinePlaceholder1,
+        layer: PrestigeLayer.EmbraceDivinity,
+        name: "PLACEHOLDER",
+        get_description: () => { return `PLACEHOLDER`; },
+        cost: 100_000_000_000
+    },
+    {
+        type: PrestigeUnlockType.DivinePlaceholder2,
+        layer: PrestigeLayer.EmbraceDivinity,
+        name: "PLACEHOLDER",
+        get_description: () => { return `PLACEHOLDER`; },
+        cost: 100_000_000_000
+    },
+    {
+        type: PrestigeUnlockType.DivinePlaceholder3,
+        layer: PrestigeLayer.EmbraceDivinity,
+        name: "PLACEHOLDER",
+        get_description: () => { return `PLACEHOLDER`; },
+        cost: 100_000_000_000
+    },
+    {
+        type: PrestigeUnlockType.DivinePlaceholder4,
+        layer: PrestigeLayer.EmbraceDivinity,
+        name: "PLACEHOLDER",
+        get_description: () => { return `PLACEHOLDER`; },
+        cost: 100_000_000_000
     },
 ];
 
@@ -211,6 +250,39 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         name: "Deenergized",
         get_description: () => { return `Reduces ${ENERGY_TEXT} drain by ${((1 - DEENERGIZED_BASE) * 100).toFixed(0)}%`; },
         initial_cost: 10000,
+        scaling_exponent: 2.5
+    },
+
+    {
+        type: PrestigeRepeatableType.DivinePlaceholder1,
+        layer: PrestigeLayer.EmbraceDivinity,
+        name: "PLACEHOLDER",
+        get_description: () => { return `PLACEHOLDER`; },
+        initial_cost: 100_000_000_000,
+        scaling_exponent: 2.5
+    },
+    {
+        type: PrestigeRepeatableType.DivinePlaceholder2,
+        layer: PrestigeLayer.EmbraceDivinity,
+        name: "PLACEHOLDER",
+        get_description: () => { return `PLACEHOLDER`; },
+        initial_cost: 100_000_000_000,
+        scaling_exponent: 2.5
+    },
+    {
+        type: PrestigeRepeatableType.DivinePlaceholder3,
+        layer: PrestigeLayer.EmbraceDivinity,
+        name: "PLACEHOLDER",
+        get_description: () => { return `PLACEHOLDER`; },
+        initial_cost: 100_000_000_000,
+        scaling_exponent: 2.5
+    },
+    {
+        type: PrestigeRepeatableType.DivinePlaceholder4,
+        layer: PrestigeLayer.EmbraceDivinity,
+        name: "PLACEHOLDER",
+        get_description: () => { return `PLACEHOLDER`; },
+        initial_cost: 100_000_000_000,
         scaling_exponent: 2.5
     },
 ];
