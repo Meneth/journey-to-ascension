@@ -1620,7 +1620,7 @@ export function formatNumber(n: number, allow_decimals: boolean = true): string 
     const postfixes = ["k", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
     let postfix_index = -1;
 
-    while (n > 1000 && (postfix_index + 1) < postfixes.length) {
+    while (n >= 1000 && (postfix_index + 1) < postfixes.length) {
         n = n / 1000;
         postfix_index++;
     }

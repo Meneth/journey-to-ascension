@@ -15,6 +15,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Fixed Bottled Lightning showing up in the tooltips of Tasks it doesn't apply to<br>"
         + "- Fixed Bottled Lightning queued stacks not getting zeroed on Energy reset<br>"
         + "- Mastery of Time can now skip zones on prestige<br>"
+        + "- Fixed numbers getting sometimes shown as 1000k and similar rather than 1.00M<br>"
     },
     {
         version: "0.4.0",
