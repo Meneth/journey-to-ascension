@@ -29,7 +29,7 @@ export enum PrestigeUnlockType {
 
     Perky,
     CompulsiveNotetaking,
-    DivinePlaceholder3,
+    CraftingBreakthrough,
     DivinePlaceholder4,
     
     Count
@@ -47,7 +47,7 @@ export enum PrestigeRepeatableType {
     Deenergized,
 
     MandatorySchmandatory,
-    DivinePlaceholder2,
+    DivineAttunement,
     DivinePlaceholder3,
     DivinePlaceholder4,
 
@@ -151,11 +151,11 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         cost: 1_000_000
     },
     {
-        type: PrestigeUnlockType.DivinePlaceholder3,
+        type: PrestigeUnlockType.CraftingBreakthrough,
         layer: PrestigeLayer.EmbraceDivinity,
-        name: "PLACEHOLDER",
-        get_description: () => { return `PLACEHOLDER`; },
-        cost: 100_000_000_000
+        name: "Crafting Breakthrough",
+        get_description: () => { return `>Makes ${ATTUNEMENT_TEXT} apply to ${getSkillString(SkillType.Crafting)}`; },
+        cost: 3_000_000
     },
     {
         type: PrestigeUnlockType.DivinePlaceholder4,
@@ -174,7 +174,8 @@ export const DIVINE_LIGHTNING_EXPONENT_INCREASE = 0.12;
 export const ENERGIZED_INCREASE = 20;
 export const ENERGIZED_PERK_INCREASE = 0.05;
 export const DEENERGIZED_BASE = 0.9;
-export const MANDATORY_SCHMANDATORY_MULT = 0.1;
+export const MANDATORY_SCHMANDATORY_MULT = 0.2;
+export const DIVINE_ATTUNEMENT_BASE = 1.25;
 
 function calcDivineSparkIncrease(zone: number) {
     const current_exponent = getPrestigeGainExponent();
@@ -262,17 +263,17 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         type: PrestigeRepeatableType.MandatorySchmandatory,
         layer: PrestigeLayer.EmbraceDivinity,
         name: "Mandatory Schmandatory",
-        get_description: () => { return `Improves the speed of Travel and Mandatory Tasks by ${formatPercentage(MANDATORY_SCHMANDATORY_MULT)}`; },
+        get_description: () => { return `Improves the speed of Travel, Mandatory, and Prestige Tasks by ${formatPercentage(MANDATORY_SCHMANDATORY_MULT)}`; },
         initial_cost: 500_000,
         scaling_exponent: 1.5
     },
     {
-        type: PrestigeRepeatableType.DivinePlaceholder2,
+        type: PrestigeRepeatableType.DivineAttunement,
         layer: PrestigeLayer.EmbraceDivinity,
-        name: "PLACEHOLDER",
-        get_description: () => { return `PLACEHOLDER`; },
-        initial_cost: 100_000_000_000,
-        scaling_exponent: 2.5
+        name: "Divine Attunement",
+        get_description: () => { return `Multiplies ${ATTUNEMENT_TEXT} Gain by ${DIVINE_ATTUNEMENT_BASE}`; },
+        initial_cost: 1_000_000,
+        scaling_exponent: 2
     },
     {
         type: PrestigeRepeatableType.DivinePlaceholder3,

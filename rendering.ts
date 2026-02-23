@@ -6,7 +6,7 @@ import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.j
 import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpContext, SkippedTasksContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ATTUNEMENT_TEXT, BOTTLED_LIGHTNING_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, TRAVEL_EMOJI, XP_TEXT } from "./rendering_constants.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DEENERGIZED_BASE, PrestigeUnlockType, ENERGIZED_PERK_INCREASE, MANDATORY_SCHMANDATORY_MULT } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DEENERGIZED_BASE, PrestigeUnlockType, ENERGIZED_PERK_INCREASE, MANDATORY_SCHMANDATORY_MULT, DIVINE_ATTUNEMENT_BASE } from "./prestige_upgrades.js";
 import { CHANGELOG } from "./changelog.js";
 import { CREDITS } from "./credits.js";
 import { AWAKENING_DIVINE_SPARK_MULT, DEFIED_THE_GODS_SPARK_MULT } from "./simulation_constants.js";
@@ -540,7 +540,7 @@ function createTaskDiv(task: Task, tasks_div: HTMLElement, rendering: Rendering)
 
             const attunement_gain = completions * calcAttunementGain(task);
             if (attunement_gain > 0) {
-                createTwoElementRow(getOrCreateTable(), `🌀Attunement`, `${attunement_gain}`);
+                createTwoElementRow(getOrCreateTable(), `🌀Attunement`, `${formatInt(attunement_gain)}`);
             }
 
             const power_gain = completions * calcPowerGain(task);
@@ -1555,6 +1555,9 @@ function populatePrestigeView() {
                         break;
                     case PrestigeRepeatableType.MandatorySchmandatory:
                         desc += `+${formatPercentage(level * MANDATORY_SCHMANDATORY_MULT)}`;
+                        break;
+                    case PrestigeRepeatableType.DivineAttunement:
+                        desc += `x${formatNumber(Math.pow(DIVINE_ATTUNEMENT_BASE, level))}`;
                         break;
                     default:
                         console.error("Unhandled upgrade");
