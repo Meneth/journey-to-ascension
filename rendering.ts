@@ -1,5 +1,5 @@
 import { Task, TaskDefinition, ZONES, TaskType, PERKS_BY_ZONE, ITEMS_BY_ZONE } from "./zones.js";
-import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint, setAutomationEndZone, isTaskDisabledDueToMissingItem, isTaskDisabledWithoutBeingFinished } from "./simulation.js";
+import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTaskProgressMultiplier, calcSkillXp, calcEnergyDrainPerTick, clickItem, calcTaskCost, calcSkillTaskProgressMultiplier, getSkill, hasPerk, doEnergyReset, calcSkillTaskProgressMultiplierFromLevel, saveGame, SAVE_LOCATION, toggleRepeatTasks, calcAttunementGain, calcPowerGain, toggleAutomation, AutomationMode, calcPowerSpeedBonusAtLevel, calcAttunementSpeedBonusAtLevel, calcSkillTaskProgressWithoutLevel, setAutomationMode, hasUnlockedPrestige, calcDivineSparkGain, getPrestigeRepeatableLevel, hasPrestigeUnlock, calcPrestigeRepeatableCost, addPrestigeUnlock, increasePrestigeRepeatableLevel, doPrestige, knowsPerk, calcAttunementSkills, getPrestigeGainExponent, calcTickRate, willCompleteAllRepsInOneTick, isTaskDisabledDueToTooStrongBoss, BOSS_MAX_ENERGY_DISPARITY, undoItemUse, gatherItemBonuses, gatherPerkBonuses, getPowerSkills, SAVE_VERSION, setHasGottenPrepRunHint, calcDivineSparkGainFromHighestZone, knowsItem, setHasGottenBossHint, setAutomationEndZone, isTaskDisabledDueToMissingItem, isTaskDisabledWithoutBeingFinished, getSpiteTheGodsSkills, calcSpiteTheGodsBonus } from "./simulation.js";
 import { GAMESTATE, RENDERING, resetSave } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT, BOTTLED_LIGHTNING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
@@ -1559,6 +1559,9 @@ function populatePrestigeView() {
                     case PrestigeRepeatableType.DivineAttunement:
                         desc += `x${formatNumber(Math.pow(DIVINE_ATTUNEMENT_BASE, level))}`;
                         break;
+                    case PrestigeRepeatableType.SpiteTheGods:
+                        desc += `+${formatPercentage(calcSpiteTheGodsBonus() - 1)}`;
+                        break;
                     default:
                         console.error("Unhandled upgrade");
                         break;
@@ -2267,6 +2270,12 @@ function populateStatsView() {
 
             if (GAMESTATE.power > 0 && power_skills.includes(skill_type)) {
                 createTwoElementRow(skill_table, POWER_TEXT, `x${formatNumber(calcPowerSpeedBonusAtLevel(GAMESTATE.attunement))}`);
+            }
+
+            const spite_the_gods_level = getPrestigeRepeatableLevel(PrestigeRepeatableType.SpiteTheGods);
+
+            if (spite_the_gods_level > 0 && getSpiteTheGodsSkills().includes(skill_type)) {
+                createTwoElementRow(skill_table, "Spite the Gods", `x${formatNumber(calcSpiteTheGodsBonus())}`);
             }
         }
 

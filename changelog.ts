@@ -18,6 +18,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Fixed numbers getting sometimes shown as 1000k and similar rather than 1.00M<br>"
         + "- The Energized prestige upgrade now also boosts Energetic Memory's bonus a little<br>"
         + "- Made Z23 post-boss task cheaper<br>"
+        + "- Rebalanced the mandatory tasks in Z25<br>"
     },
     {
         version: "0.4.0",

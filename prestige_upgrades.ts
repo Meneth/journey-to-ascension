@@ -48,7 +48,7 @@ export enum PrestigeRepeatableType {
 
     MandatorySchmandatory,
     DivineAttunement,
-    DivinePlaceholder3,
+    SpiteTheGods,
     DivinePlaceholder4,
 
     Count
@@ -176,6 +176,7 @@ export const ENERGIZED_PERK_INCREASE = 0.05;
 export const DEENERGIZED_BASE = 0.9;
 export const MANDATORY_SCHMANDATORY_MULT = 0.2;
 export const DIVINE_ATTUNEMENT_BASE = 1.25;
+export const SPITE_THE_GODS_MULT = 0.25;
 
 function calcDivineSparkIncrease(zone: number) {
     const current_exponent = getPrestigeGainExponent();
@@ -276,12 +277,12 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         scaling_exponent: 2
     },
     {
-        type: PrestigeRepeatableType.DivinePlaceholder3,
+        type: PrestigeRepeatableType.SpiteTheGods,
         layer: PrestigeLayer.EmbraceDivinity,
-        name: "PLACEHOLDER",
-        get_description: () => { return `PLACEHOLDER`; },
-        initial_cost: 100_000_000_000,
-        scaling_exponent: 2.5
+        name: "Spite the Gods",
+        get_description: () => { return `Improves the speed of Charisma and Ascension Tasks by ${formatPercentage(SPITE_THE_GODS_MULT)}`; },
+        initial_cost: 200_000,
+        scaling_exponent: 1.4
     },
     {
         type: PrestigeRepeatableType.DivinePlaceholder4,
