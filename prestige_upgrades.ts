@@ -49,7 +49,7 @@ export enum PrestigeRepeatableType {
     MandatorySchmandatory,
     DivineAttunement,
     SpiteTheGods,
-    DivinePlaceholder4,
+    DivinerKnowledge,
 
     Count
 }
@@ -167,6 +167,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
 ];
 
 export const DIVINE_KNOWLEDGE_MULT = 0.5;
+export const DIVINER_KNOWLEDGE_MULT = 1;
 export const DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT = 0.2;
 export const GOTTA_GO_FAST_BASE = 1.1;
 export const TRANSCENDANT_APTITUDE_MULT = 100;
@@ -285,11 +286,11 @@ export const PRESTIGE_REPEATABLES: PrestigeRepeatable[] = [
         scaling_exponent: 1.4
     },
     {
-        type: PrestigeRepeatableType.DivinePlaceholder4,
+        type: PrestigeRepeatableType.DivinerKnowledge,
         layer: PrestigeLayer.EmbraceDivinity,
-        name: "PLACEHOLDER",
-        get_description: () => { return `PLACEHOLDER`; },
-        initial_cost: 100_000_000_000,
-        scaling_exponent: 2.5
+        name: "Diviner Knowledge",
+        get_description: () => { return `Increases ${XP_TEXT} gain by ${DIVINER_KNOWLEDGE_MULT * 100}%`; },
+        initial_cost: 5_000_000,
+        scaling_exponent: 3
     },
 ];
