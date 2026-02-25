@@ -415,6 +415,20 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 268, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
+    {
+        name: "The Return",
+        tasks: [
+            new TaskDefinition({ id: 270, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 500_000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 271, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 8_000_000, max_reps: 1, skills: [SkillType.Subterfuge], xp_mult: 0.3 }),
+            new TaskDefinition({ id: 272, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 2_000_000_000_000, max_reps: 2, skills: [SkillType.Study, SkillType.Search], xp_mult: 0.0001 }),
+            new TaskDefinition({ id: 273, name: "PLACEHOLDER", max_reps: 6, cost_multiplier: 20_000_000_000, skills: [SkillType.Magic], item: ItemType.Light, xp_mult: 0.05 },),
+            new TaskDefinition({ id: 274, name: "PLACEHOLDER", cost_multiplier: 5_000_000_000_000, max_reps: 2, xp_mult: 0.0000001, skills: [SkillType.Fortitude], perk: PerkType.SurvivedTheVoid }),
+            new TaskDefinition({ id: 275, name: "PLACEHOLDER", cost_multiplier: 200_000_000, max_reps: 3, skills: [SkillType.Charisma], xp_mult: 2 }),
+            new TaskDefinition({ id: 276, name: "PLACEHOLDER", cost_multiplier: 50_000_000_000, max_reps: 5, xp_mult: 0.00001, skills: [SkillType.Travel, SkillType.Search] }),
+            new TaskDefinition({ id: 277, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 1_000_000_000_000, xp_mult: 0.00001, skills: [SkillType.Combat], item: ItemType.Calamari, unlocks_task: 278 }),
+            new TaskDefinition({ id: 278, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+        ],
+    },
 ]
 
 ZONES.forEach((zone, index) => {
