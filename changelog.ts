@@ -6,9 +6,15 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
-        version: "0.4.1",
+        version: "0.5.0",
         date: "2026-02-08",
-        changes: "- Made Defy the Gods task about 30% easier<br>"
+        changes: "- Added zones Z26 through ??, including:<br>"
+        + "-- 4 new Prestige upgrades<br>"
+        + "-- 4 new repeatable Prestige upgrades<br>"
+        + "-- ? new Items<br>"
+        + "-- ? new Bosses<br>"
+        + "-- ? new Perks<br>"
+        + "- Made Defy the Gods task about 30% easier<br>"
         + "- Made Divine Knowledge's cost scale slightly faster<br>"
         + "- Made Permanent Automation and Divine Inspiration have a small cost<br>"
         + "- The Z25 Prestige task is now 4 reps instead of 5, slightly higher cost per rep<br>"
