@@ -385,7 +385,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 245, name: "Deep-water Swimming", cost_multiplier: 50_000_000_000, max_reps: 3, skills: [SkillType.Fortitude, SkillType.Travel], xp_mult: 0.000001 }),
             new TaskDefinition({ id: 246, name: "Go to Crab Rave", cost_multiplier: 1_000_000, max_reps: 4, xp_mult: 50, skills: [SkillType.Charisma] }),
             new TaskDefinition({ id: 247, name: "Half-Kraken", type: TaskType.Boss, cost_multiplier: 1_000_000_000_000, xp_mult: 0.00001, skills: [SkillType.Combat], item: ItemType.Calamari, unlocks_task: 248 }),
-            new TaskDefinition({ id: 248, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+            new TaskDefinition({ id: 248, name: "Commune with Damned Souls", cost_multiplier: 20_000_000_000, xp_mult: 0.1, skills: [SkillType.Charisma], perk: PerkType.CommunedWithDamnedSouls,hidden_by_default: true }),
         ],
     },
     {

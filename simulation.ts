@@ -959,6 +959,10 @@ export function calcAttunementGain(task: Task): number {
         value *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineKnowledge) * DIVINE_KNOWLEDGE_MULT;
     }
 
+    if (hasPerk(PerkType.CommunedWithDamnedSouls)) {
+        value *= 2;
+    }
+
     value *= Math.pow(DIVINE_ATTUNEMENT_BASE, getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineAttunement));
 
     return value;

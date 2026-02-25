@@ -3,6 +3,7 @@ import { PerkSkillModifierList } from "./modifiers.js";
 import { PrestigeUnlockType } from "./prestige_upgrades.js";
 import { formatPercentage } from "./rendering.js";
 import {
+    ATTUNEMENT_TEXT,
     DIVINE_SPARK_TEXT,
     ENERGY_TEXT,
     XP_TEXT
@@ -51,6 +52,7 @@ export enum PerkType {
     PurgedDemonicInfluences,
     DefiedTheGods,
     SurvivedTheVoid,
+    CommunedWithDamnedSouls,
 
     Count
 }
@@ -416,5 +418,11 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Fortitude, 0.3],
         ]),
         icon: `⚫`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.CommunedWithDamnedSouls,
+        name: `Communed with Damned Souls`,
+        get_custom_tooltip: () => { return `Doubles ${ATTUNEMENT_TEXT} Gain`; },
+        icon: `👻`,
     }),
 ]

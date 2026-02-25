@@ -21,6 +21,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Rebalanced the mandatory tasks in Z25<br>"
         + "- You now get the option to Prestige when you reach the end of content<br>"
         + "- Divine Lightning current effect now has three significant figures in the tooltip<br>"
+        + "- Added a Task after the Z24 Boss<br>"
     },
     {
         version: "0.4.0",
