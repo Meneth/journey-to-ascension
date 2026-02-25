@@ -1559,7 +1559,7 @@ function populatePrestigeView() {
                         desc += `x${formatNumber(Math.pow(GOTTA_GO_FAST_BASE, level))}`;
                         break;
                     case PrestigeRepeatableType.DivineLightning:
-                        desc += `+${(level * DIVINE_LIGHTNING_EXPONENT_INCREASE).toFixed(1)}`;
+                        desc += `+${formatNumber(level * DIVINE_LIGHTNING_EXPONENT_INCREASE)}`;
                         break;
                     case PrestigeRepeatableType.TranscendantAptitude:
                         desc += `+${level * TRANSCENDANT_APTITUDE_MULT}`;
