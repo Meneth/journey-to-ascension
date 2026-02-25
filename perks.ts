@@ -50,6 +50,7 @@ export enum PerkType {
     UnderstandingLeviathan,
     PurgedDemonicInfluences,
     DefiedTheGods,
+    SurvivedTheVoid,
 
     Count
 }
@@ -406,5 +407,14 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Ascension, 1.0],
         ]),
         icon: `🚫`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.SurvivedTheVoid,
+        name: `Survived the Void`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Ascension, 0.3],
+            [SkillType.Fortitude, 0.3],
+        ]),
+        icon: `⚫`,
     }),
 ]

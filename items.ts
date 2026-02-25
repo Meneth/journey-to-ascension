@@ -44,6 +44,7 @@ export enum ItemType {
     WingsOfShadow,
     RitualSymbol,
     Glasses,
+    Light,
 
     Count
 }
@@ -397,6 +398,15 @@ export const ITEMS: ItemDefinition[] = [
         icon: `👓`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Search, 1.0]
+        ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.RitualSymbol, name: `Light`, name_plural: `Light`,
+        icon: `💡`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Search, 0.5],
+            [SkillType.Travel, 0.5],
+            [SkillType.Fortitude, 0.5],
         ]),
     }),
 ]
