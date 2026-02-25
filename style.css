@@ -636,9 +636,11 @@ button:hover:not(.disabled):not(:disabled) {
 
 #end-of-content-box {
     text-align: center;
+    display: flex;
+    flex-direction: column;
 }
 
-button#end-of-content-reset, button.dismiss {
+button#end-of-content-reset, button#end-of-content-prestige , button.dismiss {
     font-size: 1.5em;
 }
 

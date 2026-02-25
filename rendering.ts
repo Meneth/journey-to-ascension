@@ -1337,18 +1337,30 @@ function populateEndOfContent(end_of_content_div: HTMLElement) {
     reset_count.innerHTML = `You've done ${GAMESTATE.energy_reset_count} Energy Resets this Prestige`;
     reset_count.innerHTML += `<br>You've done ${GAMESTATE.prestige_count} Prestiges`;
 
-    const reset_button = end_of_content_div.querySelector<HTMLElement>("#end-of-content-reset");
-    if (!reset_button) {
+    const energy_reset_button = end_of_content_div.querySelector<HTMLElement>("#end-of-content-reset");
+    if (!energy_reset_button) {
         console.error("No reset button");
         return;
     }
 
-    reset_button.innerHTML = "";
-    reset_button.textContent = "Do Energy Reset";
-    setupTooltipStatic(reset_button, "Do Energy Reset", "Do a regular Energy Reset to keep on playing");
-    reset_button.addEventListener("click", () => {
-        end_of_content_div.classList.add("hidden");
+    energy_reset_button.innerHTML = "";
+    energy_reset_button.textContent = "Do Energy Reset";
+    setupTooltipStatic(energy_reset_button, "Do Energy Reset", "Do a regular Energy Reset to keep on playing");
+    energy_reset_button.addEventListener("click", () => {
         doEnergyReset();
+    });
+
+    const prestige_button = end_of_content_div.querySelector<HTMLElement>("#end-of-content-prestige");
+    if (!prestige_button) {
+        console.error("No reset button");
+        return;
+    }
+
+    prestige_button.innerHTML = "";
+    prestige_button.textContent = "Prestige";
+    setupTooltipStatic(prestige_button, "Prestige", "Do a Prestige to keep on playing");
+    prestige_button.addEventListener("click", () => {
+        triggerPrestigeConfirmation();
     });
 }
 
@@ -1361,10 +1373,24 @@ function updateGameOver() {
     const showing_end_of_content = !RENDERING.end_of_content_element.classList.contains("hidden");
     if (!showing_end_of_content && GAMESTATE.is_at_end_of_content) {
         populateEndOfContent(RENDERING.end_of_content_element);
+    } else if (showing_end_of_content && !GAMESTATE.is_at_end_of_content) {
+        RENDERING.end_of_content_element.classList.add("hidden");
     }
 }
 
 // MARK: Prestige
+
+function triggerPrestigeConfirmation() {
+    let warning = `Will give ${formatInt(calcDivineSparkGain())} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases`;
+    if (!hasPrestigeUnlock(PrestigeUnlockType.SeeBeyondTheVeil)) {
+        warning += `<br>Will also remove all Boss Tasks from automation`;
+    }
+
+    createConfirmationOverlay("Do Prestige", warning, () => {
+        doPrestige();
+        populatePrestigeView();
+    });
+}
 
 function populatePrestigeView() {
     const prestige_overlay = RENDERING.prestige_overlay_element;
@@ -1420,15 +1446,7 @@ function populatePrestigeView() {
         });
 
         prestige_button.addEventListener("click", () => {
-            let warning = `Will give ${formatInt(calcDivineSparkGain())} ${DIVINE_SPARK_TEXT}, but reset everything except that which is granted by Divinity purchases`;
-            if (!hasPrestigeUnlock(PrestigeUnlockType.SeeBeyondTheVeil)) {
-                warning += `<br>Will also remove all Boss Tasks from automation`;
-            }
-
-            createConfirmationOverlay("Do Prestige", warning, () => {
-                doPrestige();
-                populatePrestigeView();
-            });
+            triggerPrestigeConfirmation();
         });
 
         prestige_button.classList.toggle("prestige-glow", GAMESTATE.unlocked_new_prestige_this_prestige);

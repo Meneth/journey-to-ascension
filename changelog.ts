@@ -19,6 +19,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- The Energized prestige upgrade now also boosts Energetic Memory's bonus a little<br>"
         + "- Made Z23 post-boss task cheaper<br>"
         + "- Rebalanced the mandatory tasks in Z25<br>"
+        + "- You now get the option to Prestige when you reach the end of content<br>"
     },
     {
         version: "0.4.0",
