@@ -401,6 +401,20 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 257, name: "Prepare to Face the Gods", cost_multiplier: 1_000_000_000_000_000, max_reps: 4, xp_mult: 0.00005, skills: [SkillType.Combat] }),
         ],
     },
+    {
+        name: "The Void",
+        tasks: [
+            new TaskDefinition({ id: 260, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 40_000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 261, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 200_000_000_000, max_reps: 1, skills: [SkillType.Search, SkillType.Study], xp_mult: 0.0001 }),
+            new TaskDefinition({ id: 262, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 100_000_000_000, max_reps: 3, skills: [SkillType.Fortitude], xp_mult: 0.000001 }),
+            new TaskDefinition({ id: 263, name: "PLACEHOLDER", max_reps: 5, cost_multiplier: 200_000_000_000, skills: [SkillType.Combat], item: ItemType.Fish, xp_mult: 0.002 },),
+            new TaskDefinition({ id: 264, name: "PLACEHOLDER", cost_multiplier: 100_000_000_000, max_reps: 1, xp_mult: 0.0001, skills: [SkillType.Subterfuge, SkillType.Study], perk: PerkType.UnderstandingLeviathan }),
+            new TaskDefinition({ id: 265, name: "PLACEHOLDER", cost_multiplier: 50_000_000_000, max_reps: 3, skills: [SkillType.Fortitude, SkillType.Travel], xp_mult: 0.000001 }),
+            new TaskDefinition({ id: 266, name: "PLACEHOLDER", cost_multiplier: 1_000_000, max_reps: 4, xp_mult: 50, skills: [SkillType.Charisma] }),
+            new TaskDefinition({ id: 267, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 1_000_000_000_000, xp_mult: 0.00001, skills: [SkillType.Combat], item: ItemType.Calamari, unlocks_task: 268 }),
+            new TaskDefinition({ id: 268, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+        ],
+    },
 ]
 
 ZONES.forEach((zone, index) => {
