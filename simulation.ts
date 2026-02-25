@@ -1275,6 +1275,9 @@ export function doPrestige() {
         GAMESTATE.items.set(item, 0);
     }
 
+    // Ensure we apply Compulsive Notetaking
+    handleEnergyResetItemCounts();
+
     GAMESTATE.energy_reset_info = new EnergyResetInfo();
     GAMESTATE.energy_reset_count = 0;
     GAMESTATE.max_energy = STARTING_ENERGY;
