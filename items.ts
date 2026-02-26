@@ -45,6 +45,7 @@ export enum ItemType {
     RitualSymbol,
     Glasses,
     Light,
+    MadContraption,
 
     Count
 }
@@ -407,6 +408,15 @@ export const ITEMS: ItemDefinition[] = [
             [SkillType.Search, 0.5],
             [SkillType.Travel, 0.5],
             [SkillType.Fortitude, 0.5],
+        ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.MadContraption, name: `Mad Contraption`, name_plural: `Mad Contraptions`,
+        icon: `🤪`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Study, 1],
+            [SkillType.Crafting, 1],
+            [SkillType.Combat, 1],
         ]),
     }),
 ]

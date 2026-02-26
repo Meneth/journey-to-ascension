@@ -53,6 +53,7 @@ export enum PerkType {
     DefiedTheGods,
     SurvivedTheVoid,
     CommunedWithDamnedSouls,
+    DivinePower,
 
     Count
 }
@@ -424,5 +425,16 @@ export const PERKS: PerkDefinition[] = [
         name: `Communed with Damned Souls`,
         get_custom_tooltip: () => { return `Doubles ${ATTUNEMENT_TEXT} Gain`; },
         icon: `👻`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.DivinePower,
+        name: `Divine Power`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Ascension, 0.25],
+            [SkillType.Combat, 0.25],
+            [SkillType.Magic, 0.25],
+            [SkillType.Study, 0.25],
+        ]),
+        icon: `☀️`,
     }),
 ]
