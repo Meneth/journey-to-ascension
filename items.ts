@@ -402,7 +402,7 @@ export const ITEMS: ItemDefinition[] = [
         ]),
     }),
     new ItemDefinition({
-        enum: ItemType.RitualSymbol, name: `Light`, name_plural: `Light`,
+        enum: ItemType.Light, name: `Light`, name_plural: `Light`,
         icon: `💡`,
         skill_modifiers: new ItemSkillModifierList([
             [SkillType.Search, 0.5],
