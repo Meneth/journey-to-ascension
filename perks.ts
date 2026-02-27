@@ -54,6 +54,7 @@ export enum PerkType {
     SurvivedTheVoid,
     CommunedWithDamnedSouls,
     DivinePower,
+    SecondInCommand,
 
     Count
 }
@@ -436,5 +437,15 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Study, 0.25],
         ]),
         icon: `☀️`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.SecondInCommand,
+        name: `Second in Command`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Charisma, 0.3],
+            [SkillType.Subterfuge, 0.3],
+            [SkillType.Search, 0.3],
+        ]),
+        icon: `🙇‍♂️`,
     }),
 ]
