@@ -429,6 +429,20 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 278, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
+    {
+        name: "The Cult",
+        tasks: [
+            new TaskDefinition({ id: 280, name: "PLACEHOLDER", type: TaskType.Travel, cost_multiplier: 600_000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 281, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 5_000_000_000_000, max_reps: 8, skills: [SkillType.Fortitude], xp_mult: 0.000001 }),
+            new TaskDefinition({ id: 282, name: "PLACEHOLDER", type: TaskType.Mandatory, cost_multiplier: 40_000_000_000_000, max_reps: 4, skills: [SkillType.Study, SkillType.Subterfuge], xp_mult: 0.00001 }),
+            new TaskDefinition({ id: 283, name: "PLACEHOLDER", max_reps: 4, cost_multiplier: 200_000_000, skills: [SkillType.Crafting], item: ItemType.MadContraption, xp_mult: 0.01 },),
+            new TaskDefinition({ id: 284, name: "PLACEHOLDER", cost_multiplier: 7_000_000_000_000, max_reps: 5, xp_mult: 0.001, skills: [SkillType.Magic], perk: PerkType.DivinePower }),
+            new TaskDefinition({ id: 285, name: "PLACEHOLDER", cost_multiplier: 200_000_000, max_reps: 3, skills: [SkillType.Charisma], xp_mult: 2 }),
+            new TaskDefinition({ id: 286, name: "PLACEHOLDER", cost_multiplier: 60_000_000_000_000, max_reps: 9, xp_mult: 0.0002, skills: [SkillType.Study, SkillType.Magic] }),
+            new TaskDefinition({ id: 287, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 1_000_000_000_000, xp_mult: 0.00001, skills: [SkillType.Combat], item: ItemType.Calamari, unlocks_task: 288 }),
+            new TaskDefinition({ id: 288, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+        ],
+    },
 ]
 
 ZONES.forEach((zone, index) => {
