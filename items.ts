@@ -46,6 +46,9 @@ export enum ItemType {
     Glasses,
     Light,
     MadContraption,
+    Recording,
+    DivineSpark,
+    VoidEssence,
 
     Count
 }
@@ -417,6 +420,29 @@ export const ITEMS: ItemDefinition[] = [
             [SkillType.Study, 1],
             [SkillType.Crafting, 1],
             [SkillType.Combat, 1],
+        ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.Recording, name: `Recording`, name_plural: `Recordings`,
+        icon: `📼`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Charisma, 1],
+        ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.DivineSpark, name: `Divine Spark`, name_plural: `Divine Sparks`,
+        icon: `✨`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Ascension, 10],
+        ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.VoidEssence, name: `Void Essence`, name_plural: `Void Essence`,
+        icon: `⚫`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Magic, 3],
+            [SkillType.Study, 3],
+            [SkillType.Subterfuge, 3],
         ]),
     }),
 ]
