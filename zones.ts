@@ -458,6 +458,21 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 298, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
         ],
     },
+    {
+        name: "The Gates of Heaven",
+        tasks: [
+            new TaskDefinition({ id: 300, name: "Take Your Place in Heaven", type: TaskType.Travel, cost_multiplier: 500_000_000, skills: [SkillType.Travel], xp_mult: 0.01 }),
+            new TaskDefinition({ id: 301, name: "Rally Your Troops", type: TaskType.Mandatory, cost_multiplier: 1_000_000_000_000_000, max_reps: 4, skills: [SkillType.Charisma], xp_mult: 0.001 }),
+            new TaskDefinition({ id: 302, name: "Break Down the Gates", type: TaskType.Mandatory, cost_multiplier: 5_000_000_000_000_000_000_000, max_reps: 1, skills: [SkillType.Combat], xp_mult: 0.000003 }),
+            new TaskDefinition({ id: 303, name: "Ascend to Godhood", type: TaskType.Prestige, max_reps: 5, cost_multiplier: 500_000_000, skills: [SkillType.Ascension], xp_mult: 0.001, prestige_layer: PrestigeLayer.AscendToGodhood },),
+            new TaskDefinition({ id: 304, name: "PLACEHOLDER", max_reps: 3, cost_multiplier: 500_000_000_000, skills: [SkillType.Crafting], item: ItemType.ArmyFood, xp_mult: 0.001 },),
+            new TaskDefinition({ id: 305, name: "PLACEHOLDER", cost_multiplier: 5_000_000_000_000_000_000, max_reps: 5, xp_mult: 0.000001, skills: [SkillType.Combat], perk: PerkType.SupplyLines }),
+            new TaskDefinition({ id: 306, name: "PLACEHOLDER", cost_multiplier: 5_000_000_000, max_reps: 3, skills: [SkillType.Charisma], xp_mult: 2 }),
+            new TaskDefinition({ id: 307, name: "PLACEHOLDER", cost_multiplier: 60_000_000_000_000, max_reps: 9, xp_mult: 0.0000001, skills: [SkillType.Search, SkillType.Travel] }),
+            new TaskDefinition({ id: 308, name: "PLACEHOLDER", type: TaskType.Boss, cost_multiplier: 100_000_000_000_000, xp_mult: 0.000005, skills: [SkillType.Combat], item: ItemType.Calamari, unlocks_task: 308 }),
+            new TaskDefinition({ id: 309, name: "PLACEHOLDER", cost_multiplier: 3_000_000_000_000, xp_mult: 0.0001, skills: [SkillType.Combat, SkillType.Search], perk: PerkType.DragonSlayer,hidden_by_default: true }),
+        ],
+    },
 ]
 
 ZONES.forEach((zone, index) => {
