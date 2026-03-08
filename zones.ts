@@ -432,10 +432,10 @@ export const ZONES: Zone[] = [
     {
         name: "The Cult",
         tasks: [
-            new TaskDefinition({ id: 280, name: "Assemble Your Forces", type: TaskType.Travel, cost_multiplier: 600_000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 280, name: "Assemble Your Forces", type: TaskType.Travel, cost_multiplier: 1_000_000, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 281, name: "Attract Followers", type: TaskType.Mandatory, cost_multiplier: 1_000_000_000, max_reps: 4, skills: [SkillType.Charisma], xp_mult: 0.05 }),
             new TaskDefinition({ id: 282, name: "Train Your Fighters", type: TaskType.Mandatory, cost_multiplier: 1_000_000_000_000_000_000_000_000, max_reps: 2, skills: [SkillType.Study, SkillType.Combat], xp_mult: 0.00000000000005 }),
-            new TaskDefinition({ id: 283, name: "Train Your Magicians", type: TaskType.Mandatory, cost_multiplier: 3_000_000_000_000_000, max_reps: 3, skills: [SkillType.Study, SkillType.Magic], xp_mult: 0.00001 }),
+            new TaskDefinition({ id: 283, name: "Train Your Magicians", type: TaskType.Mandatory, cost_multiplier: 30_000_000_000_000_000, max_reps: 3, skills: [SkillType.Study, SkillType.Magic], xp_mult: 0.000005 }),
             new TaskDefinition({ id: 284, name: "Record Rousing Speech", max_reps: 5, cost_multiplier: 200_000_000_000, skills: [SkillType.Magic], item: ItemType.Recording, xp_mult: 0.01 },),
             new TaskDefinition({ id: 285, name: "Appoint Second in Command", cost_multiplier: 5_000_000_000, max_reps: 1, xp_mult: 0.3, skills: [SkillType.Charisma], perk: PerkType.SecondInCommand }),
             new TaskDefinition({ id: 286, name: "Ponder Next Moves", cost_multiplier: 10_000_000_000_000, max_reps: 3, skills: [SkillType.Study], xp_mult: 0.01 }),
@@ -447,7 +447,7 @@ export const ZONES: Zone[] = [
     {
         name: "The War Preparations",
         tasks: [
-            new TaskDefinition({ id: 290, name: "Bring Your Army to Heaven", type: TaskType.Travel, cost_multiplier: 600_000, skills: [SkillType.Travel] }),
+            new TaskDefinition({ id: 290, name: "Bring Your Army to Heaven", type: TaskType.Travel, cost_multiplier: 1_000_000, skills: [SkillType.Travel] }),
             new TaskDefinition({ id: 291, name: "Build Staircase to Heaven", type: TaskType.Mandatory, cost_multiplier: 40_000_000_000_000, max_reps: 1, skills: [SkillType.Crafting], xp_mult: 0.01 }),
             new TaskDefinition({ id: 292, name: "Make Battle Plan", type: TaskType.Mandatory, cost_multiplier: 40_000_000_000_000, max_reps: 4, skills: [SkillType.Study], xp_mult: 0.00001 }),
             new TaskDefinition({ id: 293, name: "PLACEHOLDER", max_reps: 4, cost_multiplier: 200_000_000, skills: [SkillType.Crafting], item: ItemType.MadContraption, xp_mult: 0.01 },),
