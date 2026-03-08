@@ -30,7 +30,7 @@ export enum PrestigeUnlockType {
     Perky,
     CompulsiveNotetaking,
     CraftingBreakthrough,
-    DivinePlaceholder4,
+    GodlyTravel,
     
     Count
 }
@@ -76,6 +76,7 @@ export class PrestigeRepeatable {
 export const DIVINE_SPEED_TICKS_PER_PERCENT = 4;
 export const PERKY_BASE = 1.01;
 export const COMPULSIVE_NOTE_TAKING_AMOUNT = 2;
+export const GODLY_TRAVEL_MULT = 5;
 
 export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
@@ -158,11 +159,11 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         cost: 3_000_000
     },
     {
-        type: PrestigeUnlockType.DivinePlaceholder4,
+        type: PrestigeUnlockType.GodlyTravel,
         layer: PrestigeLayer.EmbraceDivinity,
-        name: "PLACEHOLDER",
-        get_description: () => { return `PLACEHOLDER`; },
-        cost: 100_000_000_000
+        name: "Godly Travel",
+        get_description: () => { return `Makes ${getSkillString(SkillType.Travel)} Tasks ${GODLY_TRAVEL_MULT}x faster`; },
+        cost: 1_000_000_000
     },
 ];
 
