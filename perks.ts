@@ -9,7 +9,7 @@ import {
     XP_TEXT
 } from "./rendering_constants.js";
 import { calcReflectionsOnTheJourneyMult, hasPrestigeUnlock } from "./simulation.js";
-import { REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_BASE, AWAKENING_DIVINE_SPARK_MULT, UNIFIED_THEORY_OF_MAGIC_EFFECT, DEFIED_THE_GODS_SPARK_MULT } from "./simulation_constants.js";
+import { REFLECTIONS_ON_THE_JOURNEY_BOOSTED_BASE, REFLECTIONS_ON_THE_JOURNEY_BASE, AWAKENING_DIVINE_SPARK_MULT, UNIFIED_THEORY_OF_MAGIC_EFFECT, DEFIED_THE_GODS_SPARK_MULT, SUPPLY_LINES_EFFECT } from "./simulation_constants.js";
 import { SkillType } from "./skills.js";
 
 export enum PerkType {
@@ -55,6 +55,7 @@ export enum PerkType {
     CommunedWithDamnedSouls,
     DivinePower,
     SecondInCommand,
+    SupplyLines,
 
     Count
 }
@@ -447,5 +448,11 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Search, 0.3],
         ]),
         icon: `🙇‍♂️`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.SupplyLines,
+        name: `Supply Lines`,
+        get_custom_tooltip: () => { return `Increases ${ENERGY_TEXT} Gain from Items by ${formatPercentage(SUPPLY_LINES_EFFECT)}`; },
+        icon: `🛣️`,
     }),
 ]

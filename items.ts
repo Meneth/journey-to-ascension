@@ -49,6 +49,7 @@ export enum ItemType {
     Recording,
     DivineSpark,
     VoidEssence,
+    ArmyFood,
 
     Count
 }
@@ -444,6 +445,13 @@ export const ITEMS: ItemDefinition[] = [
             [SkillType.Study, 3],
             [SkillType.Subterfuge, 3],
         ]),
+    }),
+    new ItemDefinition({
+        enum: ItemType.Food, name: `Army Food`, name_plural: `Army Food`,
+        icon: `🍱`,
+        get_custom_tooltip: () => { return `Gives ${calcItemEnergyGain(15)} ${ENERGY_TEXT} each<br>Can take you above your Max Energy<br><br>Right-click to use all`; },
+        get_custom_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(15)} ${ENERGY_TEXT}`; },
+        on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(15) * amount; },
     }),
 ]
 

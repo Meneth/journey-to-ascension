@@ -5,3 +5,4 @@ export const AWAKENING_DIVINE_SPARK_MULT = 1 / 3;
 export const MAJOR_TIME_COMPRESSION_EFFECT = 1.5;
 export const UNIFIED_THEORY_OF_MAGIC_EFFECT = 0.02;
 export const DEFIED_THE_GODS_SPARK_MULT = 1 / 4;
+export const SUPPLY_LINES_EFFECT = 0.2;
