@@ -50,6 +50,7 @@ export enum ItemType {
     DivineSpark,
     VoidEssence,
     ArmyFood,
+    RitualSacrifice,
 
     Count
 }
@@ -434,7 +435,7 @@ export const ITEMS: ItemDefinition[] = [
         enum: ItemType.DivineSpark, name: `Divine Spark`, name_plural: `Divine Sparks`,
         icon: `✨`,
         skill_modifiers: new ItemSkillModifierList([
-            [SkillType.Ascension, 10],
+            [SkillType.Ascension, 20],
         ]),
     }),
     new ItemDefinition({
@@ -447,11 +448,20 @@ export const ITEMS: ItemDefinition[] = [
         ]),
     }),
     new ItemDefinition({
-        enum: ItemType.Food, name: `Army Food`, name_plural: `Army Food`,
+        enum: ItemType.ArmyFood, name: `Army Food`, name_plural: `Army Food`,
         icon: `🍱`,
         get_custom_tooltip: () => { return `Gives ${calcItemEnergyGain(15)} ${ENERGY_TEXT} each<br>Can take you above your Max Energy<br><br>Right-click to use all`; },
         get_custom_effect_text: (amount) => { return `Gained ${amount * calcItemEnergyGain(15)} ${ENERGY_TEXT}`; },
         on_consume: (amount) => { GAMESTATE.current_energy += calcItemEnergyGain(15) * amount; },
+    }),
+    new ItemDefinition({
+        enum: ItemType.RitualSacrifice, name: `Ritual Sacrifice`, name_plural: `Ritual Sacrifice`,
+        icon: `🩸`,
+        skill_modifiers: new ItemSkillModifierList([
+            [SkillType.Magic, 5],
+            [SkillType.Ascension, 5],
+            [SkillType.Combat, 5],
+        ]),
     }),
 ]
 

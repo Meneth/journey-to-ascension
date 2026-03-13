@@ -56,6 +56,9 @@ export enum PerkType {
     DivinePower,
     SecondInCommand,
     SupplyLines,
+    FinalRitual,
+    ReturnedHeraldHead,
+    AvoidedGodlyRevenge,
 
     Count
 }
@@ -454,5 +457,36 @@ export const PERKS: PerkDefinition[] = [
         name: `Supply Lines`,
         get_custom_tooltip: () => { return `Increases ${ENERGY_TEXT} Gain from Items by ${formatPercentage(SUPPLY_LINES_EFFECT)}`; },
         icon: `🛣️`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.FinalRitual,
+        name: `Prepared Final Ritual`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Ascension, 1.0],
+            [SkillType.Study, 1.0],
+            [SkillType.Magic, 1.0],
+        ]),
+        icon: `✨`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.ReturnedHeraldHead,
+        name: `Returned Herald's Head`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Charisma, 0.3],
+            [SkillType.Combat, 0.3],
+            [SkillType.Ascension, 0.3],
+        ]),
+        icon: `🤕`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.AvoidedGodlyRevenge,
+        name: `Returned Herald's Head`,
+        skill_modifiers: new PerkSkillModifierList([
+            [SkillType.Subterfuge, 0.3],
+            [SkillType.Fortitude, 0.3],
+            [SkillType.Charisma, 0.3],
+            [SkillType.Ascension, 0.3],
+        ]),
+        icon: `🌋`,
     }),
 ]
