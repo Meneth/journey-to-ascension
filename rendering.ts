@@ -1352,7 +1352,7 @@ function populateEndOfContent(end_of_content_div: HTMLElement) {
 
     const prestige_button = end_of_content_div.querySelector<HTMLElement>("#end-of-content-prestige");
     if (!prestige_button) {
-        console.error("No reset button");
+        console.error("No prestige button");
         return;
     }
 
@@ -1361,6 +1361,19 @@ function populateEndOfContent(end_of_content_div: HTMLElement) {
     setupTooltipStatic(prestige_button, "Prestige", "Do a Prestige to keep on playing");
     prestige_button.addEventListener("click", () => {
         triggerPrestigeConfirmation();
+    });
+
+    const credits_button = end_of_content_div.querySelector<HTMLElement>("#end-of-content-credits");
+    if (!credits_button) {
+        console.error("No credits button");
+        return;
+    }
+
+    credits_button.innerHTML = "";
+    credits_button.textContent = "Credits";
+    setupTooltipStatic(credits_button, "Credits", "View the game's Credits");
+    credits_button.addEventListener("click", () => {
+        showCredits();
     });
 }
 

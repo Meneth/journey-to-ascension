@@ -640,8 +640,12 @@ button:hover:not(.disabled):not(:disabled) {
     flex-direction: column;
 }
 
-button#end-of-content-reset, button#end-of-content-prestige , button.dismiss {
+button.end-of-content-button, button.dismiss {
     font-size: 1.5em;
+}
+
+.end-of-content-button {
+    margin-top: 5px;
 }
 
 #game-over-overlay button.dismiss {
