@@ -33,8 +33,8 @@ export enum PrestigeUnlockType {
     GodlyTravel,
 
     AmazingSpeed,
-    UnparalleledLearning,
     LimitlessPower,
+    UnparalleledLearning,
     DivineSupremacy,
     
     Count
@@ -83,6 +83,7 @@ export const PERKY_BASE = 1.01;
 export const COMPULSIVE_NOTE_TAKING_AMOUNT = 2;
 export const GODLY_TRAVEL_MULT = 5;
 export const FINAL_PRESTIGE_MULT = 5;
+export const DIVINE_SUPREMACY_ENERGY = 1000;
 
 export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
     {
@@ -184,21 +185,21 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         layer: PrestigeLayer.AscendToGodhood,
         name: "Limitless Power",
         get_description: () => { return `Multiplies ${POWER_TEXT} and ${ATTUNEMENT_TEXT} Gain by ${FINAL_PRESTIGE_MULT}<br>Doubles ${DIVINE_SPARK_TEXT} Gain`; },
-        cost: 30_000_000_000
+        cost: 50_000_000_000
     },
     {
         type: PrestigeUnlockType.UnparalleledLearning,
         layer: PrestigeLayer.AscendToGodhood,
         name: "Unparalleled Learning",
         get_description: () => { return `Multiplies ${XP_TEXT} Gain by ${FINAL_PRESTIGE_MULT}<br>Doubles ${DIVINE_SPARK_TEXT} Gain`; },
-        cost: 100_000_000_000
+        cost: 150_000_000_000
     },
     {
         type: PrestigeUnlockType.DivineSupremacy,
         layer: PrestigeLayer.AscendToGodhood,
         name: "Divine Supremacy",
-        get_description: () => { return `Makes Mandatory Tasks ${FINAL_PRESTIGE_MULT}x faster<br>Doubles ${DIVINE_SPARK_TEXT} Gain`; },
-        cost: 250_000_000_000
+        get_description: () => { return `Makes Mandatory Tasks ${FINAL_PRESTIGE_MULT}x faster<br><br>Increases Max ${ENERGY_TEXT} by ${DIVINE_SUPREMACY_ENERGY}<br>Doubles ${DIVINE_SPARK_TEXT} Gain`; },
+        cost: 500_000_000_000
     },
 ];
 

@@ -481,7 +481,7 @@ export const PERKS: PerkDefinition[] = [
     }),
     new PerkDefinition({
         enum: PerkType.AvoidedGodlyRevenge,
-        name: `Returned Herald's Head`,
+        name: `Avoided Godly Revenge`,
         skill_modifiers: new PerkSkillModifierList([
             [SkillType.Subterfuge, 0.3],
             [SkillType.Fortitude, 0.3],
