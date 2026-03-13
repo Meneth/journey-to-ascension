@@ -1539,75 +1539,79 @@ function populatePrestigeView() {
             }
         }
 
-        const upgrades_div = createChildElement(touch_the_divine_div, "div");
-        const upgrades_header = createChildElement(upgrades_div, "h3");
-        upgrades_header.textContent = "Repeatable Upgrades";
-        const repeatables_purchases = createChildElement(upgrades_div, "div");
-        repeatables_purchases.className = "prestige-purchases";
+        const repeatables = PRESTIGE_REPEATABLES.filter((unlock) => { return unlock.layer == prestige_layer; } );
+        if (repeatables.length != 0) {
 
-        for (const upgrade of PRESTIGE_REPEATABLES.filter((unlock) => { return unlock.layer == prestige_layer; })) {
-            const unlock_button = createChildElement(repeatables_purchases, "button");
-            unlock_button.className = "prestige-purchase prestige-purchase-repeatable";
-            const cost = calcPrestigeRepeatableCost(upgrade.type);
-            const level = getPrestigeRepeatableLevel(upgrade.type);
-            unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${formatInt(cost)}<br>Level: ${level}`;
-
-            (unlock_button as HTMLInputElement).disabled = cost > GAMESTATE.divine_spark;
-
-            setupTooltipStaticHeader(unlock_button, upgrade.name, () => {
-                let desc = upgrade.get_description();
-                desc += "<br><br>Current Effect: ";
-
-                switch (upgrade.type) {
-                    case PrestigeRepeatableType.DivineKnowledge:
-                        desc += `+${formatPercentage(DIVINE_KNOWLEDGE_MULT * level)}`;
-                        break;
-                    case PrestigeRepeatableType.DivinerKnowledge:
-                        desc += `+${formatPercentage(DIVINER_KNOWLEDGE_MULT * level)}`;
-                        break;
-                    case PrestigeRepeatableType.UnlimitedPower:
-                        desc += `x${formatInt(Math.pow(2, level))}`;
-                        break;
-                    case PrestigeRepeatableType.DivineAppetite:
-                        desc += `+${formatPercentage(DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT * level)}`;
-                        break;
-                    case PrestigeRepeatableType.GottaGoFast:
-                        desc += `x${formatNumber(Math.pow(GOTTA_GO_FAST_BASE, level))}`;
-                        break;
-                    case PrestigeRepeatableType.DivineLightning:
-                        desc += `+${formatNumber(level * DIVINE_LIGHTNING_EXPONENT_INCREASE)}`;
-                        break;
-                    case PrestigeRepeatableType.TranscendantAptitude:
-                        desc += `+${level * TRANSCENDANT_APTITUDE_MULT}`;
-                        break;
-                    case PrestigeRepeatableType.Energized:
-                        desc += `+${level * ENERGIZED_INCREASE}`;
-                        desc += ` and +${formatPercentage(level * ENERGIZED_PERK_INCREASE)}`;
-                        break;
-                    case PrestigeRepeatableType.Deenergized:
-                        desc += `x${formatNumber(Math.pow(DEENERGIZED_BASE, level))}`;
-                        break;
-                    case PrestigeRepeatableType.MandatorySchmandatory:
-                        desc += `+${formatPercentage(level * MANDATORY_SCHMANDATORY_MULT)}`;
-                        break;
-                    case PrestigeRepeatableType.DivineAttunement:
-                        desc += `x${formatNumber(Math.pow(DIVINE_ATTUNEMENT_BASE, level))}`;
-                        break;
-                    case PrestigeRepeatableType.SpiteTheGods:
-                        desc += `+${formatPercentage(calcSpiteTheGodsBonus() - 1)}`;
-                        break;
-                    default:
-                        console.error("Unhandled upgrade");
-                        break;
-                }
-
-                return desc;
-            });
-
-            unlock_button.addEventListener("click", () => {
-                increasePrestigeRepeatableLevel(upgrade.type);
-                populatePrestigeView();
-            });
+            const upgrades_div = createChildElement(touch_the_divine_div, "div");
+            const upgrades_header = createChildElement(upgrades_div, "h3");
+            upgrades_header.textContent = "Repeatable Upgrades";
+            const repeatables_purchases = createChildElement(upgrades_div, "div");
+            repeatables_purchases.className = "prestige-purchases";
+    
+            for (const upgrade of repeatables) {
+                const unlock_button = createChildElement(repeatables_purchases, "button");
+                unlock_button.className = "prestige-purchase prestige-purchase-repeatable";
+                const cost = calcPrestigeRepeatableCost(upgrade.type);
+                const level = getPrestigeRepeatableLevel(upgrade.type);
+                unlock_button.innerHTML = `${upgrade.name}<br>Cost: ${formatInt(cost)}<br>Level: ${level}`;
+    
+                (unlock_button as HTMLInputElement).disabled = cost > GAMESTATE.divine_spark;
+    
+                setupTooltipStaticHeader(unlock_button, upgrade.name, () => {
+                    let desc = upgrade.get_description();
+                    desc += "<br><br>Current Effect: ";
+    
+                    switch (upgrade.type) {
+                        case PrestigeRepeatableType.DivineKnowledge:
+                            desc += `+${formatPercentage(DIVINE_KNOWLEDGE_MULT * level)}`;
+                            break;
+                        case PrestigeRepeatableType.DivinerKnowledge:
+                            desc += `+${formatPercentage(DIVINER_KNOWLEDGE_MULT * level)}`;
+                            break;
+                        case PrestigeRepeatableType.UnlimitedPower:
+                            desc += `x${formatInt(Math.pow(2, level))}`;
+                            break;
+                        case PrestigeRepeatableType.DivineAppetite:
+                            desc += `+${formatPercentage(DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT * level)}`;
+                            break;
+                        case PrestigeRepeatableType.GottaGoFast:
+                            desc += `x${formatNumber(Math.pow(GOTTA_GO_FAST_BASE, level))}`;
+                            break;
+                        case PrestigeRepeatableType.DivineLightning:
+                            desc += `+${formatNumber(level * DIVINE_LIGHTNING_EXPONENT_INCREASE)}`;
+                            break;
+                        case PrestigeRepeatableType.TranscendantAptitude:
+                            desc += `+${level * TRANSCENDANT_APTITUDE_MULT}`;
+                            break;
+                        case PrestigeRepeatableType.Energized:
+                            desc += `+${level * ENERGIZED_INCREASE}`;
+                            desc += ` and +${formatPercentage(level * ENERGIZED_PERK_INCREASE)}`;
+                            break;
+                        case PrestigeRepeatableType.Deenergized:
+                            desc += `x${formatNumber(Math.pow(DEENERGIZED_BASE, level))}`;
+                            break;
+                        case PrestigeRepeatableType.MandatorySchmandatory:
+                            desc += `+${formatPercentage(level * MANDATORY_SCHMANDATORY_MULT)}`;
+                            break;
+                        case PrestigeRepeatableType.DivineAttunement:
+                            desc += `x${formatNumber(Math.pow(DIVINE_ATTUNEMENT_BASE, level))}`;
+                            break;
+                        case PrestigeRepeatableType.SpiteTheGods:
+                            desc += `+${formatPercentage(calcSpiteTheGodsBonus() - 1)}`;
+                            break;
+                        default:
+                            console.error("Unhandled upgrade");
+                            break;
+                    }
+    
+                    return desc;
+                });
+    
+                unlock_button.addEventListener("click", () => {
+                    increasePrestigeRepeatableLevel(upgrade.type);
+                    populatePrestigeView();
+                });
+            }
         }
     }
 
