@@ -4,7 +4,7 @@ import { HASTE_MULT, ItemDefinition, ITEMS, ARTIFACTS, ItemType, MAGIC_RING_MULT
 import { getReflectionsOnTheJourneyExponent, PerkDefinition, PERKS, PerkType } from "./perks.js";
 import { SkillUpContext, EventType, RenderEvent, GainedPerkContext, UsedItemContext, UnlockedTaskContext, UnlockedSkillContext, EventContext, HighestZoneContext, SkippedTasksContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SKILLS, SkillType } from "./skills.js";
-import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT, PERKY_BASE, COMPULSIVE_NOTE_TAKING_AMOUNT, ENERGIZED_PERK_INCREASE, MANDATORY_SCHMANDATORY_MULT, DIVINE_ATTUNEMENT_BASE, SPITE_THE_GODS_MULT, DIVINER_KNOWLEDGE_MULT, GODLY_TRAVEL_MULT } from "./prestige_upgrades.js";
+import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, PrestigeUnlock, PrestigeUnlockType, PrestigeRepeatable, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, PrestigeLayer, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DIVINE_SPEED_TICKS_PER_PERCENT, PERKY_BASE, COMPULSIVE_NOTE_TAKING_AMOUNT, ENERGIZED_PERK_INCREASE, MANDATORY_SCHMANDATORY_MULT, DIVINE_ATTUNEMENT_BASE, SPITE_THE_GODS_MULT, DIVINER_KNOWLEDGE_MULT, GODLY_TRAVEL_MULT, FINAL_PRESTIGE_MULT } from "./prestige_upgrades.js";
 import { AWAKENING_DIVINE_SPARK_MULT, DEFIED_THE_GODS_SPARK_MULT, ENERGETIC_MEMORY_MULT, MAJOR_TIME_COMPRESSION_EFFECT, SUPPLY_LINES_EFFECT, UNIFIED_THEORY_OF_MAGIC_EFFECT } from "./simulation_constants.js";
 
 // MARK: Constants
@@ -47,6 +47,11 @@ export function calcSkillXp(task: Task, task_progress: number, ignore_boost = fa
 
     xp *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineKnowledge) * DIVINE_KNOWLEDGE_MULT;
     xp *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.DivinerKnowledge) * DIVINER_KNOWLEDGE_MULT;
+
+    if (hasPrestigeUnlock(PrestigeUnlockType.UnparalleledLearning))
+    {
+        xp *= FINAL_PRESTIGE_MULT;
+    }
 
     xp *= Math.pow(1.25, task.task_definition.zone_id);
 
@@ -233,6 +238,14 @@ export function calcTaskProgressMultiplier(task: Task, override_haste: boolean |
     const mandatoryish = task.task_definition.type == TaskType.Travel || task.task_definition.type == TaskType.Mandatory || task.task_definition.type == TaskType.Prestige;
     if (mandatoryish) {
         mult *= 1 + getPrestigeRepeatableLevel(PrestigeRepeatableType.MandatorySchmandatory) * MANDATORY_SCHMANDATORY_MULT;
+
+        if (hasPrestigeUnlock(PrestigeUnlockType.DivineSupremacy)) {
+            mult *= FINAL_PRESTIGE_MULT;
+        }
+    }
+
+    if (hasPrestigeUnlock(PrestigeUnlockType.AmazingSpeed)) {
+        mult *= FINAL_PRESTIGE_MULT;
     }
 
     return mult * task_progress_mult;
@@ -932,6 +945,12 @@ export function calcPowerGain(task: Task) {
     const mult = Math.max(task.task_definition.zone_id - 1, 1); // First boss is zone 3, which is internally 2
     let powerAmount = 5 * mult;
     powerAmount *= Math.pow(2, getPrestigeRepeatableLevel(PrestigeRepeatableType.UnlimitedPower));
+
+    if (hasPrestigeUnlock(PrestigeUnlockType.LimitlessPower))
+    {
+        powerAmount *= FINAL_PRESTIGE_MULT;
+    }
+
     return powerAmount;
 }
 
@@ -972,6 +991,11 @@ export function calcAttunementGain(task: Task): number {
 
     if (hasPerk(PerkType.CommunedWithDamnedSouls)) {
         value *= 2;
+    }
+
+    if (hasPrestigeUnlock(PrestigeUnlockType.LimitlessPower))
+    {
+        value *= FINAL_PRESTIGE_MULT;
     }
 
     value *= Math.pow(DIVINE_ATTUNEMENT_BASE, getPrestigeRepeatableLevel(PrestigeRepeatableType.DivineAttunement));
@@ -1160,6 +1184,21 @@ export function calcDivineSparkGainFromHighestZone(zone: number) {
     }
     if (hasPerk(PerkType.DefiedTheGods)) {
         gain_mult *= 1 + DEFIED_THE_GODS_SPARK_MULT;
+    }
+    if (hasPerk(PerkType.Ascended)) {
+        gain_mult *= 2;
+    }
+    if (hasPrestigeUnlock(PrestigeUnlockType.AmazingSpeed)) {
+        gain_mult *= 2;
+    }
+    if (hasPrestigeUnlock(PrestigeUnlockType.LimitlessPower)) {
+        gain_mult *= 2;
+    }
+    if (hasPrestigeUnlock(PrestigeUnlockType.UnparalleledLearning)) {
+        gain_mult *= 2;
+    }
+    if (hasPrestigeUnlock(PrestigeUnlockType.DivineSupremacy)) {
+        gain_mult *= 2;
     }
 
     return Math.ceil(gain_mult * BASE_PRESTIGE_GAIN);

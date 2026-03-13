@@ -59,6 +59,7 @@ export enum PerkType {
     FinalRitual,
     ReturnedHeraldHead,
     AvoidedGodlyRevenge,
+    Ascended,
 
     Count
 }
@@ -488,5 +489,11 @@ export const PERKS: PerkDefinition[] = [
             [SkillType.Ascension, 0.3],
         ]),
         icon: `🌋`,
+    }),
+    new PerkDefinition({
+        enum: PerkType.Ascended,
+        name: `Ascended`,
+        get_custom_tooltip: () => { return `Doubles ${DIVINE_SPARK_TEXT} gain`; },
+        icon: `👼`,
     }),
 ]

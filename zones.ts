@@ -464,7 +464,7 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 300, name: "Take Your Place in Heaven", type: TaskType.Travel, cost_multiplier: 500_000_000, skills: [SkillType.Travel], xp_mult: 0.01 }),
             new TaskDefinition({ id: 301, name: "Rally Your Troops", type: TaskType.Mandatory, cost_multiplier: 1_000_000_000_000_000, max_reps: 4, skills: [SkillType.Charisma], xp_mult: 0.001 }),
             new TaskDefinition({ id: 302, name: "Break Down the Gates", type: TaskType.Mandatory, cost_multiplier: 5_000_000_000_000_000_000_000, max_reps: 1, skills: [SkillType.Combat], xp_mult: 0.000003 }),
-            new TaskDefinition({ id: 303, name: "Ascend to Godhood", type: TaskType.Prestige, max_reps: 5, cost_multiplier: 5_000_000_000, skills: [SkillType.Ascension], xp_mult: 0.0001, prestige_layer: PrestigeLayer.AscendToGodhood },),
+            new TaskDefinition({ id: 303, name: "Ascend to Godhood", type: TaskType.Prestige, max_reps: 5, cost_multiplier: 5_000_000_000, skills: [SkillType.Ascension], xp_mult: 0.0001, prestige_layer: PrestigeLayer.AscendToGodhood, perk: PerkType.Ascended },),
             new TaskDefinition({ id: 304, name: "Conduct Ritual Sacrifice", max_reps: 3, cost_multiplier: 5_000_000_000_000, skills: [SkillType.Magic], item: ItemType.RitualSacrifice, xp_mult: 0.001 },),
             new TaskDefinition({ id: 305, name: "Prepare Final Ritual", cost_multiplier: 800_000_000_000_000_000, max_reps: 5, xp_mult: 0, skills: [SkillType.Magic, SkillType.Ascension], perk: PerkType.FinalRitual }),
             new TaskDefinition({ id: 306, name: "Taunt the Gods", cost_multiplier: 5_000_000_000, max_reps: 2, skills: [SkillType.Charisma], xp_mult: 2 }),
