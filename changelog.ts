@@ -6,8 +6,19 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "1.0.0",
+        date: "2026-03-13",
+        changes: "- The game is now content complete<br>"
+        + "- Added zones Z28, Z29, and Z30, including:<br>"
+        + "-- 5 new Prestige upgrades<br>"
+        + "-- 4 new repeatable Prestige upgrades<br>"
+        + "-- 5 new Items<br>"
+        + "-- 6 new Perks<br>"
+        + "- Added Z26 and Z27 bosses and boss Tasks<br>"
+    },
+    {
         version: "0.5.0",
-        date: "2026-02-08",
+        date: "2026-02-27",
         changes: "- Added zones Z26 and Z27, including:<br>"
         + "-- 3 new Prestige upgrades<br>"
         + "-- 4 new repeatable Prestige upgrades<br>"
