@@ -6,6 +6,12 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "1.1.0",
+        date: "2026-04-10",
+        changes: "- Mastery of Time's Task skipping no longer applies to Zones you've not set to be automated (in case you want to do things like use a Magic Ring<br>"
+        + "- PLACEHOLDER<br>"
+    },
+    {
         version: "1.0.0",
         date: "2026-03-13",
         changes: "- The game is now content complete<br>"

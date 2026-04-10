@@ -582,6 +582,11 @@ function doMasteryOfTimeTaskCompletion() {
         return;
     }
 
+    if ((GAMESTATE.current_zone + 1) >= GAMESTATE.automation_end) {
+        // Let the user deal with it manually when it's not automated
+        return;
+    }
+
     let num_complete = 0;
 
     for (const task of GAMESTATE.tasks) {
