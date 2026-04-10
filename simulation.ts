@@ -13,7 +13,7 @@ const ZONE_SPEEDUP_BASE = 1.05;
 export const BOSS_MAX_ENERGY_DISPARITY = 5;
 const STARTING_ENERGY = 100;
 const DEFAULT_TICK_RATE = 66.6;
-export const SAVE_VERSION = "1.0.0";
+export const SAVE_VERSION = "1.1.0";
 
 // MARK: Skills
 
@@ -632,8 +632,28 @@ export function calcReflectionsOnTheJourneyMult(zone: number) {
     return Math.pow(base, zone_diff);
 }
 
-export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): number {
+export function calcEnergyDrainPerTickInZone(zone: number): number {
     let drain = 1;
+
+    if (hasPerk(PerkType.HighAltitudeClimbing)) {
+        drain *= 0.8;
+    }
+
+    if (hasPerk(PerkType.ReflectionsOnTheJourney)) {
+        drain *= calcReflectionsOnTheJourneyMult(zone);
+    }
+
+    if (hasPerk(PerkType.MajorTimeCompression)) {
+        drain *= MAJOR_TIME_COMPRESSION_EFFECT;
+    }
+
+    drain *= Math.pow(ZONE_SPEEDUP_BASE, zone);
+
+    return drain;
+}
+
+export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): number {
+    let drain = calcEnergyDrainPerTickInZone(task.task_definition.zone_id);
 
     if (is_single_tick && hasPrestigeUnlock(PrestigeUnlockType.MasteryOfTime)) {
         return 0;
@@ -643,18 +663,9 @@ export function calcEnergyDrainPerTick(task: Task, is_single_tick: boolean): num
         drain *= 0.2;
     }
 
-    if (hasPerk(PerkType.HighAltitudeClimbing)) {
-        drain *= 0.8;
-    }
-
-    if (hasPerk(PerkType.ReflectionsOnTheJourney)) {
-        drain *= calcReflectionsOnTheJourneyMult(task.task_definition.zone_id);
-    }
-
-    drain *= Math.pow(ZONE_SPEEDUP_BASE, task.task_definition.zone_id);
-
-    if (!is_single_tick && hasPerk(PerkType.MajorTimeCompression)) {
-        drain *= MAJOR_TIME_COMPRESSION_EFFECT;
+    if (is_single_tick && hasPerk(PerkType.MajorTimeCompression)) {
+        // Make up for it always getting applied in calcEnergyDrainPerTickInZone
+        drain /= MAJOR_TIME_COMPRESSION_EFFECT;
     }
 
     return drain;
