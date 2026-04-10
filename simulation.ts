@@ -587,6 +587,11 @@ function doMasteryOfTimeTaskCompletion() {
         return;
     }
 
+    // Artifacts shouldn't affect this
+    const old_queued_haste = GAMESTATE.queued_scrolls_of_haste;
+    const old_queued_rings = GAMESTATE.queued_magic_rings;
+    const old_queued_lightning = GAMESTATE.queued_lightning;
+
     let num_complete = 0;
 
     for (const task of GAMESTATE.tasks) {
@@ -594,7 +599,6 @@ function doMasteryOfTimeTaskCompletion() {
             continue;
         }
 
-        // TODO - Ignore artifacts
         if (!isSingleTickTask(task)) {
             continue;
         }
@@ -613,6 +617,10 @@ function doMasteryOfTimeTaskCompletion() {
         const event = new RenderEvent(EventType.SkippedTasks, context);
         GAMESTATE.queueRenderEvent(event);
     }
+
+    GAMESTATE.queued_scrolls_of_haste = old_queued_haste;
+    GAMESTATE.queued_magic_rings = old_queued_rings;
+    GAMESTATE.queued_lightning = old_queued_lightning;
 }
 
 // MARK: Energy

@@ -14,6 +14,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Made Z25 a bit easier<br>"
         + "- Improved the XP of the training Tasks in Z30<br>"
         + "- Added setting for what to do when the next Task can't be started when using Task Automation (E.G., due to a Boss being too strong). You can now choose between pausing automation, and skipping the Task<br>"
+        + "- Fixed Mastery of Time being affected by active Artifacts<br>"
     },
     {
         version: "1.0.0",
