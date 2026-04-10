@@ -1992,6 +1992,15 @@ function handleEvents() {
                     }
                 }
             }
+        } else if (event.type == EventType.SkippedTasks) {
+            const new_context = context as SkippedTasksContext;
+            for (const [message, old_event] of RENDERING.message_contexts) {
+                if (old_event.type == event.type) {
+                    const old_context = old_event.context as SkippedTasksContext;
+                    new_context.tasks += old_context.tasks;
+                    message_to_replace = message;
+                }
+            }
         }
 
         switch (event.type) {

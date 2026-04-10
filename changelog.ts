@@ -16,6 +16,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- Added setting for what to do when the next Task can't be started when using Task Automation (E.G., due to a Boss being too strong). You can now choose between pausing automation, and skipping the Task<br>"
         + "- Fixed Mastery of Time being affected by active Artifacts<br>"
         + "- The Used Items notification now gets consolidated if you use more than 3 Items in short succession. Artifacts are unaffected<br>"
+        + "- The Tasks skipped notification now gets consolidated if you skip Tasks in multiple Zones in short succession<br>"
     },
     {
         version: "1.0.0",
