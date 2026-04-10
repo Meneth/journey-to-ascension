@@ -10,6 +10,8 @@ export const CHANGELOG: ChangelogEntry[] = [
         date: "2026-04-10",
         changes: "- Mastery of Time's Task skipping no longer applies to Zones you've not set to be automated (in case you want to do things like use a Magic Ring<br>"
         + "- The Energy bar tooltip now shows ticks and Energy use per second<br>"
+        + "- Reduced the cost of Crafting Breakthrough by a third<br>"
+        + "- Made Z25 a bit easier<br>"
     },
     {
         version: "1.0.0",

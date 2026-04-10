@@ -163,7 +163,7 @@ export const PRESTIGE_UNLOCKABLES: PrestigeUnlock[] = [
         layer: PrestigeLayer.EmbraceDivinity,
         name: "Crafting Breakthrough",
         get_description: () => { return `Makes ${ATTUNEMENT_TEXT} apply to ${getSkillString(SkillType.Crafting)}`; },
-        cost: 3_000_000
+        cost: 2_000_000
     },
     {
         type: PrestigeUnlockType.GodlyTravel,
