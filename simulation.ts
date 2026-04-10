@@ -808,7 +808,7 @@ function autoUseItems() {
         }
 
         if (value > 0) {
-            clickItem(key, true);
+            useItem(key, value);
             disableItemUndo(); // It'd just cause weird flashing
         }
     }

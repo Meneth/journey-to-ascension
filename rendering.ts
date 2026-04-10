@@ -3,7 +3,7 @@ import { clickTask, Skill, calcSkillXpNeeded, calcSkillXpNeededAtLevel, calcTask
 import { GAMESTATE, RENDERING, resetSave } from "./game.js";
 import { ItemType, ItemDefinition, ITEMS, HASTE_MULT, ARTIFACTS, MAGIC_RING_MULT, BOTTLED_LIGHTNING_MULT } from "./items.js";
 import { PerkDefinition, PerkType, PERKS, getPerkNameWithEmoji } from "./perks.js";
-import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpContext, SkippedTasksContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext } from "./events.js";
+import { EventType, GainedPerkContext, HighestZoneContext, RenderEvent, SkillUpContext, SkippedTasksContext, UnlockedSkillContext, UnlockedTaskContext, UsedItemContext, UsedItemsContext } from "./events.js";
 import { SKILL_DEFINITIONS, SkillDefinition, SkillType } from "./skills.js";
 import { ATTUNEMENT_TEXT, BOTTLED_LIGHTNING_TEXT, DIVINE_SPARK_TEXT, ENERGY_TEXT, HASTE_TEXT, POWER_TEXT, TRAVEL_EMOJI, XP_TEXT } from "./rendering_constants.js";
 import { PRESTIGE_UNLOCKABLES, PRESTIGE_REPEATABLES, PrestigeRepeatableType, DIVINE_KNOWLEDGE_MULT, DIVINE_APPETITE_ENERGY_ITEM_BOOST_MULT, GOTTA_GO_FAST_BASE, DIVINE_LIGHTNING_EXPONENT_INCREASE, TRANSCENDANT_APTITUDE_MULT, ENERGIZED_INCREASE, DEENERGIZED_BASE, PrestigeUnlockType, ENERGIZED_PERK_INCREASE, MANDATORY_SCHMANDATORY_MULT, DIVINE_ATTUNEMENT_BASE, DIVINER_KNOWLEDGE_MULT, GODLY_TRAVEL_MULT } from "./prestige_upgrades.js";
@@ -1935,17 +1935,51 @@ function handleEvents() {
             RENDERING.message_contexts.delete(message);
         }
 
-        const context = event.context;
+        let context = event.context;
         if (event.type == EventType.UsedItem) {
             const new_item_context = context as UsedItemContext;
+            const is_artifact = ARTIFACTS.includes(new_item_context.item);
+            let event_count = 0;
             for (const [message, old_event] of RENDERING.message_contexts) {
-                if (old_event.type == event.type) {
+                if (old_event.type == EventType.UsedItem) {
                     const old_item_context = old_event.context as UsedItemContext;
                     if (old_item_context.item == new_item_context.item) {
                         new_item_context.count += old_item_context.count;
                         message_to_replace = message;
+                    } else {
+                        event_count++;
                     }
+                } else if (old_event.type == EventType.UsedItems && !is_artifact) {
+                    const old_item_context = old_event.context as UsedItemsContext;
+                    old_item_context.count += new_item_context.count;
+                    event.type = EventType.UsedItems;
+                    context = old_item_context;
+                    event.context = old_item_context;
+                    message_to_replace = message;
                 }
+            }
+
+            // Consolidate multiple item uses
+            if (event_count >= 3 && !is_artifact) {
+                let count = new_item_context.count;
+                for (const [message, old_event] of RENDERING.message_contexts) {
+                    if (old_event.type != EventType.UsedItem) {
+                        continue;
+                    }
+
+                    const old_item_context = old_event.context as UsedItemContext;
+                    if (ARTIFACTS.includes(old_item_context.item)) {
+                        continue;
+                    }
+
+                    count += old_item_context.count;
+                    removeMessage(message);
+                    message_to_replace = null;
+                }
+
+                context = { count: count };
+                event.type = EventType.UsedItems;
+                event.context = context;
             }
         } else if (event.type == EventType.SkillUp) {
             const new_skill_context = context as SkillUpContext;
@@ -1986,6 +2020,13 @@ function handleEvents() {
                     const plural = item_context.count > 1;
                     message_div.innerHTML = `Used ${item_context.count} ${getItemNameWithIcon(item_context.item, plural)}`;
                     message_div.innerHTML += `<br>${item.getEffectText(item_context.count)}`;
+                    recreateItemsIfNeeded();
+                    break;
+                }
+            case EventType.UsedItems:
+                {
+                    const item_context = context as UsedItemsContext;
+                    message_div.innerHTML = `Used ${item_context.count} Items`;
                     recreateItemsIfNeeded();
                     break;
                 }

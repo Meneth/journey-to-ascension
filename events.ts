@@ -19,6 +19,7 @@ export enum EventType {
     NewPrestigeLayer,
     SkippedZones,
     SkippedTasks,
+    UsedItems,
 
     Count
 }
@@ -47,6 +48,10 @@ export class GainedPerkContext extends EventContext {
 
 export class UsedItemContext extends EventContext {
     item: ItemType = ItemType.Count;
+    count: number = 0;
+}
+
+export class UsedItemsContext extends EventContext {
     count: number = 0;
 }
 
