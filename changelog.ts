@@ -12,7 +12,8 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- The Energy bar tooltip now shows ticks and Energy use per second<br>"
         + "- Reduced the cost of Crafting Breakthrough by a third<br>"
         + "- Made Z25 a bit easier<br>"
-        + "- Improved the training Tasks in Z30 a bit<br>"
+        + "- Improved the XP of the training Tasks in Z30<br>"
+        + "- Added setting for what to do when the next Task can't be started when using Task Automation (E.G., due to a Boss being too strong). You can now choose between pausing automation, and skipping the Task<br>"
     },
     {
         version: "1.0.0",

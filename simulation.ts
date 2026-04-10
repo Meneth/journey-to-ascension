@@ -1101,6 +1101,9 @@ function pickNextTaskInAutomationQueue(): Task | null {
             }
 
             if (isTaskDisabledWithoutBeingFinished(task)) {
+                if (GAMESTATE.automation_skip_blocked) {
+                    continue;
+                }
                 return null; // Better to stop automating than having it fuck up by skipping a Task
             }
 
@@ -1507,6 +1510,7 @@ export class Gamestate {
     automation_mode = AutomationMode.Off;
     automation_prios: Map<number, number[]> = new Map();
     automation_end = 99;
+    automation_skip_blocked = false;
     auto_use_items = false;
     undo_item: [ItemType, amount: number] = [ItemType.Count, 0];
     manual_tooltips = false;

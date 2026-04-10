@@ -1784,6 +1784,21 @@ function setupSettings() {
         return "With Manual Tooltips enabled, tooltips only show up while CTRL is held";
     });
 
+    const skip_blocked_button = settings_div.querySelector<HTMLElement>("#skip-blocked");
+    if (!skip_blocked_button) {
+        console.error("No skip-blocked button");
+        return;
+    }
+
+    skip_blocked_button.addEventListener("click", () => {
+        GAMESTATE.automation_skip_blocked = !GAMESTATE.automation_skip_blocked;
+        updateSettingsDisplay();
+    });
+
+    setupTooltip(skip_blocked_button, function () { return GAMESTATE.automation_skip_blocked ? "Switch to Pause on Blocked Tasks" : "Switch to Skip on Blocked Tasks"; }, function () {
+        return "When using Task Autmation, this setting decides what to do if the next queued Task is blocked (E.G., too strong a Boss). Will either pause the automation, or keep running automated with the Task skipped";
+    });
+
     updateSettingsDisplay();
 }
 
@@ -1797,6 +1812,14 @@ function updateSettingsDisplay() {
     }
 
     manual_tooltips_button.textContent = GAMESTATE.manual_tooltips ? "Manual Tooltips" : "Auto Tooltips";
+
+    const skip_blocked_button = settings_div.querySelector<HTMLElement>("#skip-blocked");
+    if (!skip_blocked_button) {
+        console.error("No skip-blocked button");
+        return;
+    }
+
+    skip_blocked_button.textContent = GAMESTATE.automation_skip_blocked ? "Skip on Block" : "Pause on Block";
 }
 
 // MARK: Settings: Saves
