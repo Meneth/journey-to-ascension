@@ -467,8 +467,8 @@ export const ZONES: Zone[] = [
             new TaskDefinition({ id: 303, name: "Ascend to Godhood", type: TaskType.Prestige, max_reps: 5, cost_multiplier: 5_000_000_000, skills: [SkillType.Ascension], xp_mult: 0.0001, prestige_layer: PrestigeLayer.AscendToGodhood, perk: PerkType.Ascended },),
             new TaskDefinition({ id: 304, name: "Conduct Ritual Sacrifice", max_reps: 3, cost_multiplier: 5_000_000_000_000, skills: [SkillType.Magic], item: ItemType.RitualSacrifice, xp_mult: 0.001 },),
             new TaskDefinition({ id: 305, name: "Prepare Final Ritual", cost_multiplier: 800_000_000_000_000_000, max_reps: 5, xp_mult: 0, skills: [SkillType.Magic, SkillType.Ascension], perk: PerkType.FinalRitual }),
-            new TaskDefinition({ id: 306, name: "Taunt the Gods", cost_multiplier: 5_000_000_000, max_reps: 2, skills: [SkillType.Charisma], xp_mult: 2 }),
-            new TaskDefinition({ id: 307, name: "Plan Eternity in Heaven", cost_multiplier: 500_000_000_000_000, max_reps: 5, xp_mult: 0.01, skills: [SkillType.Study] }),
+            new TaskDefinition({ id: 306, name: "Taunt the Gods", cost_multiplier: 5_000_000_000, max_reps: 2, skills: [SkillType.Charisma], xp_mult: 3 }),
+            new TaskDefinition({ id: 307, name: "Plan Eternity in Heaven", cost_multiplier: 500_000_000_000_000, max_reps: 5, xp_mult: 0.03, skills: [SkillType.Study] }),
         ],
     },
 ]

@@ -12,6 +12,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         + "- The Energy bar tooltip now shows ticks and Energy use per second<br>"
         + "- Reduced the cost of Crafting Breakthrough by a third<br>"
         + "- Made Z25 a bit easier<br>"
+        + "- Improved the training Tasks in Z30 a bit<br>"
     },
     {
         version: "1.0.0",
