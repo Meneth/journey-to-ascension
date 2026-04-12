@@ -14,6 +14,7 @@ export const BOSS_MAX_ENERGY_DISPARITY = 5;
 const STARTING_ENERGY = 100;
 const DEFAULT_TICK_RATE = 66.6;
 export const SAVE_VERSION = "1.1.0";
+const TASK_STARTED_PROGRESS = 0.01;
 
 // MARK: Skills
 
@@ -269,7 +270,7 @@ function calcTaskEnergyCost(task: Task, hasted: boolean, lightning: boolean): nu
 }
 
 function isSingleTickTaskImpl(progress: number, cost: number) {
-    return progress >= cost;
+    return (progress + TASK_STARTED_PROGRESS) >= cost;
 }
 
 function isSingleTickTask(task: Task) {
@@ -380,7 +381,7 @@ export function applyTaskRepStartEffects(task: Task) {
         consumeItem(task.task_definition.use_item, 1);
     }
 
-    task.progress = Math.max(task.progress, 0.01); // Slight progress to ensure it counts as started
+    task.progress = Math.max(task.progress, TASK_STARTED_PROGRESS); // Slight progress to ensure it counts as started
 }
 
 export function clickTask(task: Task) {

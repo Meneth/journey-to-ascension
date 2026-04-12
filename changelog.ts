@@ -6,6 +6,11 @@ export class ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
     {
+        version: "1.1.1",
+        date: "2026-04-12",
+        changes: "- Fixed Minor Time Compression's single-tick Task effect not working<br>"
+    },
+    {
         version: "1.1.0",
         date: "2026-04-10",
         changes: "- Mastery of Time's Task skipping no longer applies to Zones you've not set to be automated (in case you want to do things like use a Magic Ring<br>"
