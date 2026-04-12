@@ -9,6 +9,7 @@ export const CHANGELOG: ChangelogEntry[] = [
         version: "1.1.1",
         date: "2026-04-12",
         changes: "- Fixed Minor Time Compression's single-tick Task effect not working<br>"
+        + "- The Zone name now has a tooltip which shows the highest Zone (30)<br>"
     },
     {
         version: "1.1.0",

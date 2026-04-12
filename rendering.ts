@@ -2716,6 +2716,7 @@ function setupZone() {
     const zone = ZONES[GAMESTATE.current_zone];
     if (zone) {
         zone_name.innerHTML = `Zone ${GAMESTATE.current_zone + 1} - ${zone.name}`;
+        setupTooltipStatic(zone_name, zone_name.innerHTML, `This is Zone ${GAMESTATE.current_zone + 1} of 30`);
     }
 }
 
